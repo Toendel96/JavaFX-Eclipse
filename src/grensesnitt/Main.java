@@ -107,9 +107,26 @@ public class Main extends Application {
 	}
 	
 	public void lagPlanleggerscene() {
-		try {
-			System.out.println("Test for planlegger");
-		}catch(Exception e) {System.out.println("nope");}
+		
+		BorderPane planleggerRotpanel = new BorderPane();
+		FlowPane planleggerFlowpane = new FlowPane();
+		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
+		
+		//Oppretter en knapp for administrasjonsdel:
+		Button administrasjon = new Button("Administrasjon");
+		planleggerFlowpane.getChildren().add(administrasjon);
+		//administrasjon.setOnAction(e -> lagLoginscene());
+		
+		//Oppretter en knapp for rapportdel:
+		Button rapport = new Button("Rapport");
+		//rapport.setOnAction(e -> lagLoginscene());
+		planleggerFlowpane.getChildren().add(rapport);
+		
+		//FlowPane settings
+		planleggerFlowpane.setHgap(10);
+		planleggerRotpanel.setCenter(planleggerFlowpane);
+		vindu.setScene(planleggerScene);
+		vindu.show();
 	}
 		
 		
