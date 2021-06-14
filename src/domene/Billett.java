@@ -1,7 +1,6 @@
 package domene;
 
 public class Billett {
-
 	private String billettkode;
 	private int visningsnr;
 	private int erBetalt;

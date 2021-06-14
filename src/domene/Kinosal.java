@@ -5,6 +5,7 @@ public class Kinosal {
 	private String kinonavn;
 	private String kinosalnavn;
 	
+	
 	public int getKinosalnr() {
 		return kinosalnr;
 	}

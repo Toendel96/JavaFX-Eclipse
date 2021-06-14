@@ -1,7 +1,6 @@
 package domene;
 
 public class Film {
-	
 	private int filmnr;
 	private String filmnavn;
 	
