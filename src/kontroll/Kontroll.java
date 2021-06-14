@@ -128,8 +128,19 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public ResultSet hentBilletter() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+        resultat = null;
+        String sql = "SELECT b_billettkode, b_visningsnr, b_erBetalt FROM tblbillett";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	String billettKode = resultat.getString(1);
+        	int visningsnr = resultat.getInt(2);
+        	boolean erBetalt = resultat.getBoolean(3);
+        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
+        	billett.add(new Billett(billettKode, visningsnr, erBetalt));
+        }
+        return resultat;
 	}
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
@@ -158,9 +169,8 @@ public class Kontroll implements kontrollInterface {
 		    	String sql = "SELECT * FROM tblbillett";
 	    		preparedStatement = forbindelse.prepareStatement(sql);
 	    		resultat = preparedStatement.executeQuery(sql);
-	    		return resultat;
+	    		return resultat; 
 	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
-	 
 	    }
 
 	

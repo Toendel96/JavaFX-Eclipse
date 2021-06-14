@@ -250,8 +250,8 @@ public class Main extends Application {
 		
 	public void lagKinobetjentscene() {
 		try {
-			vindu.setWidth(300);
-			vindu.setHeight(200);
+			vindu.setWidth(400);
+			vindu.setHeight(300);
 			BorderPane kinobetjentrotpanel = new BorderPane();
 			GridPane gridpane = new GridPane();
 			Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
@@ -264,7 +264,14 @@ public class Main extends Application {
 			avbestill.setOnAction(e -> lagSlettBillettScene());
 			Button tilbake = new Button("Tilbake");
 			tilbake.setOnAction(e -> behandleTilbake());
-			oppdater.setOnAction(e -> System.out.println("TESTER OM BETALT"));
+			oppdater.setOnAction(e -> {
+				try {
+					settBetalt(billettkode.getText());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});
 			gridpane.getChildren().addAll();
 			kinobetjentrotpanel.setTop(gridpane);
 			kinobetjentrotpanel.setBottom(tilbake);
@@ -353,6 +360,11 @@ public class Main extends Application {
 	
 		public void behandleTilbake() {
 			lagMenyscene();
+		}
+		
+		public void settBetalt(String billettKode) throws Exception {
+			System.out.println(billettKode);
+			kontroll.hentBilletter();
 		}
 	
 	
