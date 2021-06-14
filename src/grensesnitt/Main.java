@@ -2,6 +2,7 @@ package grensesnitt;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
+import kontroll.Kontroll;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
@@ -16,6 +17,9 @@ public class Main extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			System.out.println("Din applikasjon fungerer");
+			Kontroll kontroll = new Kontroll();
+			kontroll.lagForbindelse();
+			//kontroll.lukk();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Dette gikk dårlig. Prøv igjen");
