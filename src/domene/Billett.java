@@ -1,11 +1,16 @@
 package domene;
 
 public class Billett {
-
 	private String billettkode;
 	private int visningsnr;
 	private int erBetalt;
 	
+	public Billett(String billettkode, int visningsnr, int erBetalt) {
+		super();
+		this.billettkode = billettkode;
+		this.visningsnr = visningsnr;
+		this.erBetalt = erBetalt;
+	}
 	public String getBillettkode() {
 		return billettkode;
 	}

@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Kontroll {
+public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
 	    private String databasedriver = "com.mysql.jdbc.Driver";
 	    private Connection forbindelse;

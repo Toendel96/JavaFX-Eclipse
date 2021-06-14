@@ -1,10 +1,14 @@
 package domene;
 
 public class Film {
-	
 	private int filmnr;
 	private String filmnavn;
 	
+	public Film(int filmnr, String filmnavn) {
+		super();
+		this.filmnr = filmnr;
+		this.filmnavn = filmnavn;
+	}
 	
 	public int getFilmnr() {
 		return filmnr;

@@ -11,6 +11,16 @@ public class Visning {
 	private Time starttid;
 	private float pris;
 	
+	public Visning(int visningsnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		super();
+		this.visningsnr = visningsnr;
+		this.filmnr = filmnr;
+		this.kinosalnr = kinosalnr;
+		this.dato = dato;
+		this.starttid = starttid;
+		this.pris = pris;
+	}
+	
 	public int getVisningsnr() {
 		return visningsnr;
 	}

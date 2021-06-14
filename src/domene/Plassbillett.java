@@ -5,9 +5,19 @@ public class Plassbillett {
 	private int setenr;
 	private int kinosalnr;
 	private String billettkode;
+	
+	public Plassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
+		super();
+		this.radnr = radnr;
+		this.setenr = setenr;
+		this.kinosalnr = kinosalnr;
+		this.billettkode = billettkode;
+	}
+
 	public int getRadnr() {
 		return radnr;
 	}
+
 	public void setRadnr(int radnr) {
 		this.radnr = radnr;
 	}
