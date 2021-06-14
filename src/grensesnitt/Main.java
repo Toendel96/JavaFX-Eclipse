@@ -17,52 +17,51 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			vindu=primaryStage;
-			String kinobetjent="kinobetjent";
-			String planleggeren="planlegger";
-			
-			BorderPane root = new BorderPane();
-			FlowPane panel = new FlowPane();
-			Scene scene = new Scene(root,400,400);
 			vindu.setTitle("Kinosentralen");
-			vindu.setWidth(900);
+			vindu.setWidth(800);
 			vindu.setHeight(600);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			//Oppretter en knapp for planlegger:
-			Button planleggerknapp = new Button("Kinosentralens planlegger");
-			panel.getChildren().add(planleggerknapp);
-			planleggerknapp.setOnAction(e -> login(planleggeren));
-			//Oppretter en knapp for kinobetjent:
-			Button kinobetjentknapp = new Button("Kinobetjent");
-			kinobetjentknapp.setOnAction(e -> login(kinobetjent));
-			panel.getChildren().add(kinobetjentknapp);
-			//Oppretter en knapp for kunde:
-			Button kundeknapp = new Button("Kunde");
-			kundeknapp.setOnAction(e -> kunden());
-			panel.getChildren().add(kundeknapp);
-			
-			//FlowPane settings
-			panel.setHgap(10);
-			root.setCenter(panel);
-
-			vindu.setScene(scene);
-			vindu.show();
-			
-			
+			lagMenyscene();
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.out.println("Dette gikk dÃ¥rlig. PrÃ¸v igjen");
 		}
 	}
 	
-	public void login(String bruker) {
+	public void lagMenyscene() {
+		String kinobetjent="kinobetjent";
+		String planleggeren="planlegger";
+		BorderPane menyrotpanel = new BorderPane();
+		FlowPane panel = new FlowPane();
+		Scene menyscene = new Scene(menyrotpanel,600,600);
+		//Oppretter en knapp for planlegger:
+		Button planleggerknapp = new Button("Kinosentralens planlegger");
+		panel.getChildren().add(planleggerknapp);
+		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
+		//Oppretter en knapp for kinobetjent:
+		Button kinobetjentknapp = new Button("Kinobetjent");
+		kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
+		panel.getChildren().add(kinobetjentknapp);
+		//Oppretter en knapp for kunde:
+		Button kundeknapp = new Button("Kunde");
+		kundeknapp.setOnAction(e -> lagKundescene());
+		panel.getChildren().add(kundeknapp);
+		//FlowPane settings
+		panel.setHgap(10);
+		menyrotpanel.setCenter(panel);
+		menyscene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		vindu.setScene(menyscene);
+		vindu.show();
+	}
+	
+	public void lagLoginscene(String bruker) {
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
 		Scene loginscene = new Scene(loginrootpanel,400,400);
-		gridpane.add(new Label(), 0, 0);
-		gridpane.add(new TextField(), 0, 1);
-		gridpane.add(new Label(), 1, 0);
+		gridpane.add(new Label("Brukernavn"), 0, 0);
+		gridpane.add(new TextField(), 1, 0);
+		gridpane.add(new Label("Passord"), 0, 1);
 		gridpane.add(new TextField(), 1, 1);
-		gridpane.add(new Button(), 3, 0);
+		gridpane.add(new Button("Logg inn"), 1, 2);
 		if (bruker=="planlegger") {
 			//Planleggeren prøver å logge inn
 		}
@@ -75,21 +74,21 @@ public class Main extends Application {
 		vindu.show();
 	}
 	
-	public void planleggeren() {
+	public void lagPlanleggerscene() {
 		try {
 			System.out.println("Test for planlegger");
 		}catch(Exception e) {System.out.println("nope");}
 	}
 		
 		
-		public void kinobetjenten() {
+		public void lagKinobetjentscene() {
 			try {
 				System.out.println("Test for kinobetjent");
 				
 			}catch(Exception e) {System.out.println("nope");}
 		}
 			
-		public void kunden() {
+		public void lagKundescene() {
 			try {
 				System.out.println("Test for kunden");
 				}catch(Exception e) {System.out.println("nope");}
