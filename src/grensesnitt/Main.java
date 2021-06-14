@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -52,6 +53,7 @@ public class Main extends Application {
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
+
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
@@ -120,29 +122,72 @@ public class Main extends Application {
 	
 	public void lagPlanleggerscene() {
 		
+		vindu.setWidth(500);
+		vindu.setHeight(200);
+		
 		BorderPane planleggerRotpanel = new BorderPane();
-		FlowPane planleggerFlowpane = new FlowPane();
+		GridPane planleggerGridpane = new GridPane();
 		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
 		
 		//Oppretter en knapp for administrasjonsdel:
 		Button administrasjon = new Button("Administrasjon");
-		planleggerFlowpane.getChildren().add(administrasjon);
+		planleggerGridpane.add(administrasjon,0,0);
 		//administrasjon.setOnAction(e -> lagLoginscene());
 		
 		//Oppretter en knapp for rapportdel:
 		Button rapport = new Button("Rapport");
-		//rapport.setOnAction(e -> lagLoginscene());
-		planleggerFlowpane.getChildren().add(rapport);
+		planleggerGridpane.add(rapport, 1, 0);
+		rapport.setOnAction(e -> lagRapportScene());
 		
-		/*Button leggTilFilm = new Button("Legg til en film");
+		Button leggTilFilm = new Button("Legg til en film");
 		leggTilFilm.setOnAction(e -> lagNyFilmScene());
-		planleggerFlowpane.getChildren().add(leggTilFilm);*/
+		planleggerGridpane.add(leggTilFilm,2,0);
 		
-		//FlowPane settings
-		planleggerFlowpane.setHgap(10);
-		planleggerRotpanel.setCenter(planleggerFlowpane);
+		Button leggTilVisning = new Button("Ny visning");
+		leggTilVisning.setOnAction(e -> lagNyVisningScene());
+		planleggerGridpane.add(leggTilVisning,3,0);
+		
+		Button tilbake = new Button("Logg ut");
+		tilbake.setOnAction(e -> behandleTilbake());
+		
+		planleggerGridpane.getChildren().addAll();
+		
+		//GridPane settings
+		planleggerGridpane.setHgap(10);
+		planleggerRotpanel.setBottom(tilbake);
+		planleggerRotpanel.setCenter(planleggerGridpane);
 		vindu.setScene(planleggerScene);
 		vindu.show();
+	}
+	
+	public void lagRapportScene() {
+		BorderPane rapportRotpanel = new BorderPane();
+		GridPane rapportGridpane = new GridPane();
+		Scene rapportScene = new Scene(rapportRotpanel,600,600);
+		
+		//Oppretter en knapp for statistikk for film:
+		Button statistikkFilm = new Button("Statistikk film");
+		rapportGridpane.add(statistikkFilm,0,0);
+		//statistikkFilm.setOnAction(e -> sceneNavnHer());
+		
+		//Oppretter en knapp for statistikk for kinosal:
+		Button statistikkKinosal = new Button("Statistikk kinosal");
+		rapportGridpane.add(statistikkKinosal, 1, 0);
+		//statistikkFilm.setOnAction(e -> sceneNavnHer());
+			
+		Button tilbake = new Button("Logg ut");
+		tilbake.setOnAction(e -> behandleTilbake()); //Opprette ny tilbake funksjon her
+		
+		rapportGridpane.getChildren().addAll();
+		
+		//GridPane settings
+		rapportGridpane.setHgap(10);
+		rapportRotpanel.setBottom(tilbake);
+		rapportRotpanel.setCenter(rapportGridpane);
+		vindu.setScene(rapportScene);
+		vindu.show();
+		
+		
 	}
 	
 	public void lagNyFilmScene() {
@@ -150,9 +195,56 @@ public class Main extends Application {
 		vindu.setHeight(200);
 		BorderPane nyFilmPanel = new BorderPane();
 		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
-		FlowPane panel = new FlowPane();
+		GridPane panel = new GridPane();
+		Label lblFilmNavn = new Label("Filmnavn:");
+		panel.add(lblFilmNavn, 0, 0);
+		TextField txtFilmNavn = new TextField();
+		panel.add(txtFilmNavn, 1, 0);
+		Button leggTil = new Button("Legg til");
+		panel.add(leggTil, 1, 1);
+		leggTil.setOnAction(e -> kontroll.leggTilFilm(txtFilmNavn.getText()));
 		
+		panel.getChildren().addAll();
+		nyFilmPanel.setCenter(panel);
 		vindu.setScene(nyFilmScene);
+		vindu.show();
+	}
+	
+	public void lagNyVisningScene(){
+		vindu.setWidth(300);
+		vindu.setHeight(200);
+		BorderPane nyVisningPanel = new BorderPane();
+		Scene nyVisningScene = new Scene(nyVisningPanel,400,400);
+		GridPane panel = new GridPane();
+		//String filmnr, String kinosalnr, String dato, String starttid, String pris
+		
+		//Hent alle filmer
+		try { kontroll.hentFilmer();
+		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
+		
+		//Hent alle kinosaler
+		try { kontroll.hentKinosaler();
+		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
+		
+		
+		Label lblDato = new Label("Dato: ");
+		panel.add(lblDato, 0, 0);
+		DatePicker pcrDato = new DatePicker();
+		panel.add(pcrDato, 1, 0);
+		Label lblTidspunkt = new Label("Tidspunkt: ");
+		panel.add(lblTidspunkt, 0, 1);
+		TextField txtTidspunkt = new TextField();
+		txtTidspunkt.setPromptText("Eks: 18:00");
+		panel.add(txtTidspunkt, 1, 1);
+		Label lblPris = new Label("Pris");
+		panel.add(lblPris, 0, 2);
+		TextField txtPris = new TextField();
+		panel.add(txtPris, 1, 2);
+		
+		
+		panel.getChildren().addAll();
+		nyVisningPanel.setCenter(panel);
+		vindu.setScene(nyVisningScene);
 		vindu.show();
 	}
 		
