@@ -22,7 +22,7 @@ public interface kontrollInterface {
 	
 	//Film
 	public boolean leggTilFilm(String filmnavn);
-	public ResultSet hentFilmer() throws Exception;
+	public ResultSet hentFilmer() throws Exception;	
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception;
 	
 	//Kinosal
@@ -31,8 +31,13 @@ public interface kontrollInterface {
 	
 	//Plassbillett
 	boolean leggTilPlassbillett(String filmnavn);
-	ResultSet hentPlassbillett(String billettkode) throws Exception;
+	ResultSet hentPlassbilletter(String billettkode) throws Exception;
 	ResultSet finnSpesifikkPlassbillett(String kundenr1) throws Exception;
+	
+	//Visninger
+	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
+	ResultSet hentVisninger(String billettkode) throws Exception;
+	ResultSet finnSpesifikkVisning(String kundenr1) throws Exception;
 
 
 }

@@ -3,9 +3,9 @@ package domene;
 public class Billett {
 	private String billettkode;
 	private int visningsnr;
-	private int erBetalt;
+	private boolean erBetalt;
 	
-	public Billett(String billettkode, int visningsnr, int erBetalt) {
+	public Billett(String billettkode, int visningsnr, boolean erBetalt) {
 		super();
 		this.billettkode = billettkode;
 		this.visningsnr = visningsnr;
@@ -23,10 +23,10 @@ public class Billett {
 	public void setVisningsnr(int visningsnr) {
 		this.visningsnr = visningsnr;
 	}
-	public int getErBetalt() {
+	public boolean getErBetalt() {
 		return erBetalt;
 	}
-	public void setErBetalt(int erBetalt) {
+	public void setErBetalt(boolean erBetalt) {
 		this.erBetalt = erBetalt;
 	}
 	
