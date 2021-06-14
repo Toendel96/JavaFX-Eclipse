@@ -20,6 +20,10 @@ import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import domene.Billett;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
 	    private String databasedriver = "com.mysql.jdbc.Driver";
@@ -28,6 +32,7 @@ public class Kontroll implements kontrollInterface {
 	    private PreparedStatement preparedStatement;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
+	    private ObservableList<Billett> billettListe = FXCollections.observableArrayList();
 	
 	//------------------------ Åpne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -126,6 +131,39 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public ObservableList<Billett> hentUbetalteBilletter() {
+		//Returner en liste med ubetalte billetter
+		try {
+			ResultSet resultat = lesUbetalteBilletter();
+			while(resultat.next()) {
+				String billettkode = resultat.getString(1);
+				int visningsnr = resultat.getInt(2);
+				boolean erBetalt = resultat.getBoolean(3);
+				/*boolean erBetalt;
+				if (erBetalt1==0) {
+					erBetalt=false;
+				}else {
+					erBetalt=true;
+				}*/
+				billettListe.add(new Billett(billettkode, visningsnr, erBetalt));
+			}
+		}catch(Exception e) {System.out.println(e.getMessage());}
+		return billettListe;
+	}
+	
+	 public ResultSet lesUbetalteBilletter() throws Exception {
+	    	try {
+	    		ResultSet resultat = null;
+		    	String sql = "SELECT * FROM tblbillett";
+	    		preparedStatement = forbindelse.prepareStatement(sql);
+	    		resultat = preparedStatement.executeQuery(sql);
+	    		return resultat;
+	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
+	 
+	    }
+
+	
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
