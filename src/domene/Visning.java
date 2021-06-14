@@ -11,9 +11,9 @@ public class Visning {
 	private Time starttid;
 	private float pris;
 	
-	public Visning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+	public Visning(int visningsnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		super();
-		this.visningnr = visningnr;
+		this.visningnr = visningsnr;
 		this.filmnr = filmnr;
 		this.kinosalnr = kinosalnr;
 		this.dato = dato;
@@ -21,7 +21,7 @@ public class Visning {
 		this.pris = pris;
 	}
 	
-	public int getVisningnr() {
+	public int getVisningsnr() {
 		return visningnr;
 	}
 	public void setVisningsnr(int visningsnr) {
