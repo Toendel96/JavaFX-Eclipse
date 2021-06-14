@@ -116,6 +116,7 @@ public class Main extends Application {
 		Button leggTilFilm = new Button("Legg til en film");
 		leggTilFilm.setOnAction(e -> lagNyFilmScene());
 		panel.getChildren().add(leggTilFilm);
+		planleggerScene.setCenter(panel);
 		
 		vindu.setScene(loginscene);
 		vindu.show();
@@ -127,6 +128,8 @@ public class Main extends Application {
 		vindu.setHeight(200);
 		BorderPane nyFilmPanel = new BorderPane();
 		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
+		FlowPane panel = new FlowPane();
+		
 		
 		vindu.setScene(nyFilmScene);
 		vindu.show();
