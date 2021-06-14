@@ -5,7 +5,13 @@ public class Kinosal {
 	private String kinonavn;
 	private String kinosalnavn;
 	
-	
+	public Kinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
+		super();
+		this.kinosalnr = kinosalnr;
+		this.kinonavn = kinonavn;
+		this.kinosalnavn = kinosalnavn;
+	}
+
 	public int getKinosalnr() {
 		return kinosalnr;
 	}

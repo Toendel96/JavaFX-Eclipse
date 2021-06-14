@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Kontroll {
+public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
 	    private String databasedriver = "com.mysql.jdbc.Driver";
 	    private Connection forbindelse;
@@ -37,5 +37,97 @@ public class Kontroll {
             throw new Exception("Kan ikke lukke databaseforbindelse");
         }
     }
+
+	@Override
+	public boolean sletteBillett(String billettKode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int leggTilBillett(String billetNavn) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ResultSet hentBilletter() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean leggTilFilm(String filmnavn) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ResultSet hentFilmer() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet hentKinosaler() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet finnSpesifikkKinosal(String kinosalnr) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean leggTilPlassbillett(String filmnavn) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ResultSet hentPlassbilletter(String billettkode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet finnSpesifikkPlassbillett(String kundenr1) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ResultSet hentVisninger(String billettkode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
+    
 
 }
