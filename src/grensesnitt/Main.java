@@ -50,7 +50,12 @@ public class Main extends Application {
 		Scene menyscene = new Scene(menyrotpanel,600,600);
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
+<<<<<<< HEAD
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
+=======
+		panel.getChildren().add(planleggerknapp);
+		planleggerknapp.setOnAction(e -> lagPlanleggerscene());
+>>>>>>> 02f7312afc5bb02d7460ba6a9f5d3ddbecdc23eb
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
@@ -92,11 +97,6 @@ public class Main extends Application {
 	}
 	
 	
-		public void lagPlanleggerscene() {
-			try {
-				System.out.println("Test for planlegger");
-			}catch(Exception e) {System.out.println("nope");}
-		}
 
 	public void loggInnBruker(String brukernavn, String passord, String bruker) {
 		Alert loggInnFeilet = new Alert(AlertType.ERROR);
@@ -119,6 +119,45 @@ public class Main extends Application {
 					loggInnFeilet.show();
 			}
 		} 
+	}
+
+	
+	public void lagPlanleggerscene() {
+		
+		BorderPane planleggerRotpanel = new BorderPane();
+		FlowPane planleggerFlowpane = new FlowPane();
+		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
+		
+		//Oppretter en knapp for administrasjonsdel:
+		Button administrasjon = new Button("Administrasjon");
+		planleggerFlowpane.getChildren().add(administrasjon);
+		//administrasjon.setOnAction(e -> lagLoginscene());
+		
+		//Oppretter en knapp for rapportdel:
+		Button rapport = new Button("Rapport");
+		//rapport.setOnAction(e -> lagLoginscene());
+		planleggerFlowpane.getChildren().add(rapport);
+		
+		/*Button leggTilFilm = new Button("Legg til en film");
+		leggTilFilm.setOnAction(e -> lagNyFilmScene());
+		planleggerFlowpane.getChildren().add(leggTilFilm);*/
+		
+		//FlowPane settings
+		planleggerFlowpane.setHgap(10);
+		planleggerRotpanel.setCenter(planleggerFlowpane);
+		vindu.setScene(planleggerScene);
+		vindu.show();
+	}
+	
+	public void lagNyFilmScene() {
+		vindu.setWidth(300);
+		vindu.setHeight(200);
+		BorderPane nyFilmPanel = new BorderPane();
+		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
+		FlowPane panel = new FlowPane();
+		
+		vindu.setScene(nyFilmScene);
+		vindu.show();
 	}
 		
 	public void lagKinobetjentscene() {
