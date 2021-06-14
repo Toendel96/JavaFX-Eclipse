@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class Visning {
-	private int visningsnr;
+	private int visningnr;
 	private int filmnr;
 	private int kinosalnr;
 	private Date dato;
@@ -13,7 +13,7 @@ public class Visning {
 	
 	public Visning(int visningsnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		super();
-		this.visningsnr = visningsnr;
+		this.visningnr = visningsnr;
 		this.filmnr = filmnr;
 		this.kinosalnr = kinosalnr;
 		this.dato = dato;
@@ -22,10 +22,10 @@ public class Visning {
 	}
 	
 	public int getVisningsnr() {
-		return visningsnr;
+		return visningnr;
 	}
 	public void setVisningsnr(int visningsnr) {
-		this.visningsnr = visningsnr;
+		this.visningnr = visningsnr;
 	}
 	public int getFilmnr() {
 		return filmnr;
@@ -60,7 +60,7 @@ public class Visning {
 	
 	@Override
 	public String toString() {
-		return "Visning [visningsnr=" + visningsnr + ", filmnr=" + filmnr + ", kinosalnr=" + kinosalnr + ", dato="
+		return "Visning [visningnr=" + visningnr + ", filmnr=" + filmnr + ", kinosalnr=" + kinosalnr + ", dato="
 				+ dato + ", starttid=" + starttid + ", pris=" + pris + "]";
 	}
 	
