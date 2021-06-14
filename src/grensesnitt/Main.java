@@ -91,13 +91,13 @@ public class Main extends Application {
 		vindu.show();
 	}
 	
-<<<<<<< HEAD
+	
 		public void lagPlanleggerscene() {
 			try {
 				System.out.println("Test for planlegger");
 			}catch(Exception e) {System.out.println("nope");}
 		}
-=======
+
 	public void loggInnBruker(String brukernavn, String passord, String bruker) {
 		Alert loggInnFeilet = new Alert(AlertType.ERROR);
 		if (bruker.equals("planlegger")) {
@@ -120,14 +120,6 @@ public class Main extends Application {
 			}
 		} 
 	}
-	
-	public void lagPlanleggerscene() {
-		try {
-			System.out.println("Test for planlegger");
-		}catch(Exception e) {System.out.println("nope");}
-	}
->>>>>>> 063ad1ba4bfa714810433c2b5a600a723ed89373
-		
 		
 		public void lagKinobetjentscene() {
 			try {
