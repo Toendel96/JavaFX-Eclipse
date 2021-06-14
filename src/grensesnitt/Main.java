@@ -42,7 +42,7 @@ public class Main extends Application {
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
 		panel.getChildren().add(planleggerknapp);
-		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
+		planleggerknapp.setOnAction(e -> lagPlanleggerscene());
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
@@ -107,11 +107,30 @@ public class Main extends Application {
 	}
 	
 	public void lagPlanleggerscene() {
-		try {
-			System.out.println("Test for planlegger");
-		}catch(Exception e) {System.out.println("nope");}
-	}
+		vindu.setWidth(300);
+		vindu.setHeight(200);
+		BorderPane planleggerScene = new BorderPane();
+		Scene loginscene = new Scene(planleggerScene,400,400);
+		FlowPane panel = new FlowPane();
 		
+		Button leggTilFilm = new Button("Legg til en film");
+		leggTilFilm.setOnAction(e -> lagNyFilmScene());
+		panel.getChildren().add(leggTilFilm);
+		
+		vindu.setScene(loginscene);
+		vindu.show();
+		
+	}
+	
+	public void lagNyFilmScene() {
+		vindu.setWidth(300);
+		vindu.setHeight(200);
+		BorderPane nyFilmPanel = new BorderPane();
+		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
+		
+		vindu.setScene(nyFilmScene);
+		vindu.show();
+	}
 		
 		public void lagKinobetjentscene() {
 			try {
