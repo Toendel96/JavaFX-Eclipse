@@ -50,12 +50,7 @@ public class Main extends Application {
 		Scene menyscene = new Scene(menyrotpanel,600,600);
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
-<<<<<<< HEAD
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
-=======
-		panel.getChildren().add(planleggerknapp);
-		planleggerknapp.setOnAction(e -> lagPlanleggerscene());
->>>>>>> 02f7312afc5bb02d7460ba6a9f5d3ddbecdc23eb
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
