@@ -28,6 +28,8 @@ public class Main extends Application {
 	}
 	
 	public void lagMenyscene() {
+		vindu.setWidth(500);
+		vindu.setHeight(200);
 		String kinobetjent="kinobetjent";
 		String planleggeren="planlegger";
 		BorderPane menyrotpanel = new BorderPane();
@@ -54,6 +56,8 @@ public class Main extends Application {
 	}
 	
 	public void lagLoginscene(String bruker) {
+		vindu.setWidth(300);
+		vindu.setHeight(200);
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
 		Scene loginscene = new Scene(loginrootpanel,400,400);
@@ -68,8 +72,11 @@ public class Main extends Application {
 		else {
 			//Kinobetjenten prøver å logge inn
 		}
+		Button tilbake = new Button("Tilbake");
+		tilbake.setOnAction(e -> behandleTilbake());
 		gridpane.getChildren().addAll();
 		loginrootpanel.setCenter(gridpane);
+		loginrootpanel.setBottom(tilbake);
 		vindu.setScene(loginscene);
 		vindu.show();
 	}
@@ -94,7 +101,9 @@ public class Main extends Application {
 				}catch(Exception e) {System.out.println("nope");}
 			}
 	
-	
+		public void behandleTilbake() {
+			lagMenyscene();
+		}
 	
 	
 	public static void main(String[] args) {
