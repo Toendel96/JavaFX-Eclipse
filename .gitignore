@@ -1,6 +1,7 @@
 # Compiled class file
 *.class
 *.classpath
+*org.eclipse.jdt.core.prefs
 
 # Log file
 *.log
