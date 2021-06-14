@@ -121,6 +121,9 @@ public class Main extends Application {
 	
 	public void lagPlanleggerscene() {
 		
+		vindu.setWidth(500);
+		vindu.setHeight(200);
+		
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
 		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
@@ -137,11 +140,11 @@ public class Main extends Application {
 		
 		Button leggTilFilm = new Button("Legg til en film");
 		leggTilFilm.setOnAction(e -> lagNyFilmScene());
-		planleggerFlowpane.getChildren().add(leggTilFilm);
+		planleggerGridpane.add(leggTilFilm,2,0);
 		
 		Button leggTilVisning = new Button("Ny visning");
 		leggTilVisning.setOnAction(e -> lagNyVisningScene());
-		planleggerFlowpane.getChildren().add(leggTilVisning);
+		planleggerGridpane.add(leggTilVisning,3,0);
 		
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake());
