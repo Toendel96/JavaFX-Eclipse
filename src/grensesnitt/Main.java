@@ -45,7 +45,8 @@ public class Main extends Application {
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
-		kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
+		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
+		kinobetjentknapp.setOnAction(e -> lagKinobetjentscene());
 		panel.getChildren().add(kinobetjentknapp);
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
@@ -115,8 +116,24 @@ public class Main extends Application {
 		
 		public void lagKinobetjentscene() {
 			try {
-				System.out.println("Test for kinobetjent");
-				
+				vindu.setWidth(300);
+				vindu.setHeight(200);
+				BorderPane kinobetjentrotpanel = new BorderPane();
+				GridPane gridpane = new GridPane();
+				Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
+				gridpane.add(new Label("Skriv ned billettkoden:"), 0, 0);
+				TextField billettkode = new TextField();
+				gridpane.add(billettkode, 1, 0);
+				Button oppdater = new Button("Oppdater som betalt");
+				gridpane.add(oppdater, 1, 2);
+				Button tilbake = new Button("Tilbake");
+				tilbake.setOnAction(e -> behandleTilbake());
+				oppdater.setOnAction(e -> System.out.println("TESTER OM BETALT"));
+				gridpane.getChildren().addAll();
+				kinobetjentrotpanel.setCenter(gridpane);
+				kinobetjentrotpanel.setBottom(tilbake);
+				vindu.setScene(kinoscene);
+				vindu.show();
 			}catch(Exception e) {System.out.println("nope");}
 		}
 			
