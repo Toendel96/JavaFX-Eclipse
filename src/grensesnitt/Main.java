@@ -2,6 +2,7 @@ package grensesnitt;
 	
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 
 import domene.Billett;
 import domene.Film;
@@ -219,7 +220,8 @@ public class Main extends Application {
 		//String filmnr, String kinosalnr, String dato, String starttid, String pris
 		
 		//Hent alle filmer
-		try { kontroll.hentFilmer();
+		ArrayList<Film> filmer = null;
+		try { filmer = kontroll.hentFilmer();
 		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
 		
 		//Hent alle kinosaler
@@ -227,6 +229,7 @@ public class Main extends Application {
 		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
 		
 		
+		System.out.println(filmer);
 		Label lblDato = new Label("Dato: ");
 		panel.add(lblDato, 0, 0);
 		DatePicker pcrDato = new DatePicker();
@@ -250,8 +253,8 @@ public class Main extends Application {
 		
 	public void lagKinobetjentscene() {
 		try {
-			vindu.setWidth(300);
-			vindu.setHeight(200);
+			vindu.setWidth(400);
+			vindu.setHeight(300);
 			BorderPane kinobetjentrotpanel = new BorderPane();
 			GridPane gridpane = new GridPane();
 			Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
@@ -264,7 +267,14 @@ public class Main extends Application {
 			avbestill.setOnAction(e -> lagSlettBillettScene());
 			Button tilbake = new Button("Tilbake");
 			tilbake.setOnAction(e -> behandleTilbake());
-			oppdater.setOnAction(e -> System.out.println("TESTER OM BETALT"));
+			oppdater.setOnAction(e -> {
+				try {
+					settBetalt(billettkode.getText());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});
 			gridpane.getChildren().addAll();
 			kinobetjentrotpanel.setTop(gridpane);
 			kinobetjentrotpanel.setBottom(tilbake);
@@ -309,8 +319,6 @@ public class Main extends Application {
 			vindu.setWidth(900);
 			vindu.setHeight(600);
 			
-			//v_visningnr, v_filmnr, v_pris, v_dato, v_starttid
-			
 			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(150);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("v_visningnr"));
@@ -336,12 +344,30 @@ public class Main extends Application {
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("v_starttid"));
 
 	        tabellVisning.getColumns().addAll(visningnr, filmnr, pris, dato, starttid);
+	        
+	        //hentVisninger();
+	        //tabellVisning.setItems(kontroll.hentVisninger());
+	        
+	      //Registrering -------------------------------------------------------
+	        FlowPane registreringspanel = new FlowPane();
+	        TextField nyttkundenavnPrivat = new TextField();
+	        nyttkundenavnPrivat.setPromptText("Visningnr ");
+	        nyttkundenavnPrivat.setMaxWidth(visningnr.getPrefWidth());
+
+	        Button nyknapp = new Button("Legg til");
+	        
+	        
 			
 		} catch(Exception e) {e.printStackTrace();}
 		}
 	
 		public void behandleTilbake() {
 			lagMenyscene();
+		}
+		
+		public void settBetalt(String billettKode) throws Exception {
+			System.out.println(billettKode);
+			kontroll.hentBilletter();
 		}
 	
 	

@@ -1,6 +1,8 @@
 package kontroll;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import domene.*;
@@ -22,7 +24,7 @@ public interface kontrollInterface {
 	
 	//Film
 	public boolean leggTilFilm(String filmnavn);
-	public ResultSet hentFilmer() throws Exception;	
+	public ArrayList<Film> hentFilmer() throws Exception;	
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception;
 	
 	//Kinosal
@@ -31,12 +33,12 @@ public interface kontrollInterface {
 	
 	//Plassbillett
 	boolean leggTilPlassbillett(String filmnavn);
-	ResultSet hentPlassbilletter(String billettkode) throws Exception;
+	ResultSet hentPlassbilletter() throws Exception;
 	ResultSet finnSpesifikkPlassbillett(String kundenr1) throws Exception;
 	
 	//Visninger
 	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
-	ResultSet hentVisninger(String billettkode) throws Exception;
+	ResultSet hentVisninger() throws Exception;
 	ResultSet finnSpesifikkVisning(String kundenr1) throws Exception;
 
 
