@@ -3,6 +3,7 @@ package grensesnitt;
 import java.sql.Date;
 import java.sql.Time;
 
+import domene.Billett;
 import domene.Film;
 import domene.Visning;
 import javafx.application.Application;
@@ -49,17 +50,15 @@ public class Main extends Application {
 		Scene menyscene = new Scene(menyrotpanel,600,600);
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
-		panel.getChildren().add(planleggerknapp);
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
 		kinobetjentknapp.setOnAction(e -> lagKinobetjentscene());
-		panel.getChildren().add(kinobetjentknapp);
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> lagKundescene());
-		panel.getChildren().add(kundeknapp);
+		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
 		//FlowPane settings
 		panel.setHgap(10);
 		menyrotpanel.setCenter(panel);
@@ -122,28 +121,57 @@ public class Main extends Application {
 		} 
 	}
 		
-		public void lagKinobetjentscene() {
-			try {
-				vindu.setWidth(300);
-				vindu.setHeight(200);
-				BorderPane kinobetjentrotpanel = new BorderPane();
-				GridPane gridpane = new GridPane();
-				Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
-				gridpane.add(new Label("Skriv ned billettkoden:"), 0, 0);
-				TextField billettkode = new TextField();
-				gridpane.add(billettkode, 1, 0);
-				Button oppdater = new Button("Oppdater som betalt");
-				gridpane.add(oppdater, 1, 2);
-				Button tilbake = new Button("Tilbake");
-				tilbake.setOnAction(e -> behandleTilbake());
-				oppdater.setOnAction(e -> System.out.println("TESTER OM BETALT"));
-				gridpane.getChildren().addAll();
-				kinobetjentrotpanel.setCenter(gridpane);
-				kinobetjentrotpanel.setBottom(tilbake);
-				vindu.setScene(kinoscene);
-				vindu.show();
-			}catch(Exception e) {System.out.println("nope");}
-		}
+	public void lagKinobetjentscene() {
+		try {
+			vindu.setWidth(300);
+			vindu.setHeight(200);
+			BorderPane kinobetjentrotpanel = new BorderPane();
+			GridPane gridpane = new GridPane();
+			Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
+			gridpane.add(new Label("Skriv ned billettkoden:"), 0, 0);
+			TextField billettkode = new TextField();
+			gridpane.add(billettkode, 1, 0);
+			Button oppdater = new Button("Sett som betalt");
+			gridpane.add(oppdater, 1, 2);
+			Button avbestill = new Button("Slett alle bestillinger");
+			avbestill.setOnAction(e -> lagSlettBestillingScene());
+			Button tilbake = new Button("Tilbake");
+			tilbake.setOnAction(e -> behandleTilbake());
+			oppdater.setOnAction(e -> System.out.println("TESTER OM BETALT"));
+			gridpane.getChildren().addAll();
+			kinobetjentrotpanel.setTop(gridpane);
+			kinobetjentrotpanel.setBottom(tilbake);
+			kinobetjentrotpanel.setCenter(avbestill);
+			vindu.setScene(kinoscene);
+			vindu.show();
+		}catch(Exception e) {System.out.println("nope");}
+	}
+		
+	public void lagSlettBestillingScene() {
+		vindu.setWidth(600);
+		vindu.setHeight(500);
+		BorderPane slettBestillingRotpanel = new BorderPane();
+		Scene slettBestillingScene = new Scene(slettBestillingRotpanel,400,400);
+		TableView sletttabell = new TableView<>();
+		FlowPane knappePanel = new FlowPane();
+		TableColumn colBillettkode = new TableColumn("Billettkode:");
+		colBillettkode.setMinWidth(100);
+		colBillettkode.setCellValueFactory(new PropertyValueFactory<Billett, String>("b_billettkode"));
+		TableColumn colBetalt = new TableColumn("Er betalt:");
+		colBetalt.setMinWidth(100);
+		colBetalt.setCellValueFactory(new PropertyValueFactory<Billett, String>("b_erBetalt"));
+		sletttabell.getColumns().addAll(colBillettkode, colBetalt);
+		Button avbestill = new Button("Slett alle bestillinger");
+		avbestill.setOnAction(e -> lagSlettBestillingScene());
+		Button tilbake = new Button("Tilbake");
+		tilbake.setOnAction(e -> behandleTilbake());
+		knappePanel.getChildren().addAll(tilbake, avbestill);
+		knappePanel.setHgap(10);
+		slettBestillingRotpanel.setCenter(sletttabell);
+		slettBestillingRotpanel.setBottom(knappePanel);
+		vindu.setScene(slettBestillingScene);
+		vindu.show();
+	}
 			
 	public void lagKundescene() {
 		try {
