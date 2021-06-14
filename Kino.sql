@@ -1,0 +1,1225 @@
+
+-- ----------------------------------------------------
+-- USERS
+-- OBS! Kommenter vekk disse linjene hvis brukeren
+-- 'Case' allerede er skapt
+-- ----------------------------------------------------
+-- CREATE USER 'Case'@'localhost' IDENTIFIED BY 'Esac';
+-- GRANT ALL ON *.* TO 'Case'@'localhost';
+
+-- ----------------------------------------------------
+-- TABLES
+-- ----------------------------------------------------
+DROP SCHEMA IF EXISTS `kino`;
+CREATE SCHEMA IF NOT EXISTS `kino` DEFAULT CHARACTER SET utf8 COLLATE utf8_danish_ci ;
+USE `kino` ;
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblfilm`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblfilm` (
+  `f_filmnr` INT(11) NOT NULL AUTO_INCREMENT ,
+  `f_filmnavn` VARCHAR(20) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  PRIMARY KEY (`f_filmnr`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblkinosal`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblkinosal` (
+  `k_kinosalnr` INT(11) NOT NULL ,
+  `k_kinonavn` VARCHAR(20) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  `k_kinosalnavn` VARCHAR(20) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  PRIMARY KEY (`k_kinosalnr`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblvisning`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblvisning` (
+  `v_visningnr` INT(11) NOT NULL AUTO_INCREMENT ,
+  `v_filmnr` INT(11) NOT NULL ,
+  `v_kinosalnr` INT(11) NOT NULL ,
+  `v_dato` DATE NOT NULL ,
+  `v_starttid` TIME NOT NULL ,
+  `v_pris` DECIMAL(5,2) NOT NULL ,
+  PRIMARY KEY (`v_visningnr`) ,
+  INDEX `fk_Visning_Film` (`v_filmnr` ASC) ,
+  INDEX `fk_Kinosal_Visning` (`v_kinosalnr` ASC) ,
+  INDEX `fk_visning_kinosal` (`v_kinosalnr` ASC) ,
+  CONSTRAINT `fk_visning_film`
+    FOREIGN KEY (`v_filmnr` )
+    REFERENCES `kino`.`tblfilm` (`f_filmnr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_visning_kinosal`
+    FOREIGN KEY (`v_kinosalnr` )
+    REFERENCES `kino`.`tblkinosal` (`k_kinosalnr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblbillett`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblbillett` (
+  `b_billettkode` VARCHAR(6) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  `b_visningsnr` INT(11) NOT NULL ,
+  `b_erBetalt` TINYINT(1) NOT NULL DEFAULT '0' ,
+  PRIMARY KEY (`b_billettkode`) ,
+  INDEX `fk_billett_visning` (`b_visningsnr` ASC) ,
+  CONSTRAINT `fk_billett_visning`
+    FOREIGN KEY (`b_visningsnr` )
+    REFERENCES `kino`.`tblvisning` (`v_visningnr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tbllogin`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tbllogin` (
+  `l_brukernavn` VARCHAR(4) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  `l_pinkode` DECIMAL(4,0) NULL DEFAULT NULL ,
+  `l_erPlanlegger` TINYINT(1) NULL DEFAULT '0' ,
+  PRIMARY KEY (`l_brukernavn`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblplass`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblplass` (
+  `p_radnr` INT(11) NOT NULL ,
+  `p_setenr` INT(11) NOT NULL ,
+  `p_kinosalnr` INT(11) NOT NULL ,
+  PRIMARY KEY (`p_radnr`, `p_setenr`, `p_kinosalnr`) ,
+  INDEX `fk_plass_kinosal` (`p_kinosalnr` ASC) ,
+  CONSTRAINT `fk_plass_kinosal`
+    FOREIGN KEY (`p_kinosalnr` )
+    REFERENCES `kino`.`tblkinosal` (`k_kinosalnr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+
+-- -----------------------------------------------------
+-- Table `kino`.`tblplassbillett`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `kino`.`tblplassbillett` (
+  `pb_radnr` INT(11) NOT NULL ,
+  `pb_setenr` INT(11) NOT NULL ,
+  `pb_kinosalnr` INT(11) NOT NULL ,
+  `pb_billettkode` VARCHAR(6) CHARACTER SET 'utf8' COLLATE 'utf8_danish_ci' NOT NULL ,
+  PRIMARY KEY (`pb_radnr`, `pb_setenr`, `pb_kinosalnr`,`pb_billettkode`) ,
+  INDEX `fk_plassbillett_plass` (`pb_radnr` ASC, `pb_setenr` ASC, `pb_kinosalnr` ASC) ,
+  INDEX `fk_plassbillett_billett` (`pb_billettkode` ASC) ,
+  CONSTRAINT `fk_plassbillett_plass`
+    FOREIGN KEY (`pb_radnr` , `pb_setenr` , `pb_kinosalnr` )
+    REFERENCES `kino`.`tblplass` (`p_radnr` , `p_setenr` , `p_kinosalnr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_plassbillett_billett`
+    FOREIGN KEY (`pb_billettkode` )
+    REFERENCES `kino`.`tblbillett` (`b_billettkode` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_danish_ci;
+
+-- ----------------------------------------------------------
+-- INSERT
+-- 3 filmer, 5 kinosaler i to kioner og mange hundre plasser
+-- ----------------------------------------------------------
+INSERT INTO `tblfilm` VALUES (1,'Rosen'),(2,'Tulipanen'),(3,'Solsikken');
+
+INSERT INTO `tblkinosal` VALUES (101,'Ringen','Storsal'),(102,'Ringen','Småsal'),
+(201,'Tiara','Hovedsal'),(202,'Tiara','Sidesal'),(203,'Tiara','Barnesal');
+
+INSERT INTO `tblvisning` VALUES (1,1,101,'2011-05-04','16:00:00','100.00'),
+(2,1,101,'2011-05-04','19:00:00','120.00'),(3,1,101,'2011-05-05','16:00:00','100.00'),
+(4,1,101,'2011-05-05','19:00:00','120.00'),(5,1,101,'2011-05-06','16:00:00','100.00'),
+(6,1,101,'2011-05-06','19:00:00','120.00'),(7,2,102,'2011-05-04','20:00:00','135.00'),
+(8,2,102,'2011-05-05','20:00:00','135.00'),(9,2,102,'2011-05-06','20:00:00','135.00'),
+(10,2,203,'2011-05-04','13:00:00','86.00'),(11,3,203,'2011-05-05','13:00:00','85.00'),
+(12,2,203,'2011-05-06','13:00:00','85.00'),(13,2,102,'2011-05-05','18:00:00','95.00'),
+(14,3,201,'2011-05-04','19:30:00','110.00'),(15,3,201,'2011-05-05','19:30:00','110.00'),
+(16,3,201,'2011-05-06','19:30:00','110.00'),(17,3,202,'2011-05-04','19:00:00','105.00'),
+(18,3,202,'2011-05-05','19:00:00','105.00'),(19,3,202,'2011-05-06','19:00:00','105.00');
+
+INSERT INTO tblplass VALUES (1,1,101);
+INSERT INTO tblplass VALUES (1,2,101);
+INSERT INTO tblplass VALUES (1,3,101);
+INSERT INTO tblplass VALUES (1,4,101);
+INSERT INTO tblplass VALUES (1,5,101);
+INSERT INTO tblplass VALUES (1,6,101);
+INSERT INTO tblplass VALUES (1,7,101);
+INSERT INTO tblplass VALUES (1,8,101);
+INSERT INTO tblplass VALUES (1,9,101);
+INSERT INTO tblplass VALUES (1,10,101);
+INSERT INTO tblplass VALUES (1,11,101);
+INSERT INTO tblplass VALUES (1,12,101);
+INSERT INTO tblplass VALUES (1,13,101);
+INSERT INTO tblplass VALUES (1,14,101);
+INSERT INTO tblplass VALUES (1,15,101);
+INSERT INTO tblplass VALUES (1,16,101);
+INSERT INTO tblplass VALUES (1,17,101);
+INSERT INTO tblplass VALUES (1,18,101);
+INSERT INTO tblplass VALUES (1,19,101);
+INSERT INTO tblplass VALUES (1,20,101);
+INSERT INTO tblplass VALUES (2,1,101);
+INSERT INTO tblplass VALUES (2,2,101);
+INSERT INTO tblplass VALUES (2,3,101);
+INSERT INTO tblplass VALUES (2,4,101);
+INSERT INTO tblplass VALUES (2,5,101);
+INSERT INTO tblplass VALUES (2,6,101);
+INSERT INTO tblplass VALUES (2,7,101);
+INSERT INTO tblplass VALUES (2,8,101);
+INSERT INTO tblplass VALUES (2,9,101);
+INSERT INTO tblplass VALUES (2,10,101);
+INSERT INTO tblplass VALUES (2,11,101);
+INSERT INTO tblplass VALUES (2,12,101);
+INSERT INTO tblplass VALUES (2,13,101);
+INSERT INTO tblplass VALUES (2,14,101);
+INSERT INTO tblplass VALUES (2,15,101);
+INSERT INTO tblplass VALUES (2,16,101);
+INSERT INTO tblplass VALUES (2,17,101);
+INSERT INTO tblplass VALUES (2,18,101);
+INSERT INTO tblplass VALUES (2,19,101);
+INSERT INTO tblplass VALUES (2,20,101);
+INSERT INTO tblplass VALUES (3,1,101);
+INSERT INTO tblplass VALUES (3,2,101);
+INSERT INTO tblplass VALUES (3,3,101);
+INSERT INTO tblplass VALUES (3,4,101);
+INSERT INTO tblplass VALUES (3,5,101);
+INSERT INTO tblplass VALUES (3,6,101);
+INSERT INTO tblplass VALUES (3,7,101);
+INSERT INTO tblplass VALUES (3,8,101);
+INSERT INTO tblplass VALUES (3,9,101);
+INSERT INTO tblplass VALUES (3,10,101);
+INSERT INTO tblplass VALUES (3,11,101);
+INSERT INTO tblplass VALUES (3,12,101);
+INSERT INTO tblplass VALUES (3,13,101);
+INSERT INTO tblplass VALUES (3,14,101);
+INSERT INTO tblplass VALUES (3,15,101);
+INSERT INTO tblplass VALUES (3,16,101);
+INSERT INTO tblplass VALUES (3,17,101);
+INSERT INTO tblplass VALUES (3,18,101);
+INSERT INTO tblplass VALUES (3,19,101);
+INSERT INTO tblplass VALUES (3,20,101);
+INSERT INTO tblplass VALUES (4,1,101);
+INSERT INTO tblplass VALUES (4,2,101);
+INSERT INTO tblplass VALUES (4,3,101);
+INSERT INTO tblplass VALUES (4,4,101);
+INSERT INTO tblplass VALUES (4,5,101);
+INSERT INTO tblplass VALUES (4,6,101);
+INSERT INTO tblplass VALUES (4,7,101);
+INSERT INTO tblplass VALUES (4,8,101);
+INSERT INTO tblplass VALUES (4,9,101);
+INSERT INTO tblplass VALUES (4,10,101);
+INSERT INTO tblplass VALUES (4,11,101);
+INSERT INTO tblplass VALUES (4,12,101);
+INSERT INTO tblplass VALUES (4,13,101);
+INSERT INTO tblplass VALUES (4,14,101);
+INSERT INTO tblplass VALUES (4,15,101);
+INSERT INTO tblplass VALUES (4,16,101);
+INSERT INTO tblplass VALUES (4,17,101);
+INSERT INTO tblplass VALUES (4,18,101);
+INSERT INTO tblplass VALUES (4,19,101);
+INSERT INTO tblplass VALUES (4,20,101);
+INSERT INTO tblplass VALUES (5,1,101);
+INSERT INTO tblplass VALUES (5,2,101);
+INSERT INTO tblplass VALUES (5,3,101);
+INSERT INTO tblplass VALUES (5,4,101);
+INSERT INTO tblplass VALUES (5,5,101);
+INSERT INTO tblplass VALUES (5,6,101);
+INSERT INTO tblplass VALUES (5,7,101);
+INSERT INTO tblplass VALUES (5,8,101);
+INSERT INTO tblplass VALUES (5,9,101);
+INSERT INTO tblplass VALUES (5,10,101);
+INSERT INTO tblplass VALUES (5,11,101);
+INSERT INTO tblplass VALUES (5,12,101);
+INSERT INTO tblplass VALUES (5,13,101);
+INSERT INTO tblplass VALUES (5,14,101);
+INSERT INTO tblplass VALUES (5,15,101);
+INSERT INTO tblplass VALUES (5,16,101);
+INSERT INTO tblplass VALUES (5,17,101);
+INSERT INTO tblplass VALUES (5,18,101);
+INSERT INTO tblplass VALUES (5,19,101);
+INSERT INTO tblplass VALUES (5,20,101);
+INSERT INTO tblplass VALUES (6,1,101);
+INSERT INTO tblplass VALUES (6,2,101);
+INSERT INTO tblplass VALUES (6,3,101);
+INSERT INTO tblplass VALUES (6,4,101);
+INSERT INTO tblplass VALUES (6,5,101);
+INSERT INTO tblplass VALUES (6,6,101);
+INSERT INTO tblplass VALUES (6,7,101);
+INSERT INTO tblplass VALUES (6,8,101);
+INSERT INTO tblplass VALUES (6,9,101);
+INSERT INTO tblplass VALUES (6,10,101);
+INSERT INTO tblplass VALUES (6,11,101);
+INSERT INTO tblplass VALUES (6,12,101);
+INSERT INTO tblplass VALUES (6,13,101);
+INSERT INTO tblplass VALUES (6,14,101);
+INSERT INTO tblplass VALUES (6,15,101);
+INSERT INTO tblplass VALUES (6,16,101);
+INSERT INTO tblplass VALUES (6,17,101);
+INSERT INTO tblplass VALUES (6,18,101);
+INSERT INTO tblplass VALUES (6,19,101);
+INSERT INTO tblplass VALUES (6,20,101);
+INSERT INTO tblplass VALUES (7,1,101);
+INSERT INTO tblplass VALUES (7,2,101);
+INSERT INTO tblplass VALUES (7,3,101);
+INSERT INTO tblplass VALUES (7,4,101);
+INSERT INTO tblplass VALUES (7,5,101);
+INSERT INTO tblplass VALUES (7,6,101);
+INSERT INTO tblplass VALUES (7,7,101);
+INSERT INTO tblplass VALUES (7,8,101);
+INSERT INTO tblplass VALUES (7,9,101);
+INSERT INTO tblplass VALUES (7,10,101);
+INSERT INTO tblplass VALUES (7,11,101);
+INSERT INTO tblplass VALUES (7,12,101);
+INSERT INTO tblplass VALUES (7,13,101);
+INSERT INTO tblplass VALUES (7,14,101);
+INSERT INTO tblplass VALUES (7,15,101);
+INSERT INTO tblplass VALUES (7,16,101);
+INSERT INTO tblplass VALUES (7,17,101);
+INSERT INTO tblplass VALUES (7,18,101);
+INSERT INTO tblplass VALUES (7,19,101);
+INSERT INTO tblplass VALUES (7,20,101);
+INSERT INTO tblplass VALUES (8,1,101);
+INSERT INTO tblplass VALUES (8,2,101);
+INSERT INTO tblplass VALUES (8,3,101);
+INSERT INTO tblplass VALUES (8,4,101);
+INSERT INTO tblplass VALUES (8,5,101);
+INSERT INTO tblplass VALUES (8,6,101);
+INSERT INTO tblplass VALUES (8,7,101);
+INSERT INTO tblplass VALUES (8,8,101);
+INSERT INTO tblplass VALUES (8,9,101);
+INSERT INTO tblplass VALUES (8,10,101);
+INSERT INTO tblplass VALUES (8,11,101);
+INSERT INTO tblplass VALUES (8,12,101);
+INSERT INTO tblplass VALUES (8,13,101);
+INSERT INTO tblplass VALUES (8,14,101);
+INSERT INTO tblplass VALUES (8,15,101);
+INSERT INTO tblplass VALUES (8,16,101);
+INSERT INTO tblplass VALUES (8,17,101);
+INSERT INTO tblplass VALUES (8,18,101);
+INSERT INTO tblplass VALUES (8,19,101);
+INSERT INTO tblplass VALUES (8,20,101);
+INSERT INTO tblplass VALUES (9,1,101);
+INSERT INTO tblplass VALUES (9,2,101);
+INSERT INTO tblplass VALUES (9,3,101);
+INSERT INTO tblplass VALUES (9,4,101);
+INSERT INTO tblplass VALUES (9,5,101);
+INSERT INTO tblplass VALUES (9,6,101);
+INSERT INTO tblplass VALUES (9,7,101);
+INSERT INTO tblplass VALUES (9,8,101);
+INSERT INTO tblplass VALUES (9,9,101);
+INSERT INTO tblplass VALUES (9,10,101);
+INSERT INTO tblplass VALUES (9,11,101);
+INSERT INTO tblplass VALUES (9,12,101);
+INSERT INTO tblplass VALUES (9,13,101);
+INSERT INTO tblplass VALUES (9,14,101);
+INSERT INTO tblplass VALUES (9,15,101);
+INSERT INTO tblplass VALUES (9,16,101);
+INSERT INTO tblplass VALUES (9,17,101);
+INSERT INTO tblplass VALUES (9,18,101);
+INSERT INTO tblplass VALUES (9,19,101);
+INSERT INTO tblplass VALUES (9,20,101);
+INSERT INTO tblplass VALUES (10,1,101);
+INSERT INTO tblplass VALUES (10,2,101);
+INSERT INTO tblplass VALUES (10,3,101);
+INSERT INTO tblplass VALUES (10,4,101);
+INSERT INTO tblplass VALUES (10,5,101);
+INSERT INTO tblplass VALUES (10,6,101);
+INSERT INTO tblplass VALUES (10,7,101);
+INSERT INTO tblplass VALUES (10,8,101);
+INSERT INTO tblplass VALUES (10,9,101);
+INSERT INTO tblplass VALUES (10,10,101);
+INSERT INTO tblplass VALUES (10,11,101);
+INSERT INTO tblplass VALUES (10,12,101);
+INSERT INTO tblplass VALUES (10,13,101);
+INSERT INTO tblplass VALUES (10,14,101);
+INSERT INTO tblplass VALUES (10,15,101);
+INSERT INTO tblplass VALUES (10,16,101);
+INSERT INTO tblplass VALUES (10,17,101);
+INSERT INTO tblplass VALUES (10,18,101);
+INSERT INTO tblplass VALUES (10,19,101);
+INSERT INTO tblplass VALUES (10,20,101);
+INSERT INTO tblplass VALUES (11,1,101);
+INSERT INTO tblplass VALUES (11,2,101);
+INSERT INTO tblplass VALUES (11,3,101);
+INSERT INTO tblplass VALUES (11,4,101);
+INSERT INTO tblplass VALUES (11,5,101);
+INSERT INTO tblplass VALUES (11,6,101);
+INSERT INTO tblplass VALUES (11,7,101);
+INSERT INTO tblplass VALUES (11,8,101);
+INSERT INTO tblplass VALUES (11,9,101);
+INSERT INTO tblplass VALUES (11,10,101);
+INSERT INTO tblplass VALUES (11,11,101);
+INSERT INTO tblplass VALUES (11,12,101);
+INSERT INTO tblplass VALUES (11,13,101);
+INSERT INTO tblplass VALUES (11,14,101);
+INSERT INTO tblplass VALUES (11,15,101);
+INSERT INTO tblplass VALUES (11,16,101);
+INSERT INTO tblplass VALUES (11,17,101);
+INSERT INTO tblplass VALUES (11,18,101);
+INSERT INTO tblplass VALUES (11,19,101);
+INSERT INTO tblplass VALUES (11,20,101);
+INSERT INTO tblplass VALUES (12,1,101);
+INSERT INTO tblplass VALUES (12,2,101);
+INSERT INTO tblplass VALUES (12,3,101);
+INSERT INTO tblplass VALUES (12,4,101);
+INSERT INTO tblplass VALUES (12,5,101);
+INSERT INTO tblplass VALUES (12,6,101);
+INSERT INTO tblplass VALUES (12,7,101);
+INSERT INTO tblplass VALUES (12,8,101);
+INSERT INTO tblplass VALUES (12,9,101);
+INSERT INTO tblplass VALUES (12,10,101);
+INSERT INTO tblplass VALUES (12,11,101);
+INSERT INTO tblplass VALUES (12,12,101);
+INSERT INTO tblplass VALUES (12,13,101);
+INSERT INTO tblplass VALUES (12,14,101);
+INSERT INTO tblplass VALUES (12,15,101);
+INSERT INTO tblplass VALUES (12,16,101);
+INSERT INTO tblplass VALUES (12,17,101);
+INSERT INTO tblplass VALUES (12,18,101);
+INSERT INTO tblplass VALUES (12,19,101);
+INSERT INTO tblplass VALUES (12,20,101);
+INSERT INTO tblplass VALUES (13,1,101);
+INSERT INTO tblplass VALUES (13,2,101);
+INSERT INTO tblplass VALUES (13,3,101);
+INSERT INTO tblplass VALUES (13,4,101);
+INSERT INTO tblplass VALUES (13,5,101);
+INSERT INTO tblplass VALUES (13,6,101);
+INSERT INTO tblplass VALUES (13,7,101);
+INSERT INTO tblplass VALUES (13,8,101);
+INSERT INTO tblplass VALUES (13,9,101);
+INSERT INTO tblplass VALUES (13,10,101);
+INSERT INTO tblplass VALUES (13,11,101);
+INSERT INTO tblplass VALUES (13,12,101);
+INSERT INTO tblplass VALUES (13,13,101);
+INSERT INTO tblplass VALUES (13,14,101);
+INSERT INTO tblplass VALUES (13,15,101);
+INSERT INTO tblplass VALUES (13,16,101);
+INSERT INTO tblplass VALUES (13,17,101);
+INSERT INTO tblplass VALUES (13,18,101);
+INSERT INTO tblplass VALUES (13,19,101);
+INSERT INTO tblplass VALUES (13,20,101);
+INSERT INTO tblplass VALUES (14,1,101);
+INSERT INTO tblplass VALUES (14,2,101);
+INSERT INTO tblplass VALUES (14,3,101);
+INSERT INTO tblplass VALUES (14,4,101);
+INSERT INTO tblplass VALUES (14,5,101);
+INSERT INTO tblplass VALUES (14,6,101);
+INSERT INTO tblplass VALUES (14,7,101);
+INSERT INTO tblplass VALUES (14,8,101);
+INSERT INTO tblplass VALUES (14,9,101);
+INSERT INTO tblplass VALUES (14,10,101);
+INSERT INTO tblplass VALUES (14,11,101);
+INSERT INTO tblplass VALUES (14,12,101);
+INSERT INTO tblplass VALUES (14,13,101);
+INSERT INTO tblplass VALUES (14,14,101);
+INSERT INTO tblplass VALUES (14,15,101);
+INSERT INTO tblplass VALUES (14,16,101);
+INSERT INTO tblplass VALUES (14,17,101);
+INSERT INTO tblplass VALUES (14,18,101);
+INSERT INTO tblplass VALUES (14,19,101);
+INSERT INTO tblplass VALUES (14,20,101);
+INSERT INTO tblplass VALUES (15,1,101);
+INSERT INTO tblplass VALUES (15,2,101);
+INSERT INTO tblplass VALUES (15,3,101);
+INSERT INTO tblplass VALUES (15,4,101);
+INSERT INTO tblplass VALUES (15,5,101);
+INSERT INTO tblplass VALUES (15,6,101);
+INSERT INTO tblplass VALUES (15,7,101);
+INSERT INTO tblplass VALUES (15,8,101);
+INSERT INTO tblplass VALUES (15,9,101);
+INSERT INTO tblplass VALUES (15,10,101);
+INSERT INTO tblplass VALUES (15,11,101);
+INSERT INTO tblplass VALUES (15,12,101);
+INSERT INTO tblplass VALUES (15,13,101);
+INSERT INTO tblplass VALUES (15,14,101);
+INSERT INTO tblplass VALUES (15,15,101);
+INSERT INTO tblplass VALUES (15,16,101);
+INSERT INTO tblplass VALUES (15,17,101);
+INSERT INTO tblplass VALUES (15,18,101);
+INSERT INTO tblplass VALUES (15,19,101);
+INSERT INTO tblplass VALUES (15,20,101);
+INSERT INTO tblplass VALUES (16,1,101);
+INSERT INTO tblplass VALUES (16,2,101);
+INSERT INTO tblplass VALUES (16,3,101);
+INSERT INTO tblplass VALUES (16,4,101);
+INSERT INTO tblplass VALUES (16,5,101);
+INSERT INTO tblplass VALUES (16,6,101);
+INSERT INTO tblplass VALUES (16,7,101);
+INSERT INTO tblplass VALUES (16,8,101);
+INSERT INTO tblplass VALUES (16,9,101);
+INSERT INTO tblplass VALUES (16,10,101);
+INSERT INTO tblplass VALUES (16,11,101);
+INSERT INTO tblplass VALUES (16,12,101);
+INSERT INTO tblplass VALUES (16,13,101);
+INSERT INTO tblplass VALUES (16,14,101);
+INSERT INTO tblplass VALUES (16,15,101);
+INSERT INTO tblplass VALUES (16,16,101);
+INSERT INTO tblplass VALUES (16,17,101);
+INSERT INTO tblplass VALUES (16,18,101);
+INSERT INTO tblplass VALUES (16,19,101);
+INSERT INTO tblplass VALUES (16,20,101);
+INSERT INTO tblplass VALUES (17,1,101);
+INSERT INTO tblplass VALUES (17,2,101);
+INSERT INTO tblplass VALUES (17,3,101);
+INSERT INTO tblplass VALUES (17,4,101);
+INSERT INTO tblplass VALUES (17,5,101);
+INSERT INTO tblplass VALUES (17,6,101);
+INSERT INTO tblplass VALUES (17,7,101);
+INSERT INTO tblplass VALUES (17,8,101);
+INSERT INTO tblplass VALUES (17,9,101);
+INSERT INTO tblplass VALUES (17,10,101);
+INSERT INTO tblplass VALUES (17,11,101);
+INSERT INTO tblplass VALUES (17,12,101);
+INSERT INTO tblplass VALUES (17,13,101);
+INSERT INTO tblplass VALUES (17,14,101);
+INSERT INTO tblplass VALUES (17,15,101);
+INSERT INTO tblplass VALUES (17,16,101);
+INSERT INTO tblplass VALUES (17,17,101);
+INSERT INTO tblplass VALUES (17,18,101);
+INSERT INTO tblplass VALUES (17,19,101);
+INSERT INTO tblplass VALUES (17,20,101);
+INSERT INTO tblplass VALUES (18,1,101);
+INSERT INTO tblplass VALUES (18,2,101);
+INSERT INTO tblplass VALUES (18,3,101);
+INSERT INTO tblplass VALUES (18,4,101);
+INSERT INTO tblplass VALUES (18,5,101);
+INSERT INTO tblplass VALUES (18,6,101);
+INSERT INTO tblplass VALUES (18,7,101);
+INSERT INTO tblplass VALUES (18,8,101);
+INSERT INTO tblplass VALUES (18,9,101);
+INSERT INTO tblplass VALUES (18,10,101);
+INSERT INTO tblplass VALUES (18,11,101);
+INSERT INTO tblplass VALUES (18,12,101);
+INSERT INTO tblplass VALUES (18,13,101);
+INSERT INTO tblplass VALUES (18,14,101);
+INSERT INTO tblplass VALUES (18,15,101);
+INSERT INTO tblplass VALUES (18,16,101);
+INSERT INTO tblplass VALUES (18,17,101);
+INSERT INTO tblplass VALUES (18,18,101);
+INSERT INTO tblplass VALUES (18,19,101);
+INSERT INTO tblplass VALUES (18,20,101);
+INSERT INTO tblplass VALUES (19,1,101);
+INSERT INTO tblplass VALUES (19,2,101);
+INSERT INTO tblplass VALUES (19,3,101);
+INSERT INTO tblplass VALUES (19,4,101);
+INSERT INTO tblplass VALUES (19,5,101);
+INSERT INTO tblplass VALUES (19,6,101);
+INSERT INTO tblplass VALUES (19,7,101);
+INSERT INTO tblplass VALUES (19,8,101);
+INSERT INTO tblplass VALUES (19,9,101);
+INSERT INTO tblplass VALUES (19,10,101);
+INSERT INTO tblplass VALUES (19,11,101);
+INSERT INTO tblplass VALUES (19,12,101);
+INSERT INTO tblplass VALUES (19,13,101);
+INSERT INTO tblplass VALUES (19,14,101);
+INSERT INTO tblplass VALUES (19,15,101);
+INSERT INTO tblplass VALUES (19,16,101);
+INSERT INTO tblplass VALUES (19,17,101);
+INSERT INTO tblplass VALUES (19,18,101);
+INSERT INTO tblplass VALUES (19,19,101);
+INSERT INTO tblplass VALUES (19,20,101);
+INSERT INTO tblplass VALUES (20,1,101);
+INSERT INTO tblplass VALUES (20,2,101);
+INSERT INTO tblplass VALUES (20,3,101);
+INSERT INTO tblplass VALUES (20,4,101);
+INSERT INTO tblplass VALUES (20,5,101);
+INSERT INTO tblplass VALUES (20,6,101);
+INSERT INTO tblplass VALUES (20,7,101);
+INSERT INTO tblplass VALUES (20,8,101);
+INSERT INTO tblplass VALUES (20,9,101);
+INSERT INTO tblplass VALUES (20,10,101);
+INSERT INTO tblplass VALUES (20,11,101);
+INSERT INTO tblplass VALUES (20,12,101);
+INSERT INTO tblplass VALUES (20,13,101);
+INSERT INTO tblplass VALUES (20,14,101);
+INSERT INTO tblplass VALUES (20,15,101);
+INSERT INTO tblplass VALUES (20,16,101);
+INSERT INTO tblplass VALUES (20,17,101);
+INSERT INTO tblplass VALUES (20,18,101);
+INSERT INTO tblplass VALUES (20,19,101);
+INSERT INTO tblplass VALUES (20,20,101);
+INSERT INTO tblplass VALUES (21,1,101);
+INSERT INTO tblplass VALUES (21,2,101);
+INSERT INTO tblplass VALUES (21,3,101);
+INSERT INTO tblplass VALUES (21,4,101);
+INSERT INTO tblplass VALUES (21,5,101);
+INSERT INTO tblplass VALUES (21,6,101);
+INSERT INTO tblplass VALUES (21,7,101);
+INSERT INTO tblplass VALUES (21,8,101);
+INSERT INTO tblplass VALUES (21,9,101);
+INSERT INTO tblplass VALUES (21,10,101);
+INSERT INTO tblplass VALUES (21,11,101);
+INSERT INTO tblplass VALUES (21,12,101);
+INSERT INTO tblplass VALUES (21,13,101);
+INSERT INTO tblplass VALUES (21,14,101);
+INSERT INTO tblplass VALUES (21,15,101);
+INSERT INTO tblplass VALUES (21,16,101);
+INSERT INTO tblplass VALUES (21,17,101);
+INSERT INTO tblplass VALUES (21,18,101);
+INSERT INTO tblplass VALUES (21,19,101);
+INSERT INTO tblplass VALUES (21,20,101);
+INSERT INTO tblplass VALUES (22,1,101);
+INSERT INTO tblplass VALUES (22,2,101);
+INSERT INTO tblplass VALUES (22,3,101);
+INSERT INTO tblplass VALUES (22,4,101);
+INSERT INTO tblplass VALUES (22,5,101);
+INSERT INTO tblplass VALUES (22,6,101);
+INSERT INTO tblplass VALUES (22,7,101);
+INSERT INTO tblplass VALUES (22,8,101);
+INSERT INTO tblplass VALUES (22,9,101);
+INSERT INTO tblplass VALUES (22,10,101);
+INSERT INTO tblplass VALUES (22,11,101);
+INSERT INTO tblplass VALUES (22,12,101);
+INSERT INTO tblplass VALUES (22,13,101);
+INSERT INTO tblplass VALUES (22,14,101);
+INSERT INTO tblplass VALUES (22,15,101);
+INSERT INTO tblplass VALUES (22,16,101);
+INSERT INTO tblplass VALUES (22,17,101);
+INSERT INTO tblplass VALUES (22,18,101);
+INSERT INTO tblplass VALUES (22,19,101);
+INSERT INTO tblplass VALUES (22,20,101);
+INSERT INTO tblplass VALUES (23,1,101);
+INSERT INTO tblplass VALUES (23,2,101);
+INSERT INTO tblplass VALUES (23,3,101);
+INSERT INTO tblplass VALUES (23,4,101);
+INSERT INTO tblplass VALUES (23,5,101);
+INSERT INTO tblplass VALUES (23,6,101);
+INSERT INTO tblplass VALUES (23,7,101);
+INSERT INTO tblplass VALUES (23,8,101);
+INSERT INTO tblplass VALUES (23,9,101);
+INSERT INTO tblplass VALUES (23,10,101);
+INSERT INTO tblplass VALUES (23,11,101);
+INSERT INTO tblplass VALUES (23,12,101);
+INSERT INTO tblplass VALUES (23,13,101);
+INSERT INTO tblplass VALUES (23,14,101);
+INSERT INTO tblplass VALUES (23,15,101);
+INSERT INTO tblplass VALUES (23,16,101);
+INSERT INTO tblplass VALUES (23,17,101);
+INSERT INTO tblplass VALUES (23,18,101);
+INSERT INTO tblplass VALUES (23,19,101);
+INSERT INTO tblplass VALUES (23,20,101);
+INSERT INTO tblplass VALUES (24,1,101);
+INSERT INTO tblplass VALUES (24,2,101);
+INSERT INTO tblplass VALUES (24,3,101);
+INSERT INTO tblplass VALUES (24,4,101);
+INSERT INTO tblplass VALUES (24,5,101);
+INSERT INTO tblplass VALUES (24,6,101);
+INSERT INTO tblplass VALUES (24,7,101);
+INSERT INTO tblplass VALUES (24,8,101);
+INSERT INTO tblplass VALUES (24,9,101);
+INSERT INTO tblplass VALUES (24,10,101);
+INSERT INTO tblplass VALUES (24,11,101);
+INSERT INTO tblplass VALUES (24,12,101);
+INSERT INTO tblplass VALUES (24,13,101);
+INSERT INTO tblplass VALUES (24,14,101);
+INSERT INTO tblplass VALUES (24,15,101);
+INSERT INTO tblplass VALUES (24,16,101);
+INSERT INTO tblplass VALUES (24,17,101);
+INSERT INTO tblplass VALUES (24,18,101);
+INSERT INTO tblplass VALUES (24,19,101);
+INSERT INTO tblplass VALUES (24,20,101);
+INSERT INTO tblplass VALUES (25,1,101);
+INSERT INTO tblplass VALUES (25,2,101);
+INSERT INTO tblplass VALUES (25,3,101);
+INSERT INTO tblplass VALUES (25,4,101);
+INSERT INTO tblplass VALUES (25,5,101);
+INSERT INTO tblplass VALUES (25,6,101);
+INSERT INTO tblplass VALUES (25,7,101);
+INSERT INTO tblplass VALUES (25,8,101);
+INSERT INTO tblplass VALUES (25,9,101);
+INSERT INTO tblplass VALUES (25,10,101);
+INSERT INTO tblplass VALUES (25,11,101);
+INSERT INTO tblplass VALUES (25,12,101);
+INSERT INTO tblplass VALUES (25,13,101);
+INSERT INTO tblplass VALUES (25,14,101);
+INSERT INTO tblplass VALUES (25,15,101);
+INSERT INTO tblplass VALUES (25,16,101);
+INSERT INTO tblplass VALUES (25,17,101);
+INSERT INTO tblplass VALUES (25,18,101);
+INSERT INTO tblplass VALUES (25,19,101);
+INSERT INTO tblplass VALUES (25,20,101);
+INSERT INTO tblplass VALUES (1,1,102);
+INSERT INTO tblplass VALUES (1,2,102);
+INSERT INTO tblplass VALUES (1,3,102);
+INSERT INTO tblplass VALUES (1,4,102);
+INSERT INTO tblplass VALUES (1,5,102);
+INSERT INTO tblplass VALUES (1,6,102);
+INSERT INTO tblplass VALUES (1,7,102);
+INSERT INTO tblplass VALUES (1,8,102);
+INSERT INTO tblplass VALUES (1,9,102);
+INSERT INTO tblplass VALUES (1,10,102);
+INSERT INTO tblplass VALUES (1,11,102);
+INSERT INTO tblplass VALUES (1,12,102);
+INSERT INTO tblplass VALUES (1,13,102);
+INSERT INTO tblplass VALUES (1,14,102);
+INSERT INTO tblplass VALUES (1,15,102);
+INSERT INTO tblplass VALUES (1,16,102);
+INSERT INTO tblplass VALUES (1,17,102);
+INSERT INTO tblplass VALUES (1,18,102);
+INSERT INTO tblplass VALUES (1,19,102);
+INSERT INTO tblplass VALUES (1,20,102);
+INSERT INTO tblplass VALUES (2,1,102);
+INSERT INTO tblplass VALUES (2,2,102);
+INSERT INTO tblplass VALUES (2,3,102);
+INSERT INTO tblplass VALUES (2,4,102);
+INSERT INTO tblplass VALUES (2,5,102);
+INSERT INTO tblplass VALUES (2,6,102);
+INSERT INTO tblplass VALUES (2,7,102);
+INSERT INTO tblplass VALUES (2,8,102);
+INSERT INTO tblplass VALUES (2,9,102);
+INSERT INTO tblplass VALUES (2,10,102);
+INSERT INTO tblplass VALUES (2,11,102);
+INSERT INTO tblplass VALUES (2,12,102);
+INSERT INTO tblplass VALUES (2,13,102);
+INSERT INTO tblplass VALUES (2,14,102);
+INSERT INTO tblplass VALUES (2,15,102);
+INSERT INTO tblplass VALUES (2,16,102);
+INSERT INTO tblplass VALUES (2,17,102);
+INSERT INTO tblplass VALUES (2,18,102);
+INSERT INTO tblplass VALUES (2,19,102);
+INSERT INTO tblplass VALUES (2,20,102);
+INSERT INTO tblplass VALUES (3,1,102);
+INSERT INTO tblplass VALUES (3,2,102);
+INSERT INTO tblplass VALUES (3,3,102);
+INSERT INTO tblplass VALUES (3,4,102);
+INSERT INTO tblplass VALUES (3,5,102);
+INSERT INTO tblplass VALUES (3,6,102);
+INSERT INTO tblplass VALUES (3,7,102);
+INSERT INTO tblplass VALUES (3,8,102);
+INSERT INTO tblplass VALUES (3,9,102);
+INSERT INTO tblplass VALUES (3,10,102);
+INSERT INTO tblplass VALUES (3,11,102);
+INSERT INTO tblplass VALUES (3,12,102);
+INSERT INTO tblplass VALUES (3,13,102);
+INSERT INTO tblplass VALUES (3,14,102);
+INSERT INTO tblplass VALUES (3,15,102);
+INSERT INTO tblplass VALUES (3,16,102);
+INSERT INTO tblplass VALUES (3,17,102);
+INSERT INTO tblplass VALUES (3,18,102);
+INSERT INTO tblplass VALUES (3,19,102);
+INSERT INTO tblplass VALUES (3,20,102);
+INSERT INTO tblplass VALUES (4,1,102);
+INSERT INTO tblplass VALUES (4,2,102);
+INSERT INTO tblplass VALUES (4,3,102);
+INSERT INTO tblplass VALUES (4,4,102);
+INSERT INTO tblplass VALUES (4,5,102);
+INSERT INTO tblplass VALUES (4,6,102);
+INSERT INTO tblplass VALUES (4,7,102);
+INSERT INTO tblplass VALUES (4,8,102);
+INSERT INTO tblplass VALUES (4,9,102);
+INSERT INTO tblplass VALUES (4,10,102);
+INSERT INTO tblplass VALUES (4,11,102);
+INSERT INTO tblplass VALUES (4,12,102);
+INSERT INTO tblplass VALUES (4,13,102);
+INSERT INTO tblplass VALUES (4,14,102);
+INSERT INTO tblplass VALUES (4,15,102);
+INSERT INTO tblplass VALUES (4,16,102);
+INSERT INTO tblplass VALUES (4,17,102);
+INSERT INTO tblplass VALUES (4,18,102);
+INSERT INTO tblplass VALUES (4,19,102);
+INSERT INTO tblplass VALUES (4,20,102);
+INSERT INTO tblplass VALUES (5,1,102);
+INSERT INTO tblplass VALUES (5,2,102);
+INSERT INTO tblplass VALUES (5,3,102);
+INSERT INTO tblplass VALUES (5,4,102);
+INSERT INTO tblplass VALUES (5,5,102);
+INSERT INTO tblplass VALUES (5,6,102);
+INSERT INTO tblplass VALUES (5,7,102);
+INSERT INTO tblplass VALUES (5,8,102);
+INSERT INTO tblplass VALUES (5,9,102);
+INSERT INTO tblplass VALUES (5,10,102);
+INSERT INTO tblplass VALUES (5,11,102);
+INSERT INTO tblplass VALUES (5,12,102);
+INSERT INTO tblplass VALUES (5,13,102);
+INSERT INTO tblplass VALUES (5,14,102);
+INSERT INTO tblplass VALUES (5,15,102);
+INSERT INTO tblplass VALUES (5,16,102);
+INSERT INTO tblplass VALUES (5,17,102);
+INSERT INTO tblplass VALUES (5,18,102);
+INSERT INTO tblplass VALUES (5,19,102);
+INSERT INTO tblplass VALUES (5,20,102);
+INSERT INTO tblplass VALUES (6,1,102);
+INSERT INTO tblplass VALUES (6,2,102);
+INSERT INTO tblplass VALUES (6,3,102);
+INSERT INTO tblplass VALUES (6,4,102);
+INSERT INTO tblplass VALUES (6,5,102);
+INSERT INTO tblplass VALUES (6,6,102);
+INSERT INTO tblplass VALUES (6,7,102);
+INSERT INTO tblplass VALUES (6,8,102);
+INSERT INTO tblplass VALUES (6,9,102);
+INSERT INTO tblplass VALUES (6,10,102);
+INSERT INTO tblplass VALUES (6,11,102);
+INSERT INTO tblplass VALUES (6,12,102);
+INSERT INTO tblplass VALUES (6,13,102);
+INSERT INTO tblplass VALUES (6,14,102);
+INSERT INTO tblplass VALUES (6,15,102);
+INSERT INTO tblplass VALUES (6,16,102);
+INSERT INTO tblplass VALUES (6,17,102);
+INSERT INTO tblplass VALUES (6,18,102);
+INSERT INTO tblplass VALUES (6,19,102);
+INSERT INTO tblplass VALUES (6,20,102);
+INSERT INTO tblplass VALUES (7,1,102);
+INSERT INTO tblplass VALUES (7,2,102);
+INSERT INTO tblplass VALUES (7,3,102);
+INSERT INTO tblplass VALUES (7,4,102);
+INSERT INTO tblplass VALUES (7,5,102);
+INSERT INTO tblplass VALUES (7,6,102);
+INSERT INTO tblplass VALUES (7,7,102);
+INSERT INTO tblplass VALUES (7,8,102);
+INSERT INTO tblplass VALUES (7,9,102);
+INSERT INTO tblplass VALUES (7,10,102);
+INSERT INTO tblplass VALUES (7,11,102);
+INSERT INTO tblplass VALUES (7,12,102);
+INSERT INTO tblplass VALUES (7,13,102);
+INSERT INTO tblplass VALUES (7,14,102);
+INSERT INTO tblplass VALUES (7,15,102);
+INSERT INTO tblplass VALUES (7,16,102);
+INSERT INTO tblplass VALUES (7,17,102);
+INSERT INTO tblplass VALUES (7,18,102);
+INSERT INTO tblplass VALUES (7,19,102);
+INSERT INTO tblplass VALUES (7,20,102);
+INSERT INTO tblplass VALUES (8,1,102);
+INSERT INTO tblplass VALUES (8,2,102);
+INSERT INTO tblplass VALUES (8,3,102);
+INSERT INTO tblplass VALUES (8,4,102);
+INSERT INTO tblplass VALUES (8,5,102);
+INSERT INTO tblplass VALUES (8,6,102);
+INSERT INTO tblplass VALUES (8,7,102);
+INSERT INTO tblplass VALUES (8,8,102);
+INSERT INTO tblplass VALUES (8,9,102);
+INSERT INTO tblplass VALUES (8,10,102);
+INSERT INTO tblplass VALUES (8,11,102);
+INSERT INTO tblplass VALUES (8,12,102);
+INSERT INTO tblplass VALUES (8,13,102);
+INSERT INTO tblplass VALUES (8,14,102);
+INSERT INTO tblplass VALUES (8,15,102);
+INSERT INTO tblplass VALUES (8,16,102);
+INSERT INTO tblplass VALUES (8,17,102);
+INSERT INTO tblplass VALUES (8,18,102);
+INSERT INTO tblplass VALUES (8,19,102);
+INSERT INTO tblplass VALUES (8,20,102);
+INSERT INTO tblplass VALUES (9,1,102);
+INSERT INTO tblplass VALUES (9,2,102);
+INSERT INTO tblplass VALUES (9,3,102);
+INSERT INTO tblplass VALUES (9,4,102);
+INSERT INTO tblplass VALUES (9,5,102);
+INSERT INTO tblplass VALUES (9,6,102);
+INSERT INTO tblplass VALUES (9,7,102);
+INSERT INTO tblplass VALUES (9,8,102);
+INSERT INTO tblplass VALUES (9,9,102);
+INSERT INTO tblplass VALUES (9,10,102);
+INSERT INTO tblplass VALUES (9,11,102);
+INSERT INTO tblplass VALUES (9,12,102);
+INSERT INTO tblplass VALUES (9,13,102);
+INSERT INTO tblplass VALUES (9,14,102);
+INSERT INTO tblplass VALUES (9,15,102);
+INSERT INTO tblplass VALUES (9,16,102);
+INSERT INTO tblplass VALUES (9,17,102);
+INSERT INTO tblplass VALUES (9,18,102);
+INSERT INTO tblplass VALUES (9,19,102);
+INSERT INTO tblplass VALUES (9,20,102);
+INSERT INTO tblplass VALUES (1,1,201);
+INSERT INTO tblplass VALUES (1,2,201);
+INSERT INTO tblplass VALUES (1,3,201);
+INSERT INTO tblplass VALUES (1,4,201);
+INSERT INTO tblplass VALUES (1,5,201);
+INSERT INTO tblplass VALUES (1,6,201);
+INSERT INTO tblplass VALUES (1,7,201);
+INSERT INTO tblplass VALUES (1,8,201);
+INSERT INTO tblplass VALUES (1,9,201);
+INSERT INTO tblplass VALUES (1,10,201);
+INSERT INTO tblplass VALUES (1,11,201);
+INSERT INTO tblplass VALUES (1,12,201);
+INSERT INTO tblplass VALUES (1,13,201);
+INSERT INTO tblplass VALUES (1,14,201);
+INSERT INTO tblplass VALUES (1,15,201);
+INSERT INTO tblplass VALUES (1,16,201);
+INSERT INTO tblplass VALUES (1,17,201);
+INSERT INTO tblplass VALUES (1,18,201);
+INSERT INTO tblplass VALUES (1,19,201);
+INSERT INTO tblplass VALUES (1,20,201);
+INSERT INTO tblplass VALUES (2,1,201);
+INSERT INTO tblplass VALUES (2,2,201);
+INSERT INTO tblplass VALUES (2,3,201);
+INSERT INTO tblplass VALUES (2,4,201);
+INSERT INTO tblplass VALUES (2,5,201);
+INSERT INTO tblplass VALUES (2,6,201);
+INSERT INTO tblplass VALUES (2,7,201);
+INSERT INTO tblplass VALUES (2,8,201);
+INSERT INTO tblplass VALUES (2,9,201);
+INSERT INTO tblplass VALUES (2,10,201);
+INSERT INTO tblplass VALUES (2,11,201);
+INSERT INTO tblplass VALUES (2,12,201);
+INSERT INTO tblplass VALUES (2,13,201);
+INSERT INTO tblplass VALUES (2,14,201);
+INSERT INTO tblplass VALUES (2,15,201);
+INSERT INTO tblplass VALUES (2,16,201);
+INSERT INTO tblplass VALUES (2,17,201);
+INSERT INTO tblplass VALUES (2,18,201);
+INSERT INTO tblplass VALUES (2,19,201);
+INSERT INTO tblplass VALUES (2,20,201);
+INSERT INTO tblplass VALUES (3,1,201);
+INSERT INTO tblplass VALUES (3,2,201);
+INSERT INTO tblplass VALUES (3,3,201);
+INSERT INTO tblplass VALUES (3,4,201);
+INSERT INTO tblplass VALUES (3,5,201);
+INSERT INTO tblplass VALUES (3,6,201);
+INSERT INTO tblplass VALUES (3,7,201);
+INSERT INTO tblplass VALUES (3,8,201);
+INSERT INTO tblplass VALUES (3,9,201);
+INSERT INTO tblplass VALUES (3,10,201);
+INSERT INTO tblplass VALUES (3,11,201);
+INSERT INTO tblplass VALUES (3,12,201);
+INSERT INTO tblplass VALUES (3,13,201);
+INSERT INTO tblplass VALUES (3,14,201);
+INSERT INTO tblplass VALUES (3,15,201);
+INSERT INTO tblplass VALUES (3,16,201);
+INSERT INTO tblplass VALUES (3,17,201);
+INSERT INTO tblplass VALUES (3,18,201);
+INSERT INTO tblplass VALUES (3,19,201);
+INSERT INTO tblplass VALUES (3,20,201);
+INSERT INTO tblplass VALUES (4,1,201);
+INSERT INTO tblplass VALUES (4,2,201);
+INSERT INTO tblplass VALUES (4,3,201);
+INSERT INTO tblplass VALUES (4,4,201);
+INSERT INTO tblplass VALUES (4,5,201);
+INSERT INTO tblplass VALUES (4,6,201);
+INSERT INTO tblplass VALUES (4,7,201);
+INSERT INTO tblplass VALUES (4,8,201);
+INSERT INTO tblplass VALUES (4,9,201);
+INSERT INTO tblplass VALUES (4,10,201);
+INSERT INTO tblplass VALUES (4,11,201);
+INSERT INTO tblplass VALUES (4,12,201);
+INSERT INTO tblplass VALUES (4,13,201);
+INSERT INTO tblplass VALUES (4,14,201);
+INSERT INTO tblplass VALUES (4,15,201);
+INSERT INTO tblplass VALUES (4,16,201);
+INSERT INTO tblplass VALUES (4,17,201);
+INSERT INTO tblplass VALUES (4,18,201);
+INSERT INTO tblplass VALUES (4,19,201);
+INSERT INTO tblplass VALUES (4,20,201);
+INSERT INTO tblplass VALUES (5,1,201);
+INSERT INTO tblplass VALUES (5,2,201);
+INSERT INTO tblplass VALUES (5,3,201);
+INSERT INTO tblplass VALUES (5,4,201);
+INSERT INTO tblplass VALUES (5,5,201);
+INSERT INTO tblplass VALUES (5,6,201);
+INSERT INTO tblplass VALUES (5,7,201);
+INSERT INTO tblplass VALUES (5,8,201);
+INSERT INTO tblplass VALUES (5,9,201);
+INSERT INTO tblplass VALUES (5,10,201);
+INSERT INTO tblplass VALUES (5,11,201);
+INSERT INTO tblplass VALUES (5,12,201);
+INSERT INTO tblplass VALUES (5,13,201);
+INSERT INTO tblplass VALUES (5,14,201);
+INSERT INTO tblplass VALUES (5,15,201);
+INSERT INTO tblplass VALUES (5,16,201);
+INSERT INTO tblplass VALUES (5,17,201);
+INSERT INTO tblplass VALUES (5,18,201);
+INSERT INTO tblplass VALUES (5,19,201);
+INSERT INTO tblplass VALUES (5,20,201);
+INSERT INTO tblplass VALUES (6,1,201);
+INSERT INTO tblplass VALUES (6,2,201);
+INSERT INTO tblplass VALUES (6,3,201);
+INSERT INTO tblplass VALUES (6,4,201);
+INSERT INTO tblplass VALUES (6,5,201);
+INSERT INTO tblplass VALUES (6,6,201);
+INSERT INTO tblplass VALUES (6,7,201);
+INSERT INTO tblplass VALUES (6,8,201);
+INSERT INTO tblplass VALUES (6,9,201);
+INSERT INTO tblplass VALUES (6,10,201);
+INSERT INTO tblplass VALUES (6,11,201);
+INSERT INTO tblplass VALUES (6,12,201);
+INSERT INTO tblplass VALUES (6,13,201);
+INSERT INTO tblplass VALUES (6,14,201);
+INSERT INTO tblplass VALUES (6,15,201);
+INSERT INTO tblplass VALUES (6,16,201);
+INSERT INTO tblplass VALUES (6,17,201);
+INSERT INTO tblplass VALUES (6,18,201);
+INSERT INTO tblplass VALUES (6,19,201);
+INSERT INTO tblplass VALUES (6,20,201);
+INSERT INTO tblplass VALUES (7,1,201);
+INSERT INTO tblplass VALUES (7,2,201);
+INSERT INTO tblplass VALUES (7,3,201);
+INSERT INTO tblplass VALUES (7,4,201);
+INSERT INTO tblplass VALUES (7,5,201);
+INSERT INTO tblplass VALUES (7,6,201);
+INSERT INTO tblplass VALUES (7,7,201);
+INSERT INTO tblplass VALUES (7,8,201);
+INSERT INTO tblplass VALUES (7,9,201);
+INSERT INTO tblplass VALUES (7,10,201);
+INSERT INTO tblplass VALUES (7,11,201);
+INSERT INTO tblplass VALUES (7,12,201);
+INSERT INTO tblplass VALUES (7,13,201);
+INSERT INTO tblplass VALUES (7,14,201);
+INSERT INTO tblplass VALUES (7,15,201);
+INSERT INTO tblplass VALUES (7,16,201);
+INSERT INTO tblplass VALUES (7,17,201);
+INSERT INTO tblplass VALUES (7,18,201);
+INSERT INTO tblplass VALUES (7,19,201);
+INSERT INTO tblplass VALUES (7,20,201);
+INSERT INTO tblplass VALUES (8,1,201);
+INSERT INTO tblplass VALUES (8,2,201);
+INSERT INTO tblplass VALUES (8,3,201);
+INSERT INTO tblplass VALUES (8,4,201);
+INSERT INTO tblplass VALUES (8,5,201);
+INSERT INTO tblplass VALUES (8,6,201);
+INSERT INTO tblplass VALUES (8,7,201);
+INSERT INTO tblplass VALUES (8,8,201);
+INSERT INTO tblplass VALUES (8,9,201);
+INSERT INTO tblplass VALUES (8,10,201);
+INSERT INTO tblplass VALUES (8,11,201);
+INSERT INTO tblplass VALUES (8,12,201);
+INSERT INTO tblplass VALUES (8,13,201);
+INSERT INTO tblplass VALUES (8,14,201);
+INSERT INTO tblplass VALUES (8,15,201);
+INSERT INTO tblplass VALUES (8,16,201);
+INSERT INTO tblplass VALUES (8,17,201);
+INSERT INTO tblplass VALUES (8,18,201);
+INSERT INTO tblplass VALUES (8,19,201);
+INSERT INTO tblplass VALUES (8,20,201);
+INSERT INTO tblplass VALUES (9,1,201);
+INSERT INTO tblplass VALUES (9,2,201);
+INSERT INTO tblplass VALUES (9,3,201);
+INSERT INTO tblplass VALUES (9,4,201);
+INSERT INTO tblplass VALUES (9,5,201);
+INSERT INTO tblplass VALUES (9,6,201);
+INSERT INTO tblplass VALUES (9,7,201);
+INSERT INTO tblplass VALUES (9,8,201);
+INSERT INTO tblplass VALUES (9,9,201);
+INSERT INTO tblplass VALUES (9,10,201);
+INSERT INTO tblplass VALUES (9,11,201);
+INSERT INTO tblplass VALUES (9,12,201);
+INSERT INTO tblplass VALUES (9,13,201);
+INSERT INTO tblplass VALUES (9,14,201);
+INSERT INTO tblplass VALUES (9,15,201);
+INSERT INTO tblplass VALUES (9,16,201);
+INSERT INTO tblplass VALUES (9,17,201);
+INSERT INTO tblplass VALUES (9,18,201);
+INSERT INTO tblplass VALUES (9,19,201);
+INSERT INTO tblplass VALUES (9,20,201);
+INSERT INTO tblplass VALUES (10,1,201);
+INSERT INTO tblplass VALUES (10,2,201);
+INSERT INTO tblplass VALUES (10,3,201);
+INSERT INTO tblplass VALUES (10,4,201);
+INSERT INTO tblplass VALUES (10,5,201);
+INSERT INTO tblplass VALUES (10,6,201);
+INSERT INTO tblplass VALUES (10,7,201);
+INSERT INTO tblplass VALUES (10,8,201);
+INSERT INTO tblplass VALUES (10,9,201);
+INSERT INTO tblplass VALUES (10,10,201);
+INSERT INTO tblplass VALUES (10,11,201);
+INSERT INTO tblplass VALUES (10,12,201);
+INSERT INTO tblplass VALUES (10,13,201);
+INSERT INTO tblplass VALUES (10,14,201);
+INSERT INTO tblplass VALUES (10,15,201);
+INSERT INTO tblplass VALUES (10,16,201);
+INSERT INTO tblplass VALUES (10,17,201);
+INSERT INTO tblplass VALUES (10,18,201);
+INSERT INTO tblplass VALUES (10,19,201);
+INSERT INTO tblplass VALUES (10,20,201);
+INSERT INTO tblplass VALUES (11,1,201);
+INSERT INTO tblplass VALUES (11,2,201);
+INSERT INTO tblplass VALUES (11,3,201);
+INSERT INTO tblplass VALUES (11,4,201);
+INSERT INTO tblplass VALUES (11,5,201);
+INSERT INTO tblplass VALUES (11,6,201);
+INSERT INTO tblplass VALUES (11,7,201);
+INSERT INTO tblplass VALUES (11,8,201);
+INSERT INTO tblplass VALUES (11,9,201);
+INSERT INTO tblplass VALUES (11,10,201);
+INSERT INTO tblplass VALUES (11,11,201);
+INSERT INTO tblplass VALUES (11,12,201);
+INSERT INTO tblplass VALUES (11,13,201);
+INSERT INTO tblplass VALUES (11,14,201);
+INSERT INTO tblplass VALUES (11,15,201);
+INSERT INTO tblplass VALUES (11,16,201);
+INSERT INTO tblplass VALUES (11,17,201);
+INSERT INTO tblplass VALUES (11,18,201);
+INSERT INTO tblplass VALUES (11,19,201);
+INSERT INTO tblplass VALUES (11,20,201);
+INSERT INTO tblplass VALUES (12,1,201);
+INSERT INTO tblplass VALUES (12,2,201);
+INSERT INTO tblplass VALUES (12,3,201);
+INSERT INTO tblplass VALUES (12,4,201);
+INSERT INTO tblplass VALUES (12,5,201);
+INSERT INTO tblplass VALUES (12,6,201);
+INSERT INTO tblplass VALUES (12,7,201);
+INSERT INTO tblplass VALUES (12,8,201);
+INSERT INTO tblplass VALUES (12,9,201);
+INSERT INTO tblplass VALUES (12,10,201);
+INSERT INTO tblplass VALUES (12,11,201);
+INSERT INTO tblplass VALUES (12,12,201);
+INSERT INTO tblplass VALUES (12,13,201);
+INSERT INTO tblplass VALUES (12,14,201);
+INSERT INTO tblplass VALUES (12,15,201);
+INSERT INTO tblplass VALUES (12,16,201);
+INSERT INTO tblplass VALUES (12,17,201);
+INSERT INTO tblplass VALUES (12,18,201);
+INSERT INTO tblplass VALUES (12,19,201);
+INSERT INTO tblplass VALUES (12,20,201);
+INSERT INTO tblplass VALUES (13,1,201);
+INSERT INTO tblplass VALUES (13,2,201);
+INSERT INTO tblplass VALUES (13,3,201);
+INSERT INTO tblplass VALUES (13,4,201);
+INSERT INTO tblplass VALUES (13,5,201);
+INSERT INTO tblplass VALUES (13,6,201);
+INSERT INTO tblplass VALUES (13,7,201);
+INSERT INTO tblplass VALUES (13,8,201);
+INSERT INTO tblplass VALUES (13,9,201);
+INSERT INTO tblplass VALUES (13,10,201);
+INSERT INTO tblplass VALUES (13,11,201);
+INSERT INTO tblplass VALUES (13,12,201);
+INSERT INTO tblplass VALUES (13,13,201);
+INSERT INTO tblplass VALUES (13,14,201);
+INSERT INTO tblplass VALUES (13,15,201);
+INSERT INTO tblplass VALUES (13,16,201);
+INSERT INTO tblplass VALUES (13,17,201);
+INSERT INTO tblplass VALUES (13,18,201);
+INSERT INTO tblplass VALUES (13,19,201);
+INSERT INTO tblplass VALUES (13,20,201);
+INSERT INTO tblplass VALUES (14,1,201);
+INSERT INTO tblplass VALUES (14,2,201);
+INSERT INTO tblplass VALUES (14,3,201);
+INSERT INTO tblplass VALUES (14,4,201);
+INSERT INTO tblplass VALUES (14,5,201);
+INSERT INTO tblplass VALUES (14,6,201);
+INSERT INTO tblplass VALUES (14,7,201);
+INSERT INTO tblplass VALUES (14,8,201);
+INSERT INTO tblplass VALUES (14,9,201);
+INSERT INTO tblplass VALUES (14,10,201);
+INSERT INTO tblplass VALUES (14,11,201);
+INSERT INTO tblplass VALUES (14,12,201);
+INSERT INTO tblplass VALUES (14,13,201);
+INSERT INTO tblplass VALUES (14,14,201);
+INSERT INTO tblplass VALUES (14,15,201);
+INSERT INTO tblplass VALUES (14,16,201);
+INSERT INTO tblplass VALUES (14,17,201);
+INSERT INTO tblplass VALUES (14,18,201);
+INSERT INTO tblplass VALUES (14,19,201);
+INSERT INTO tblplass VALUES (14,20,201);
+INSERT INTO tblplass VALUES (15,1,201);
+INSERT INTO tblplass VALUES (15,2,201);
+INSERT INTO tblplass VALUES (15,3,201);
+INSERT INTO tblplass VALUES (15,4,201);
+INSERT INTO tblplass VALUES (15,5,201);
+INSERT INTO tblplass VALUES (15,6,201);
+INSERT INTO tblplass VALUES (15,7,201);
+INSERT INTO tblplass VALUES (15,8,201);
+INSERT INTO tblplass VALUES (15,9,201);
+INSERT INTO tblplass VALUES (15,10,201);
+INSERT INTO tblplass VALUES (15,11,201);
+INSERT INTO tblplass VALUES (15,12,201);
+INSERT INTO tblplass VALUES (15,13,201);
+INSERT INTO tblplass VALUES (15,14,201);
+INSERT INTO tblplass VALUES (15,15,201);
+INSERT INTO tblplass VALUES (15,16,201);
+INSERT INTO tblplass VALUES (15,17,201);
+INSERT INTO tblplass VALUES (15,18,201);
+INSERT INTO tblplass VALUES (15,19,201);
+INSERT INTO tblplass VALUES (15,20,201);
+INSERT INTO tblplass VALUES (1,1,202);
+INSERT INTO tblplass VALUES (1,2,202);
+INSERT INTO tblplass VALUES (1,3,202);
+INSERT INTO tblplass VALUES (1,4,202);
+INSERT INTO tblplass VALUES (1,5,202);
+INSERT INTO tblplass VALUES (1,6,202);
+INSERT INTO tblplass VALUES (1,7,202);
+INSERT INTO tblplass VALUES (1,8,202);
+INSERT INTO tblplass VALUES (1,9,202);
+INSERT INTO tblplass VALUES (1,10,202);
+INSERT INTO tblplass VALUES (2,1,202);
+INSERT INTO tblplass VALUES (2,2,202);
+INSERT INTO tblplass VALUES (2,3,202);
+INSERT INTO tblplass VALUES (2,4,202);
+INSERT INTO tblplass VALUES (2,5,202);
+INSERT INTO tblplass VALUES (2,6,202);
+INSERT INTO tblplass VALUES (2,7,202);
+INSERT INTO tblplass VALUES (2,8,202);
+INSERT INTO tblplass VALUES (2,9,202);
+INSERT INTO tblplass VALUES (2,10,202);
+INSERT INTO tblplass VALUES (3,1,202);
+INSERT INTO tblplass VALUES (3,2,202);
+INSERT INTO tblplass VALUES (3,3,202);
+INSERT INTO tblplass VALUES (3,4,202);
+INSERT INTO tblplass VALUES (3,5,202);
+INSERT INTO tblplass VALUES (3,6,202);
+INSERT INTO tblplass VALUES (3,7,202);
+INSERT INTO tblplass VALUES (3,8,202);
+INSERT INTO tblplass VALUES (3,9,202);
+INSERT INTO tblplass VALUES (3,10,202);
+INSERT INTO tblplass VALUES (4,1,202);
+INSERT INTO tblplass VALUES (4,2,202);
+INSERT INTO tblplass VALUES (4,3,202);
+INSERT INTO tblplass VALUES (4,4,202);
+INSERT INTO tblplass VALUES (4,5,202);
+INSERT INTO tblplass VALUES (4,6,202);
+INSERT INTO tblplass VALUES (4,7,202);
+INSERT INTO tblplass VALUES (4,8,202);
+INSERT INTO tblplass VALUES (4,9,202);
+INSERT INTO tblplass VALUES (4,10,202);
+INSERT INTO tblplass VALUES (5,1,202);
+INSERT INTO tblplass VALUES (5,2,202);
+INSERT INTO tblplass VALUES (5,3,202);
+INSERT INTO tblplass VALUES (5,4,202);
+INSERT INTO tblplass VALUES (5,5,202);
+INSERT INTO tblplass VALUES (5,6,202);
+INSERT INTO tblplass VALUES (5,7,202);
+INSERT INTO tblplass VALUES (5,8,202);
+INSERT INTO tblplass VALUES (5,9,202);
+INSERT INTO tblplass VALUES (5,10,202);
+INSERT INTO tblplass VALUES (1,1,203);
+INSERT INTO tblplass VALUES (1,2,203);
+INSERT INTO tblplass VALUES (1,3,203);
+INSERT INTO tblplass VALUES (1,4,203);
+INSERT INTO tblplass VALUES (1,5,203);
+INSERT INTO tblplass VALUES (2,1,203);
+INSERT INTO tblplass VALUES (2,2,203);
+INSERT INTO tblplass VALUES (2,3,203);
+INSERT INTO tblplass VALUES (2,4,203);
+INSERT INTO tblplass VALUES (2,5,203);
+INSERT INTO tblplass VALUES (3,1,203);
+INSERT INTO tblplass VALUES (3,2,203);
+INSERT INTO tblplass VALUES (3,3,203);
+INSERT INTO tblplass VALUES (3,4,203);
+INSERT INTO tblplass VALUES (3,5,203);
+INSERT INTO tblplass VALUES (4,1,203);
+INSERT INTO tblplass VALUES (4,2,203);
+INSERT INTO tblplass VALUES (4,3,203);
+INSERT INTO tblplass VALUES (4,4,203);
+INSERT INTO tblplass VALUES (4,5,203);
+
+INSERT INTO tbllogin VALUES ("knut",1234,0);
+INSERT INTO tbllogin VALUES ("tunk",4321,1);
+
+INSERT INTO tblbillett VALUES (1,1,0);
+INSERT INTO tblbillett VALUES (2,1,0);
+INSERT INTO tblbillett VALUES (3,2,1);
+INSERT INTO tblbillett VALUES (4,2,1);
+INSERT INTO tblbillett VALUES (5,3,0);
