@@ -173,20 +173,10 @@ public class Kontroll implements kontrollInterface {
 	    	try {
 	    		ResultSet resultat = null;
 		    	String sql = "SELECT * FROM tblbillett";
-<<<<<<< HEAD
 	    		utsagn = forbindelse.createStatement();
 	    		resultat = utsagn.executeQuery(sql);
 	    		return resultat;
 	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
-	 
-	    }
-=======
-	    		preparedStatement = forbindelse.prepareStatement(sql);
-	    		resultat = preparedStatement.executeQuery(sql);
->>>>>>> 798337ce5d9e4bfe38f06c95c123535fca572002
-
-	    		return resultat; 
-	    	}catch(Exception e) {throw new Exception("Kan ikke aapne databasetabell");}
 	 }
 
 	@Override
