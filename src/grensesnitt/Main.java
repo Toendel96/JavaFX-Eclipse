@@ -169,7 +169,7 @@ public class Main extends Application {
 		vindu.show();
 	}
 	
-	public void lagNyVisningScene() {
+	public void lagNyVisningScene(){
 		vindu.setWidth(300);
 		vindu.setHeight(200);
 		BorderPane nyVisningPanel = new BorderPane();
@@ -178,7 +178,13 @@ public class Main extends Application {
 		//String filmnr, String kinosalnr, String dato, String starttid, String pris
 		
 		//Hent alle filmer
+		try { kontroll.hentFilmer();
+		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
+		
 		//Hent alle kinosaler
+		try { kontroll.hentKinosaler();
+		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
+		
 		
 		Label lblDato = new Label("Dato: ");
 		panel.add(lblDato, 0, 0);
