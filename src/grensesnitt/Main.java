@@ -2,6 +2,7 @@ package grensesnitt;
 	
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 
 import domene.Billett;
 import domene.Film;
@@ -178,7 +179,8 @@ public class Main extends Application {
 		//String filmnr, String kinosalnr, String dato, String starttid, String pris
 		
 		//Hent alle filmer
-		try { kontroll.hentFilmer();
+		ArrayList<Film> filmer = null;
+		try { filmer = kontroll.hentFilmer();
 		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
 		
 		//Hent alle kinosaler
@@ -186,6 +188,7 @@ public class Main extends Application {
 		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
 		
 		
+		System.out.println(filmer);
 		Label lblDato = new Label("Dato: ");
 		panel.add(lblDato, 0, 0);
 		DatePicker pcrDato = new DatePicker();

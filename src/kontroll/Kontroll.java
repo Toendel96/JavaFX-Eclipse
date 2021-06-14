@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import domene.Film;
 
 public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
@@ -15,13 +18,13 @@ public class Kontroll implements kontrollInterface {
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
 	
-	//------------------------ Åpne/Lukke forbindelse --------------------------------
+	//------------------------ ï¿½pne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppnå kontakt med databasen");
+            throw new Exception("Kan ikke oppnï¿½ kontakt med databasen");
         }
     }
 
@@ -69,8 +72,21 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentFilmer() throws Exception {
-		// TODO Auto-generated method stub
+	public ArrayList<Film> hentFilmer() throws Exception {
+		try {
+			String sql = "SELECT * FROM tblfilm";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			ArrayList<Film> filmer = new ArrayList<Film>();
+			while(resultat.next()) {
+				int filmNr = resultat.getInt(0);
+				System.out.println(filmNr);
+				String filmNavn = resultat.getString(1);
+				System.out.println(filmNavn);
+				filmer.add(new Film(filmNr,filmNavn));
+			}
+			return filmer;
+		}catch(Exception e) {}
 		return null;
 	}
 
