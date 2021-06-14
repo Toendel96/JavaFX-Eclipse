@@ -312,8 +312,6 @@ public class Main extends Application {
 			vindu.setWidth(900);
 			vindu.setHeight(600);
 			
-			//v_visningnr, v_filmnr, v_pris, v_dato, v_starttid
-			
 			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(150);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("v_visningnr"));
@@ -339,6 +337,19 @@ public class Main extends Application {
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("v_starttid"));
 
 	        tabellVisning.getColumns().addAll(visningnr, filmnr, pris, dato, starttid);
+	        
+	        //hentVisninger();
+	        //tabellVisning.setItems(kontroll.hentVisninger());
+	        
+	      //Registrering -------------------------------------------------------
+	        FlowPane registreringspanel = new FlowPane();
+	        TextField nyttkundenavnPrivat = new TextField();
+	        nyttkundenavnPrivat.setPromptText("Visningnr ");
+	        nyttkundenavnPrivat.setMaxWidth(visningnr.getPrefWidth());
+
+	        Button nyknapp = new Button("Legg til");
+	        
+	        
 			
 		} catch(Exception e) {e.printStackTrace();}
 		}
