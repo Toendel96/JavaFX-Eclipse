@@ -16,6 +16,7 @@ public class Kontroll implements kontrollInterface {
 	    private Connection forbindelse;
 	    private ResultSet resultat;
 	    private PreparedStatement preparedStatement;
+	    private Statement utsagn;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
 	    private ObservableList<Billett> billettListe = FXCollections.observableArrayList();
@@ -61,6 +62,10 @@ public class Kontroll implements kontrollInterface {
 		return null;
 	}
 	
+	public void settDataBillettListe(String billettkode, int visningsnr, boolean erBetalt) {
+		billettListe.add(new Billett(billettkode, visningsnr, erBetalt));
+    }
+	
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
 		try {
@@ -69,13 +74,11 @@ public class Kontroll implements kontrollInterface {
 				String billettkode = resultat.getString(1);
 				int visningsnr = resultat.getInt(2);
 				boolean erBetalt = resultat.getBoolean(3);
-				/*boolean erBetalt;
-				if (erBetalt1==0) {
-					erBetalt=false;
-				}else {
-					erBetalt=true;
-				}*/
-				billettListe.add(new Billett(billettkode, visningsnr, erBetalt));
+				System.out.println(billettkode + " " + visningsnr + " " + erBetalt);
+				settDataBillettListe(billettkode, visningsnr, erBetalt);
+			}
+			for (Billett b : billettListe) {
+				System.out.println(b.getBillettkode());
 			}
 		}catch(Exception e) {System.out.println(e.getMessage());}
 		return billettListe;
@@ -85,8 +88,8 @@ public class Kontroll implements kontrollInterface {
 	    	try {
 	    		ResultSet resultat = null;
 		    	String sql = "SELECT * FROM tblbillett";
-	    		preparedStatement = forbindelse.prepareStatement(sql);
-	    		resultat = preparedStatement.executeQuery(sql);
+	    		utsagn = forbindelse.createStatement();
+	    		resultat = utsagn.executeQuery(sql);
 	    		return resultat;
 	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
 	 
