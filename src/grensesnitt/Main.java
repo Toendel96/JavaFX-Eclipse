@@ -121,28 +121,64 @@ public class Main extends Application {
 	public void lagPlanleggerscene() {
 		
 		BorderPane planleggerRotpanel = new BorderPane();
-		FlowPane planleggerFlowpane = new FlowPane();
+		GridPane planleggerGridpane = new GridPane();
 		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
 		
 		//Oppretter en knapp for administrasjonsdel:
 		Button administrasjon = new Button("Administrasjon");
-		planleggerFlowpane.getChildren().add(administrasjon);
+		planleggerGridpane.add(administrasjon,0,0);
 		//administrasjon.setOnAction(e -> lagLoginscene());
 		
 		//Oppretter en knapp for rapportdel:
 		Button rapport = new Button("Rapport");
-		//rapport.setOnAction(e -> lagLoginscene());
-		planleggerFlowpane.getChildren().add(rapport);
+		planleggerGridpane.add(rapport, 1, 0);
+		rapport.setOnAction(e -> lagRapportScene());
 		
 		/*Button leggTilFilm = new Button("Legg til en film");
 		leggTilFilm.setOnAction(e -> lagNyFilmScene());
 		planleggerFlowpane.getChildren().add(leggTilFilm);*/
 		
-		//FlowPane settings
-		planleggerFlowpane.setHgap(10);
-		planleggerRotpanel.setCenter(planleggerFlowpane);
+		Button tilbake = new Button("Logg ut");
+		tilbake.setOnAction(e -> behandleTilbake());
+		
+		planleggerGridpane.getChildren().addAll();
+		
+		//GridPane settings
+		planleggerGridpane.setHgap(10);
+		planleggerRotpanel.setBottom(tilbake);
+		planleggerRotpanel.setCenter(planleggerGridpane);
 		vindu.setScene(planleggerScene);
 		vindu.show();
+	}
+	
+	public void lagRapportScene() {
+		BorderPane rapportRotpanel = new BorderPane();
+		GridPane rapportGridpane = new GridPane();
+		Scene rapportScene = new Scene(rapportRotpanel,600,600);
+		
+		//Oppretter en knapp for statistikk for film:
+		Button statistikkFilm = new Button("Statistikk film");
+		rapportGridpane.add(statistikkFilm,0,0);
+		//statistikkFilm.setOnAction(e -> sceneNavnHer());
+		
+		//Oppretter en knapp for statistikk for kinosal:
+		Button statistikkKinosal = new Button("Statistikk kinosal");
+		rapportGridpane.add(statistikkKinosal, 1, 0);
+		//statistikkFilm.setOnAction(e -> sceneNavnHer());
+			
+		Button tilbake = new Button("Logg ut");
+		tilbake.setOnAction(e -> behandleTilbake()); //Opprette ny tilbake funksjon her
+		
+		rapportGridpane.getChildren().addAll();
+		
+		//GridPane settings
+		rapportGridpane.setHgap(10);
+		rapportRotpanel.setBottom(tilbake);
+		rapportRotpanel.setCenter(rapportGridpane);
+		vindu.setScene(rapportScene);
+		vindu.show();
+		
+		
 	}
 	
 	public void lagNyFilmScene() {
