@@ -1,18 +1,18 @@
 ##1a 
-* Waleed champ
+#Waleed champ
 
 ##1b
-Remi
+#Remi
 
 ##2a
-Waleed
+#Waleed
 
 ##2b
-Endre
+#Endre
 
 ##2c
-Andreas 
+#Andreas 
 
 ##3
-Petter
+#Petter
 
