@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -134,9 +135,13 @@ public class Main extends Application {
 		planleggerGridpane.add(rapport, 1, 0);
 		rapport.setOnAction(e -> lagRapportScene());
 		
-		/*Button leggTilFilm = new Button("Legg til en film");
+		Button leggTilFilm = new Button("Legg til en film");
 		leggTilFilm.setOnAction(e -> lagNyFilmScene());
-		planleggerFlowpane.getChildren().add(leggTilFilm);*/
+		planleggerFlowpane.getChildren().add(leggTilFilm);
+		
+		Button leggTilVisning = new Button("Ny visning");
+		leggTilVisning.setOnAction(e -> lagNyVisningScene());
+		planleggerFlowpane.getChildren().add(leggTilVisning);
 		
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake());
@@ -186,9 +191,56 @@ public class Main extends Application {
 		vindu.setHeight(200);
 		BorderPane nyFilmPanel = new BorderPane();
 		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
-		FlowPane panel = new FlowPane();
+		GridPane panel = new GridPane();
+		Label lblFilmNavn = new Label("Filmnavn:");
+		panel.add(lblFilmNavn, 0, 0);
+		TextField txtFilmNavn = new TextField();
+		panel.add(txtFilmNavn, 1, 0);
+		Button leggTil = new Button("Legg til");
+		panel.add(leggTil, 1, 1);
+		leggTil.setOnAction(e -> kontroll.leggTilFilm(txtFilmNavn.getText()));
 		
+		panel.getChildren().addAll();
+		nyFilmPanel.setCenter(panel);
 		vindu.setScene(nyFilmScene);
+		vindu.show();
+	}
+	
+	public void lagNyVisningScene(){
+		vindu.setWidth(300);
+		vindu.setHeight(200);
+		BorderPane nyVisningPanel = new BorderPane();
+		Scene nyVisningScene = new Scene(nyVisningPanel,400,400);
+		GridPane panel = new GridPane();
+		//String filmnr, String kinosalnr, String dato, String starttid, String pris
+		
+		//Hent alle filmer
+		try { kontroll.hentFilmer();
+		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
+		
+		//Hent alle kinosaler
+		try { kontroll.hentKinosaler();
+		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
+		
+		
+		Label lblDato = new Label("Dato: ");
+		panel.add(lblDato, 0, 0);
+		DatePicker pcrDato = new DatePicker();
+		panel.add(pcrDato, 1, 0);
+		Label lblTidspunkt = new Label("Tidspunkt: ");
+		panel.add(lblTidspunkt, 0, 1);
+		TextField txtTidspunkt = new TextField();
+		txtTidspunkt.setPromptText("Eks: 18:00");
+		panel.add(txtTidspunkt, 1, 1);
+		Label lblPris = new Label("Pris");
+		panel.add(lblPris, 0, 2);
+		TextField txtPris = new TextField();
+		panel.add(txtPris, 1, 2);
+		
+		
+		panel.getChildren().addAll();
+		nyVisningPanel.setCenter(panel);
+		vindu.setScene(nyVisningScene);
 		vindu.show();
 	}
 		
