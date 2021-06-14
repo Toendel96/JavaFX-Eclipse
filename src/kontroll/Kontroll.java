@@ -128,6 +128,5 @@ public class Kontroll implements kontrollInterface {
 		return null;
 	}
     
-    
 
 }

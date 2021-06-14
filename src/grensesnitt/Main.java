@@ -2,7 +2,10 @@ package grensesnitt;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
+import kontroll.Kontroll;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -13,6 +16,7 @@ import javafx.scene.layout.GridPane;
 
 public class Main extends Application {
 	//@Override
+	Kontroll kontroll = new Kontroll();
 	private Stage vindu;
 	public void start(Stage primaryStage) {
 		try {
@@ -30,8 +34,8 @@ public class Main extends Application {
 	public void lagMenyscene() {
 		vindu.setWidth(500);
 		vindu.setHeight(200);
-		String kinobetjent="kinobetjent";
 		String planleggeren="planlegger";
+		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
 		FlowPane panel = new FlowPane();
 		Scene menyscene = new Scene(menyrotpanel,600,600);
@@ -62,23 +66,44 @@ public class Main extends Application {
 		GridPane gridpane = new GridPane();
 		Scene loginscene = new Scene(loginrootpanel,400,400);
 		gridpane.add(new Label("Brukernavn"), 0, 0);
-		gridpane.add(new TextField(), 1, 0);
+		TextField brukernavn = new TextField();
+		gridpane.add(brukernavn, 1, 0);
+		TextField passord = new TextField();
+		gridpane.add(passord, 1, 1);
 		gridpane.add(new Label("Passord"), 0, 1);
-		gridpane.add(new TextField(), 1, 1);
-		gridpane.add(new Button("Logg inn"), 1, 2);
-		if (bruker=="planlegger") {
-			//Planleggeren prøver å logge inn
-		}
-		else {
-			//Kinobetjenten prøver å logge inn
-		}
+		Button loggInn = new Button("Logg inn");
+		gridpane.add(loggInn, 1, 2);
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake());
+		loggInn.setOnAction(e -> loggInnBruker(brukernavn.getText(), passord.getText(), bruker));
 		gridpane.getChildren().addAll();
 		loginrootpanel.setCenter(gridpane);
 		loginrootpanel.setBottom(tilbake);
 		vindu.setScene(loginscene);
 		vindu.show();
+	}
+	
+	public void loggInnBruker(String brukernavn, String passord, String bruker) {
+		Alert loggInnFeilet = new Alert(AlertType.ERROR);
+		if (bruker.equals("planlegger")) {
+			if (brukernavn.equals("tunk")) {
+				if (passord.equals("4321")) {
+					lagPlanleggerscene();
+				}else {loggInnFeilet.setContentText("Feil passord");
+						loggInnFeilet.show();}
+			}else {loggInnFeilet.setContentText("Feil brukernavn");
+					loggInnFeilet.show();}
+		}else {
+			if (brukernavn.equals("knut")) {
+				if (passord.equals("1234")) {
+					lagKinobetjentscene();
+				}else {loggInnFeilet.setContentText("Feil passord");
+						loggInnFeilet.show();}
+			} else {
+					loggInnFeilet.setContentText("Feil brukernavn");
+					loggInnFeilet.show();
+			}
+		} 
 	}
 	
 	public void lagPlanleggerscene() {
