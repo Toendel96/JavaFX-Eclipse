@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import domene.Billett;
 import domene.Film;
 import domene.Plassbillett;
+import domene.Plass;
 import domene.Visning;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -56,8 +58,8 @@ public class Main extends Application {
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
-			kontroll.hentVisninger();
 			kontroll.leggInnVisningerIListe();
+			kontroll.hentPlasser();
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -96,7 +98,20 @@ public class Main extends Application {
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
-		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
+		//Avsluttknapp
+		Button avslutt = new Button("Avslutt");
+		avslutt.setOnAction(e -> {
+			try {
+				kontroll.slettinnholdAlleTabeller();
+				kontroll.lagreFilmDB();
+				kontroll.lagreKinosalDB();
+				Platform.exit();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp,avslutt);
 		//FlowPane settings
 		panel.setHgap(10);
 		menyrotpanel.setCenter(panel);
@@ -357,6 +372,8 @@ public class Main extends Application {
 		panel.add(lblPris, 0, 4);
 		TextField txtPris = new TextField();
 		panel.add(txtPris, 1, 4);
+		Label lblKr = new Label("Kr");
+		panel.add(lblKr, 2, 4);
 		Button leggTil = new Button("Legg til");
 		panel.add(leggTil, 1, 5);
 		leggTil.setOnAction(e -> {
@@ -376,8 +393,6 @@ public class Main extends Application {
 		vindu.setScene(nyVisningScene);
 		vindu.show();
 	}
-			
-
 		
 	public void lagKinobetjentscene() {
 		vindu.setWidth(600);
@@ -408,7 +423,7 @@ public class Main extends Application {
 		
 	}
 	public void knappBehandleAvbestill(){
-		kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter());
+		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
 		sletttabell.getItems().clear(); 
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}

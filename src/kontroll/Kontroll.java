@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -105,6 +106,21 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
+	
+	public ResultSet hentPlasser() throws Exception {
+        resultat = null;
+        String sql = "SELECT * FROM tblplass";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	int radnr = resultat.getInt(1);
+        	int setenr = resultat.getInt(2);
+        	int kinosalnr = resultat.getInt(3);
+        	setPlass(radnr, setenr, kinosalnr);
+        }
+        return null;
+	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
@@ -175,7 +191,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 
-	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
 		if (ubetaltBillettListe.isEmpty()) {
 			showMessageDialog(null, "Finnes ingen ubetalte lister");
 		}else {
@@ -206,7 +222,7 @@ public class Kontroll implements kontrollInterface {
 				System.out.println(b.toString());
 				b.setErBetalt(true);
 				System.out.println(b.toString());
-				showMessageDialog(null, b.toString() + "\n"  + "Billetten er nå satt til betalt");
+				showMessageDialog(null, b.toString() + "\n"  + "Billetten er nï¿½ satt til betalt");
 				
 				billettFinnes=true;
 				break;
@@ -222,7 +238,10 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilFilm(String filmnavn) {
-		// TODO Auto-generated method stub
+		int sisteFilm = film.size() - 1;
+		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
+		int nyttFilmNr = sisteFilmNr + 1;
+		setFilm(nyttFilmNr,filmnavn);
 		return false;
 	}
 
@@ -240,7 +259,7 @@ public class Kontroll implements kontrollInterface {
 				setFilm(filmNr,filmNavn);
 			}
 		}catch(Exception e) {
-			throw new Exception("Kan ikke hente fra databasen");
+			throw new Exception("Kan ikke hente filmer fra databasen");
 		}
 	}
 	
@@ -272,6 +291,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		try {
 		ResultSet resultat = null;
 		String sql = "SELECT * FROM tblkinosal";
 		preparedStatement = forbindelse.prepareStatement(sql);
@@ -283,6 +303,9 @@ public class Kontroll implements kontrollInterface {
 			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
 		}
 		return kinosal;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente kinosaler");
+		}
 	}
 	
 	public ChoiceBox<String> visKinosalerChoice() {
@@ -455,7 +478,7 @@ public class Kontroll implements kontrollInterface {
 		return false;
 	}
 	
-	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
+	//------------------------------------ Sletter alt innhold i databasen (kjores nï¿½r applikasjonen avsluttes) --------------------------------------------
 	public void slettinnholdAlleTabeller() throws Exception {
 		try {
             //Execute SQL query
@@ -490,14 +513,52 @@ public class Kontroll implements kontrollInterface {
             
         } catch (Exception e) { throw new Exception(e); }
 	}
-
-	@Override
-	public void hentVisninger() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+
+	public void lagreFilmDB() throws Exception {
+		int success = 0;
+		int feil = 0;
+		String sql = "INSERT INTO tblfilm "
+				+ "(f_filmnr,f_filmnavn)"
+				+ "VALUES(?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		for (Film f: film) {
+			preparedStatement.setInt(1, f.getFilmnr());
+			preparedStatement.setString(2, f.getFilmnavn());
+			int insert = preparedStatement.executeUpdate();
+			if(insert == 1) {
+				success += 1;
+			}
+			else {feil += 1;
+			}
+		}
+		System.out.print("Suksess film: " + success + "\n");
+		System.out.print("Feil film: " + feil +"\n");
+	}
+	
+	public void lagreKinosalDB() throws Exception {
+		int success1 = 0;
+		int feil1 = 0;
+		String sql1 = "INSERT INTO tblkinosal"
+				+ "(k_kinosalnr,k_kinonavn,k_kinosalnavn)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql1);
+		for (Kinosal ks: kinosal) {
+			preparedStatement.setInt(1, ks.getKinosalnr());
+			preparedStatement.setString(2, ks.getKinonavn());
+			preparedStatement.setString(3, ks.getKinosalnavn());
+			int insert1 = preparedStatement.executeUpdate();
+			if(insert1 == 1) {
+				success1 += 1;
+			}else {
+				feil1 += 1;
+			}
+		}
+		System.out.print("Suksess kinosal: " + success1 + "\n");
+		System.out.print("Feil kinosal: " + feil1);
+	}
+		
 	public void leggAltInnItblFilmVedAvslutning() throws Exception {
         try {
             //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
