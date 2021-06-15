@@ -24,7 +24,7 @@ public interface kontrollInterface {
 	
 	//Film
 	public boolean leggTilFilm(String filmnavn);
-	public ArrayList<Film> hentFilmer() throws Exception;	
+	public ObservableList<Film> hentFilmer() throws Exception;	
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception;
 	
 	//Kinosal

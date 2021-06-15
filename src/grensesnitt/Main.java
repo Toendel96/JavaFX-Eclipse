@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -223,30 +224,31 @@ public class Main extends Application {
 		//String filmnr, String kinosalnr, String dato, String starttid, String pris
 		
 		//Hent alle filmer
-		ArrayList<Film> filmer = null;
-		try { filmer = kontroll.hentFilmer();
-		}catch(Exception e) {System.out.println("Kunne ikke hente filmer");}
+		try {
+			kontroll.hentFilmer();
+		}catch(Exception e) {}
+		
 		
 		//Hent alle kinosaler
-		try { kontroll.hentKinosaler();
-		}catch(Exception e) {System.out.println("Kunne ikke hente kinosaler");}
 		
-		
-		System.out.println(filmer);
+		Label lblFilmNavn = new Label("Filmnr");
+		panel.add(lblFilmNavn, 0, 0);
+		//Henter en choicebox med alle filmer fra kontroll
+		ChoiceBox<String> cbxFilmNavn = kontroll.visFilmerChoice();
+		panel.add(cbxFilmNavn, 1, 0);
 		Label lblDato = new Label("Dato: ");
-		panel.add(lblDato, 0, 0);
+		panel.add(lblDato, 0, 2);
 		DatePicker pcrDato = new DatePicker();
-		panel.add(pcrDato, 1, 0);
+		panel.add(pcrDato, 1, 2);
 		Label lblTidspunkt = new Label("Tidspunkt: ");
-		panel.add(lblTidspunkt, 0, 1);
+		panel.add(lblTidspunkt, 0, 3);
 		TextField txtTidspunkt = new TextField();
 		txtTidspunkt.setPromptText("Eks: 18:00");
-		panel.add(txtTidspunkt, 1, 1);
+		panel.add(txtTidspunkt, 1, 3);
 		Label lblPris = new Label("Pris");
-		panel.add(lblPris, 0, 2);
+		panel.add(lblPris, 0, 4);
 		TextField txtPris = new TextField();
-		panel.add(txtPris, 1, 2);
-		
+		panel.add(txtPris, 1, 4);
 		
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
