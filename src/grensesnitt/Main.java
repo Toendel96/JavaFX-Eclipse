@@ -244,7 +244,6 @@ public class Main extends Application {
 		vindu.setScene(filmStatistikkScene);
 		vindu.show();
 		
-			
 	}
 	
 	
@@ -418,8 +417,6 @@ public class Main extends Application {
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
-	
-			
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
