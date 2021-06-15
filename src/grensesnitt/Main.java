@@ -69,8 +69,8 @@ public class Main extends Application {
 	}
 	
 	public void lagMenyscene() {
-		vindu.setWidth(500);
-		vindu.setHeight(200);
+		vindu.setWidth(800);
+		vindu.setHeight(800);
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
@@ -97,8 +97,8 @@ public class Main extends Application {
 	}
 	
 	public void lagLoginscene(String bruker) {
-		vindu.setWidth(300);
-		vindu.setHeight(200);
+		//vindu.setWidth(300);
+		//vindu.setHeight(200);
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
 		loginscene = new Scene(loginrootpanel,400,400);
@@ -145,8 +145,8 @@ public class Main extends Application {
 
 	public void lagPlanleggerscene() {
 		
-		vindu.setWidth(500);
-		vindu.setHeight(200);
+		//vindu.setWidth(500);
+		//vindu.setHeight(200);
 		
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
@@ -249,8 +249,8 @@ public class Main extends Application {
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
 		valgpanel.getChildren().addAll(btnTilbake);
-		vindu.setWidth(600);
-		vindu.setHeight(500);
+		//vindu.setWidth(600);
+		//vindu.setHeight(500);
 		vindu.setScene(filmStatistikkScene);
 		vindu.show();
 		
@@ -295,8 +295,8 @@ public class Main extends Application {
 	}
 	
 	public void lagNyFilmScene() {
-		vindu.setWidth(300);
-		vindu.setHeight(200);
+		//vindu.setWidth(300);
+		//vindu.setHeight(200);
 		BorderPane nyFilmPanel = new BorderPane();
 		nyFilmScene = new Scene(nyFilmPanel,400,400);
 		GridPane panel = new GridPane();
@@ -319,8 +319,8 @@ public class Main extends Application {
 	}
 	
 	public void lagNyVisningScene(){
-		vindu.setWidth(300);
-		vindu.setHeight(250);
+		//vindu.setWidth(300);
+		//vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
@@ -371,8 +371,8 @@ public class Main extends Application {
 		
 	public void lagKinobetjentscene() {
 		try {
-			vindu.setWidth(400);
-			vindu.setHeight(300);
+			//vindu.setWidth(400);
+			//vindu.setHeight(300);
 			BorderPane kinobetjentrotpanel = new BorderPane();
 			GridPane gridpane = new GridPane();
 			kinoscene = new Scene(kinobetjentrotpanel,400,400);
@@ -428,7 +428,7 @@ public class Main extends Application {
 	}
 	public void knappBehandleAvbestill(){
 		kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter());
-		sletttabell.getItems().clear();
+		sletttabell.getItems().clear(); 
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
@@ -437,8 +437,8 @@ public class Main extends Application {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
 			
-			vindu.setWidth(1000);
-			vindu.setHeight(600);
+			//vindu.setWidth(1000);
+			//vindu.setHeight(600);
 			
 			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
@@ -453,8 +453,8 @@ public class Main extends Application {
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
 	        
 	        TableColumn starttid = new TableColumn("Startid");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
+	        starttid.setMinWidth(100);
+	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
 	        
 	        TableColumn filmnr = new TableColumn("Filmnrn");
 	        filmnr.setMinWidth(50);
@@ -466,11 +466,16 @@ public class Main extends Application {
 	        
 	        TableColumn kinosal = new TableColumn("Kinosal");
 	        kinosal.setMinWidth(150);
-	        kinosal.setCellValueFactory(new PropertyValueFactory<Film, String>("kinosalnr"));
+	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
 
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
-	       
+	        ObservableList<Visning> visning = kontroll.getVisning();
+	        
+	        for (Visning v : visning) {
+	        	System.out.println(v.toString());
+	        }
+	        
 	        tabellVisning.setItems(kontroll.getVisning());
 	        rotpanel.setCenter(tabellVisning);
 	        
@@ -505,6 +510,10 @@ public class Main extends Application {
 	
 		public void behandleTilbake(Scene scene) {
 			vindu.setScene(scene);
+		}
+		
+		public void settStorrelse(Scene scene, int bredde, int hoyde) {
+			//
 		}
 		
 		public void settBetalt(String billettKode) throws Exception {
