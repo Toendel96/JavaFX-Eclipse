@@ -155,16 +155,16 @@ public class Kontroll implements kontrollInterface {
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
-		ObservableList<Billett> billettListe = FXCollections.observableArrayList();
+		ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 		for (Billett b:billett) {
 			if(!b.getErBetalt()) {
-				billettListe.add(b);
+				ubetaltBillettListe.add(b);
 			}
 		}
-		if (billettListe.isEmpty()) {
+		if (ubetaltBillettListe.isEmpty()) {
 			return null;
 		}else {
-		return billettListe;
+		return ubetaltBillettListe;
 		}
 	}
 
@@ -187,15 +187,6 @@ public class Kontroll implements kontrollInterface {
 		billett = tempbillett;
 	}
 
-	 public ResultSet lesUbetalteBilletter() throws Exception {
-	    	try {
-	    		ResultSet resultat = null;
-		    	String sql = "SELECT * FROM tblbillett";
-	    		utsagn = forbindelse.createStatement();
-	    		resultat = utsagn.executeQuery(sql);
-	    		return resultat;
-	    	}catch(Exception e) {throw new Exception("Kan ikke �pne databasetabell");}
-	 }
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
@@ -210,7 +201,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ObservableList<Film> hentFilmer() throws Exception {
+	public void hentFilmer() throws Exception {
 		//Henter alle filmene som ligger i databasen og setter film Observablelisten
 		try {
 			ResultSet resultat = null;
@@ -222,7 +213,6 @@ public class Kontroll implements kontrollInterface {
 				String filmNavn = resultat.getString(2);
 				setFilm(filmNr,filmNavn);
 			}
-			return film;
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
