@@ -398,7 +398,7 @@ public class Main extends Application {
 		nyVisningPanel.setBottom(tilbake);
 	}
 	
-	public void lagLedigePlasserVisning(String visningsnr) {
+	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
@@ -495,7 +495,8 @@ public class Main extends Application {
 	            try {
 	            	//Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
-	            	lagLedigePlasserVisning(sokVisninger.getText());
+	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
