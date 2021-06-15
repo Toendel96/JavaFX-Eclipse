@@ -79,40 +79,39 @@ public class Kontroll implements kontrollInterface {
 		return film;
 	}
 
-	public void setFilm(ObservableList<Film> film) {
-		this.film = film;
+	public void setFilm(int filmnr, String filmnavn) {
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
-
-	public void setKinosal(int kinosalNr, String kinoNavn, String kinoSalNavn) {
-		kinosal.add(new Kinosal(kinosalNr,kinoNavn,kinoSalNavn));
+	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
+		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
 
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
 
-	public void setPlass(ObservableList<Plass> plass) {
-		this.plass = plass;
+	public void setPlass(int radnr, int setenr, int kinosalnr) {
+		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
 	}
 
-	public void setPlassbillett(ObservableList<Plassbillett> plassbillett) {
-		this.plassbillett = plassbillett;
+	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
+		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
 	}
 
 	public ObservableList<Visning> getVisning() {
 		return visning;
 	}
 
-	public void setVisning(ObservableList<Visning> visning) {
-		this.visning = visning;
+	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
 	@Override
@@ -156,24 +155,38 @@ public class Kontroll implements kontrollInterface {
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
-		ObservableList<Billett> billettListe = FXCollections.observableArrayList();
+		ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 		for (Billett b:billett) {
 			if(!b.getErBetalt()) {
-				
+				ubetaltBillettListe.add(b);
 			}
 		}
-		return billettListe;
+		if (ubetaltBillettListe.isEmpty()) {
+			return null;
+		}else {
+		return ubetaltBillettListe;
+		}
 	}
-	
-	 public ResultSet lesUbetalteBilletter() throws Exception {
-	    	try {
-	    		ResultSet resultat = null;
-		    	String sql = "SELECT * FROM tblbillett";
-	    		utsagn = forbindelse.createStatement();
-	    		resultat = utsagn.executeQuery(sql);
-	    		return resultat;
-	    	}catch(Exception e) {throw new Exception("Kan ikke �pne databasetabell");}
-	 }
+
+
+	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+		System.out.println("Du kom hit");
+		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
+		for (Billett u: ubetaltBillettListe) {
+			for(Billett b: billett) {
+				if (b.getBillettkode().equals(u.getBillettkode())) {
+					break;
+					//Ikke lagre dette objektet
+				} else {
+					System.out.println(b.toString() + "Har blitt lagt til i listen");
+					tempbillett.add(b);
+				}
+			} 
+		} 
+		billett.clear();
+		billett = tempbillett;
+	}
+
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
@@ -188,7 +201,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ObservableList<Film> hentFilmer() throws Exception {
+	public void hentFilmer() throws Exception {
 		//Henter alle filmene som ligger i databasen og setter film Observablelisten
 		try {
 			ResultSet resultat = null;
@@ -198,9 +211,8 @@ public class Kontroll implements kontrollInterface {
 			while(resultat.next()) {
 				int filmNr = resultat.getInt(1);
 				String filmNavn = resultat.getString(2);
-				film.add(new Film(filmNr,filmNavn));
+				setFilm(filmNr,filmNavn);
 			}
-			return film;
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}

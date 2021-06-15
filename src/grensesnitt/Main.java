@@ -314,9 +314,9 @@ public class Main extends Application {
 		colBetalt.setMinWidth(100);
 		colBetalt.setCellValueFactory(new PropertyValueFactory<Billett, Boolean>("erBetalt"));
 		sletttabell.getColumns().addAll(colBillettkode, colBetalt);
-		sletttabell.setItems(kontroll.getDataBillettListe());
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		Button avbestill = new Button("Slett alle bestillinger");
-		//avbestill.setOnAction(e -> kontroll.slettAlleBestillinger());
+		avbestill.setOnAction(e -> kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter()));
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake());
 		knappePanel.getChildren().addAll(tilbake, avbestill);
@@ -326,6 +326,8 @@ public class Main extends Application {
 		vindu.setScene(slettBestillingScene);
 		vindu.show();
 	}
+	
+	
 			
 	public void lagKundescene() {
 		try {
