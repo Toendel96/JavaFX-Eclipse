@@ -1223,3 +1223,25 @@ INSERT INTO tblbillett VALUES (2,1,0);
 INSERT INTO tblbillett VALUES (3,2,1);
 INSERT INTO tblbillett VALUES (4,2,1);
 INSERT INTO tblbillett VALUES (5,3,0);
+
+INSERT INTO tblplassbillett VALUES (1,1,102, 1);
+INSERT INTO tblplassbillett VALUES (1,2,102, 1);
+INSERT INTO tblplassbillett VALUES (2,3,102, 1);
+INSERT INTO tblplassbillett VALUES (2,4,101, 1);
+INSERT INTO tblplassbillett VALUES (2,6,101, 1);
+INSERT INTO tblplassbillett VALUES (3,8,101, 1);
+INSERT INTO tblplassbillett VALUES (6,14,101, 1);
+INSERT INTO tblplassbillett VALUES (6,2,102, 2);
+INSERT INTO tblplassbillett VALUES (6,6,102, 2);
+INSERT INTO tblplassbillett VALUES (6,8,102, 2);
+INSERT INTO tblplassbillett VALUES (6,17,102, 3);
+INSERT INTO tblplassbillett VALUES (10,18,101, 4);
+INSERT INTO tblplassbillett VALUES (5,8,102, 4);
+
+-- 1: tblfilm - Ja
+-- 2: tblkinosal - 
+-- 3: tblvisning
+-- 4: tblbillett
+-- 5: tbllogin
+-- 6: tblplass
+-- 7: tblplassbillett
