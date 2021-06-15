@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import domene.Film;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -86,8 +87,8 @@ public class Kontroll implements kontrollInterface {
 		return kinosal;
 	}
 
-	public void setKinosal(ObservableList<Kinosal> kinosal) {
-		this.kinosal = kinosal;
+	public void setKinosal(int kinosalNr, String kinoNavn, String kinoSalNavn) {
+		kinosal.add(new Kinosal(kinosalNr,kinoNavn,kinoSalNavn));
 	}
 
 	public ObservableList<Plass> getPlass() {
@@ -205,6 +206,16 @@ public class Kontroll implements kontrollInterface {
 		}
 	}
 	
+	public int hentFilmnrFraNavn(String filmNavn) {
+		int filmNr = 0;
+		for (Film f: film) {
+			if (f.getFilmnavn().equals(filmNavn)) {
+				filmNr = f.getFilmnr();
+			}
+		}
+		return filmNr;
+	}
+	
 	public ChoiceBox<String> visFilmerChoice() {
 		//Returnerer en choicebox med alle filmnavn
 		ChoiceBox<String> cb = new ChoiceBox<String>();
@@ -222,9 +233,27 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentKinosaler() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		ResultSet resultat = null;
+		String sql = "SELECT * FROM tblkinosal";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		resultat = preparedStatement.executeQuery(sql);
+		while(resultat.next()) {
+			int kinosalNr = resultat.getInt(1);
+			String kinoNavn = resultat.getString(2);
+			String kinoSalNavn = resultat.getString(3);
+			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
+		}
+		return kinosal;
+	}
+	
+	public ChoiceBox<String> visKinosalerChoice() {
+		//Returnerer en choicebox med alle kinosaler
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Kinosal k: kinosal) {
+			cb.getItems().add(String.valueOf(k.getKinosalnr()));
+		}
+		return cb;
 	}
 
 	@Override
@@ -252,8 +281,8 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
+	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		
 		return false;
 	}
 
