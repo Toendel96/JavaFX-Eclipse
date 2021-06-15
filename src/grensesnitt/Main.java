@@ -4,12 +4,14 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
+import java.util.List;
 import domene.Billett;
 import domene.Film;
+import domene.Plassbillett;
 import domene.Plass;
 import domene.Visning;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -37,8 +39,11 @@ public class Main extends Application {
 	Kontroll kontroll = new Kontroll();
 	private Stage vindu;
 	private TableView tabellVisning = new TableView<>();
+
+	private TableView<List<String>> statistikklinjer = new TableView();
+
 	private TableView sletttabell = new TableView<>();
-	private TableView statistikklinjer;
+	
 	private Scene menyscene;
 	private Scene kinoscene;
 	private Scene rapportScene;
@@ -50,23 +55,31 @@ public class Main extends Application {
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
+
 	public void start(Stage primaryStage) {
 		try {
 			vindu=primaryStage;
 			kontroll.lagForbindelse();
-			//Kaller på metoder som henter ut data fra database og legger det i lister
+			//Kaller pï¿½ metoder som henter ut data fra database og legger det i lister
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
 			kontroll.leggInnVisningerIListe();
 			kontroll.hentPlasser();
+			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
+			
+			
 			lagKundescene();
+			lagStatistikkKinosal();
+			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
+			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -90,7 +103,10 @@ public class Main extends Application {
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
-		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
+		//Avsluttknapp
+		Button avslutt = new Button("Avslutt");
+		avslutt.setOnAction(e -> {stop();});
+		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp,avslutt);
 		//FlowPane settings
 		panel.setHgap(10);
 		menyrotpanel.setCenter(panel);
@@ -193,12 +209,12 @@ public class Main extends Application {
 		//Oppretter en knapp for statistikk for film:
 		Button statistikkFilm = new Button("Statistikk film");
 		rapportGridpane.add(statistikkFilm,0,0);
-		statistikkFilm.setOnAction(e -> lagStatistikkFilm());
+		statistikkFilm.setOnAction(e -> vindu.setScene(filmStatistikkScene));
 		
 		//Oppretter en knapp for statistikk for kinosal:
 		Button statistikkKinosal = new Button("Statistikk kinosal");
 		rapportGridpane.add(statistikkKinosal, 1, 0);
-		statistikkKinosal.setOnAction(e -> lagStatistikkKinosal());
+		statistikkKinosal.setOnAction(e -> vindu.setScene(kinoStatistikkScene));
 			
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
@@ -217,27 +233,37 @@ public class Main extends Application {
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
+
+		FlowPane valgpanel = new FlowPane();
+
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
+
 		statistikklinjer = new TableView();
+		
 		filmStatistikkPanel.setCenter(statistikklinjer); 
 		filmStatistikkPanel.setTop(filmStatistikkGrid);
-		FlowPane valgpanel = new FlowPane();
 		filmStatistikkPanel.setBottom(valgpanel);
+		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colVisningnr = new TableColumn("Visningnr:");
 		colVisningnr.setMinWidth(150);	
-		colVisningnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("visningnr"));
+		//colVisningnr.setCellValueFactory(new PropertyValueFactory< , >("visningnr"));
+		
 		TableColumn colAntallSett = new TableColumn("Antall sett:");
 		colAntallSett.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		TableColumn colSalprosent = new TableColumn("Prosent kinosal:");
 		colSalprosent.setMinWidth(150);	
-		//colSalprosent.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colSalprosent.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		TableColumn colSlettet = new TableColumn("Bestilling slettet:");
 		colSlettet.setMinWidth(150);	
-		//colSlettet.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colSlettet.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		statistikklinjer.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
-		//statistikklinjer.setItems(visning);		
+		//statistikklinjer.setItems();		
+		
 		Label lblFilmnr = new Label("Filmnummer: ");
 		filmStatistikkGrid.add(lblFilmnr, 2, 1);
 		TextField filmSok = new TextField();
@@ -258,29 +284,43 @@ public class Main extends Application {
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
+
+		FlowPane valgpanel = new FlowPane();
+
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
+
 		statistikklinjer = new TableView();
+		
 		kinoStatistikkPanel.setCenter(statistikklinjer);
 		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
-		FlowPane valgpanel = new FlowPane();
 		kinoStatistikkPanel.setBottom(valgpanel);
+		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
 		colAntallVisninger.setMinWidth(150);	
-		colAntallVisninger.setCellValueFactory(new PropertyValueFactory<Visning, String>("visningnr"));
+		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<, >("visningnr"));
+		
 		TableColumn colProsentSolgt = new TableColumn("Prosent solgt:");
 		colProsentSolgt.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
 		statistikklinjer.getColumns().addAll(colAntallVisninger, colProsentSolgt);
-		//statistikklinjer.setItems(data); 		
+		//statistikklinjer.setItems(); 		
+		
 		Label lblKinosal = new Label("Kinosal: ");
 		kinoStatistikkGrid.add(lblKinosal, 2, 1);
 		TextField kinoSok = new TextField();
 		kinoStatistikkGrid.add(kinoSok, 3, 1);
 		Button btnFinnKino = new Button("Finn kino");
 		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
-		//btnFinnKino.setOnAction(e-> kontroll.behandleFinnKino(kinoSok.getText()));
+		btnFinnKino.setOnAction(e-> {
+			try {
+				kontroll.kinoStatistikk(kinoSok.getText());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
@@ -289,6 +329,8 @@ public class Main extends Application {
 		vindu.setHeight(500);
 		
 	}
+	
+
 	
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
@@ -342,6 +384,8 @@ public class Main extends Application {
 		panel.add(lblPris, 0, 4);
 		TextField txtPris = new TextField();
 		panel.add(txtPris, 1, 4);
+		Label lblKr = new Label("Kr");
+		panel.add(lblKr, 2, 4);
 		Button leggTil = new Button("Legg til");
 		panel.add(leggTil, 1, 5);
 		leggTil.setOnAction(e -> {
@@ -429,12 +473,6 @@ public class Main extends Application {
 
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
-	        ObservableList<Visning> visning = kontroll.getVisning();
-	        
-	        for (Visning v : visning) {
-	        	System.out.println(v.toString());
-	        }
-	        
 	        tabellVisning.setItems(kontroll.getVisning());
 	        rotpanel.setCenter(tabellVisning);
 	        
@@ -490,6 +528,23 @@ public class Main extends Application {
 	public void settBetalt(String billettKode) throws Exception {
 		//kontroll.hentBilletter();
 		kontroll.settBillettSomBetalt(billettKode);
+	}
+	
+	@Override
+	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
+	public void stop() {
+		try {
+			kontroll.slettinnholdAlleTabeller();
+			kontroll.lagreFilmDB();
+			kontroll.lagreKinosalDB();
+			kontroll.lagrePlassDB();
+			kontroll.lagreVisningDB();
+			kontroll.lagreBillettDB();
+			kontroll.lagrePlassBillett();
+			Platform.exit();
+		}catch(Exception e) {
+	}
+		
 	}
 	
 	
