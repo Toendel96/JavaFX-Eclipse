@@ -422,7 +422,6 @@ public class Kontroll implements kontrollInterface {
 				String billettkode = resultat.getString(4);
 				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
 			}
-			System.out.println(plassbillett);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -726,6 +725,16 @@ public class Kontroll implements kontrollInterface {
 		System.out.print("Suksess plassbillett: " + success5 + "\n");
 		System.out.print("Feil plassbillett: " + feil5 + "\n");
 	}
+	
+	/*public void lagreLoginDB() throws Exception {
+		int success6 = 0;
+		int feil6 = 0;
+		String sql6 = "INSERT INTO tbllogin"
+				+ "(l_brukernavn,l_pinkode,l_erPlanlegger)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql6);
+		for ()
+	}*/
 	
 	
 		
