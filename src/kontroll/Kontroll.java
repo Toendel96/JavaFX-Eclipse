@@ -12,6 +12,7 @@ import domene.Film;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, brukernavn));
+		film.add(new Film(filmnr, filmnavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -213,6 +214,7 @@ public class Kontroll implements kontrollInterface {
 				String filmNavn = resultat.getString(2);
 				setFilm(filmNr,filmNavn);
 			}
+			System.out.println(film);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -294,7 +296,14 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
-		
+		int filmNr = Integer.parseInt(filmnr);
+		int kinoSalNr = Integer.parseInt(kinosalnr);
+		//Konverter LocalDate til Date
+		String starttidString = starttid.toString();
+		Date datoDate = Date.valueOf(starttidString);
+		System.out.println(datoDate);
+		Time startTid = new Time(Integer.parseInt(starttid));
+		Float prisF = Float.parseFloat(pris);
 		return false;
 	}
 
