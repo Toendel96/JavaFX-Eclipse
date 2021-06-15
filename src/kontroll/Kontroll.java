@@ -158,12 +158,19 @@ public class Kontroll implements kontrollInterface {
 		ObservableList<Billett> billettListe = FXCollections.observableArrayList();
 		for (Billett b:billett) {
 			if(!b.getErBetalt()) {
-				
+				billettListe.add(b);
 			}
 		}
 		return billettListe;
 	}
 	
+	public void slettAlleBestillinger(ObservableList<Billett> billettListe) {
+		for (Billett b: billett) {
+			if (b.getBillettkode().equals(billettListe)) {
+				
+			}
+		}
+	}
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
