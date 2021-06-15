@@ -46,6 +46,7 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
 	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
+	   
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -274,8 +275,63 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public ResultSet finnSpesifikkKinosal(String kinosalnr) throws Exception {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
+	
+	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
+		
+		final ObservableList<List<String>> statistikkKino = FXCollections.observableArrayList();
+		
+		int kinoSalnr = Integer.parseInt(kinosalnr);
+		int antallVisninger = 0;
+		int antallPlasser = 0;
+		int antallSalg = 0;
+		int muligePlasser = 0;
+		int salProsent = 0;
+		for (Kinosal k : kinosal) {
+			if (k.getKinosalnr()==(kinoSalnr)) {
+				resultat = null;
+				String sql = "SELECT COUNT(v_visningnr) FROM tblvisning WHERE v_kinosalnr ="+kinoSalnr+" AND v_dato < SYSDATE();";
+				preparedStatement = forbindelse.prepareStatement(sql);
+				resultat = preparedStatement.executeQuery(sql);
+				
+				while (resultat.next()) {
+					antallVisninger = resultat.getInt(1);
+					
+				}
+				String sql1 = "SELECT COUNT(p_setenr) AS Antall_seter from tblplass where p_kinosalnr ="+kinoSalnr+" ;";
+				preparedStatement = forbindelse.prepareStatement(sql1);
+				resultat = preparedStatement.executeQuery(sql1);
+				
+				while (resultat.next() ) {
+					antallPlasser = resultat.getInt(1);
+					
+				}
+				String sql2 = "SELECT COUNT(b_billettkode) AS Antall_billetter\n"
+						+ "From tblbillett\n"
+						+ "INNER JOIN tblvisning ON tblbillett.b_visningsnr=tblvisning.v_visningnr\n"
+						+ "WHERE b_erBetalt = '1' AND v_kinosalnr ="+kinoSalnr+" AND v_dato < SYSDATE();";
+				preparedStatement = forbindelse.prepareStatement(sql2);
+				resultat = preparedStatement.executeQuery(sql2);
+				
+				while(resultat.next()) {
+					antallSalg = resultat.getInt(1);
+					
+				}
+				
+				muligePlasser = antallVisninger * antallPlasser;
+				salProsent = antallSalg / antallPlasser * 100;
+				
+				
+				
+				
+			}
+		}
+		
+		return null;
+	}
+	
 
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
