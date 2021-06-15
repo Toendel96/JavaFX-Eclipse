@@ -83,7 +83,7 @@ public class Main extends Application {
 		kinobetjentknapp.setOnAction(e -> lagKinobetjentscene());
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
-		kundeknapp.setOnAction(e -> lagKundescene());
+		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
 		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
 		//FlowPane settings
 		panel.setHgap(10);
@@ -379,7 +379,7 @@ public class Main extends Application {
 			Button oppdater = new Button("Sett som betalt");
 			gridpane.add(oppdater, 1, 2);
 			Button avbestill = new Button("Slett alle bestillinger");
-			avbestill.setOnAction(e -> {lagSlettBillettScene();});
+			avbestill.setOnAction(e -> {vindu.setScene(slettBestillingScene);});
 			Button tilbake = new Button("Tilbake");
 			tilbake.setOnAction(e -> behandleTilbake(menyscene));
 			oppdater.setOnAction(e -> {
