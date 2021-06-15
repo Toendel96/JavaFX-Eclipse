@@ -10,7 +10,11 @@ import java.util.ArrayList;
 
 import domene.Film;
 import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -49,7 +53,7 @@ public class Kontroll implements kontrollInterface {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppnï¿½ kontakt med databasen");
+            throw new Exception("Kan ikke oppnÃ¥ kontakt med databasen");
         }
     }
 
@@ -85,7 +89,6 @@ public class Kontroll implements kontrollInterface {
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
-
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
@@ -204,6 +207,16 @@ public class Kontroll implements kontrollInterface {
 		}
 	}
 	
+	public int hentFilmnrFraNavn(String filmNavn) {
+		int filmNr = 0;
+		for (Film f: film) {
+			if (f.getFilmnavn().equals(filmNavn)) {
+				filmNr = f.getFilmnr();
+			}
+		}
+		return filmNr;
+	}
+	
 	public ChoiceBox<String> visFilmerChoice() {
 		//Returnerer en choicebox med alle filmnavn
 		ChoiceBox<String> cb = new ChoiceBox<String>();
@@ -221,9 +234,27 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentKinosaler() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		ResultSet resultat = null;
+		String sql = "SELECT * FROM tblkinosal";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		resultat = preparedStatement.executeQuery(sql);
+		while(resultat.next()) {
+			int kinosalNr = resultat.getInt(1);
+			String kinoNavn = resultat.getString(2);
+			String kinoSalNavn = resultat.getString(3);
+			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
+		}
+		return kinosal;
+	}
+	
+	public ChoiceBox<String> visKinosalerChoice() {
+		//Returnerer en choicebox med alle kinosaler
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Kinosal k: kinosal) {
+			cb.getItems().add(String.valueOf(k.getKinosalnr()));
+		}
+		return cb;
 	}
 
 	@Override
@@ -251,26 +282,16 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
+	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		
 		return false;
 	}
 
+
 	@Override
-	public ResultSet hentVisninger() throws Exception {
+	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
-		
-		LocalDateTime now = LocalDateTime.now();  
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");  
-        String formatDateTime = now.format(format);
-		
-		String sql = "SELECT v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato, v_starttid, NOW()- INTERVAL 1 HOUR"
-				+ "FROM tblvisning, tblbillett, tblplass, tblfilm\r\n"
-				+ "WHERE v_visningnr = b_visningsnr\r\n"
-				+ "	AND v_kinosalnr = p_kinosalnr\r\n"
-				+ "			AND v_dato >= CURDATE()\r\n"
-				+ "				AND f_filmnr = v_filmnr\r\n"
-				+ "GROUP BY v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato;";
+		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
 		preparedStatement = forbindelse.prepareStatement(sql);
 		resultat = preparedStatement.executeQuery(sql);
 		
@@ -281,23 +302,93 @@ public class Kontroll implements kontrollInterface {
                int kinosalnr = resultat.getInt(3);
                Date dato = resultat.getDate(4);
                Time starttid = resultat.getTime(5);
-               boolean erBetalt = resultat.getBoolean(5);
-               int totalFakturaPris = resultat.getInt(6);
-               Date datoKlokkeslett = resultat.getDate(7);
+               float pris = resultat.getFloat(6);
                
-               //System.out.println(fakturanummer + " " + kundenummer + " " + dagensDato + " " + forfallsdato + " " + erBetalt); //test print
-               //dataFaktura.add(new Faktura(fakturanummer, kundenummer, dagensDato, forfallsdato, erBetalt, totalFakturaPris));
+               LocalTime startidLocalTime = toLocalTime(starttid);
+               
+               LocalDateTime naavarendeTid = LocalDateTime.now();
+               DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");  
+               String formatString = naavarendeTid.format(format);  
+               LocalTime naavarendeTidFormat = LocalTime.parse(formatString);
+               
+               //System.out.println(startidLocalTime.getClass().getName());
+               //System.out.println(naavarendeTidFormat.getClass().getName());
+               
+               long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               
+               if (differanseITid >= 30) {
+            	   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+            	   System.out.println("Mer enn tretti min");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); 
+               } else {
+            	   System.out.println("Under tretti:");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               }
+               System.out.println();
+               
+               //System.out.println("startidLocalTime " + startidLocalTime);
+               //System.out.println("naavarendeTidFormat " + naavarendeTidFormat);
+               //System.out.println("Alle:");
+               //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
 		}
-		
 		return resultat;
-		
 	}
+	
+	public static LocalTime toLocalTime(java.sql.Time time) {
+	    return time.toLocalTime();
+	  }
 
 	@Override
 	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
+
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
+	public void slettinnholdAlleTabeller() throws Exception {
+		try {
+            //Execute SQL query
+            String sql1 = "DELETE FROM tblplassbillett";
+            String sql2 = "DELETE FROM tblplass";
+            String sql3 = "DELETE FROM tbllogint";
+            String sql4 = "DELETE FROM tblbillett";
+            String sql5 = "DELETE FROM tblvisning";
+            String sql6 = "DELETE FROM tblkinosal";
+            String sql7 = "DELETE FROM tblfilm";
+
+            preparedStatement = forbindelse.prepareStatement(sql1);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql2);
+            preparedStatement.executeUpdate();
+
+            preparedStatement = forbindelse.prepareStatement(sql3);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql4);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql5);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql6);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql7);
+            preparedStatement.executeUpdate();
+            
+        } catch (Exception e) { throw new Exception(e); }
+	}
+	
+	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+	
 
 }
