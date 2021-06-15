@@ -43,6 +43,7 @@ public class Main extends Application {
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
+			kontroll.hentVisninger();
 			vindu=primaryStage;
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -475,7 +476,7 @@ public class Main extends Application {
 	        
 	        sokKnapp.setOnAction(e -> {
 	            try {
-	                //Metode for aapne nytt vindu for å se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
+	                //Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
