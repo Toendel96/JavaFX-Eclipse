@@ -119,8 +119,6 @@ public class Main extends Application {
 	}
 	
 	public void lagLoginscene(String bruker) {
-		//vindu.setWidth(300);
-		//vindu.setHeight(200);
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
 		loginscene = new Scene(loginrootpanel,400,400);
@@ -166,10 +164,6 @@ public class Main extends Application {
 	}
 
 	public void lagPlanleggerscene() {
-		
-		//vindu.setWidth(500);
-		//vindu.setHeight(200);
-		
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
 		planleggerScene = new Scene(planleggerRotpanel,600,600);
@@ -231,9 +225,7 @@ public class Main extends Application {
 		rapportRotpanel.setCenter(rapportGridpane);
 		
 		vindu.setScene(rapportScene);
-		vindu.show();
-		
-		
+		vindu.show();	
 	}
 	
 	public void lagStatistikkFilm() {
@@ -285,8 +277,7 @@ public class Main extends Application {
 		//vindu.setWidth(600);
 		//vindu.setHeight(500);
 		vindu.setScene(filmStatistikkScene);
-		vindu.show();
-		
+		vindu.show();	
 	}
 	
 	
@@ -339,10 +330,7 @@ public class Main extends Application {
 		vindu.setHeight(500);
 		vindu.setScene(kinoStatistikkScene);
 		vindu.show();
-		
 	}
-	
-
 	
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
