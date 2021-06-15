@@ -98,17 +98,7 @@ public class Main extends Application {
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
 		//Avsluttknapp
 		Button avslutt = new Button("Avslutt");
-		avslutt.setOnAction(e -> {
-			try {
-				kontroll.slettinnholdAlleTabeller();
-				kontroll.lagreFilmDB();
-				kontroll.lagreKinosalDB();
-				Platform.exit();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+		avslutt.setOnAction(e -> {stop();});
 		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp,avslutt);
 		//FlowPane settings
 		panel.setHgap(10);
@@ -534,7 +524,18 @@ public class Main extends Application {
 	@Override
 	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
 	public void stop() {
-	    System.out.println("Applikasjon er avsluttet ved å krysse på X");
+		try {
+			kontroll.slettinnholdAlleTabeller();
+			kontroll.lagreFilmDB();
+			kontroll.lagreKinosalDB();
+			kontroll.lagrePlassDB();
+			kontroll.lagreVisningDB();
+			kontroll.lagreBillettDB();
+			kontroll.lagrePlassBillett();
+			Platform.exit();
+		}catch(Exception e) {
+		}
+		
 	}
 	
 	
