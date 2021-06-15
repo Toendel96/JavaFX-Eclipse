@@ -26,6 +26,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 
 public class Main extends Application {
@@ -324,34 +325,38 @@ public class Main extends Application {
 			vindu.setWidth(900);
 			vindu.setHeight(600);
 			
-			/*TableColumn visningnr = new TableColumn("Visningnr");
+			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(150);
-	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("v_visningnr"));
+	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
 
 	        TableColumn filmnr = new TableColumn("Filmnrn");
 	        filmnr.setMinWidth(150);
-	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("v_filmnr"));
+	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
 	        
 	        TableColumn filmnavn = new TableColumn("Filmnavn");
 	        filmnavn.setMinWidth(150);
-	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("f_filmnavn"));
+	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
+	        
+	        TableColumn kinosal = new TableColumn("Kinosal");
+	        kinosal.setMinWidth(150);
+	        kinosal.setCellValueFactory(new PropertyValueFactory<Film, String>("kinosalnr"));
 
 	        TableColumn pris = new TableColumn("Pris");
 	        pris.setMinWidth(150);
-	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("v_pris"));
+	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
 
 	        TableColumn dato = new TableColumn("Dato");
 	        dato.setMinWidth(150);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("v_dato"));
+	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
 	        
 	        TableColumn starttid = new TableColumn("Startid");
 	        dato.setMinWidth(150);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("v_starttid")); */
+	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
 
-	        //tabellVisning.getColumns().addAll(visningnr, filmnr, pris, dato, starttid);
+	        tabellVisning.getColumns().addAll(visningnr, filmnr, filmnavn, kinosal, pris, dato, starttid);
 	        
-	        //hentVisninger();
-	        //tabellVisning.setItems(kontroll.hentVisninger());
+	        kontroll.leggInnVisningerIListe();
+	        tabellVisning.setItems(kontroll.getVisning());
 	        
 	      //Registrering -------------------------------------------------------
 	        FlowPane registreringspanel = new FlowPane();
@@ -362,8 +367,8 @@ public class Main extends Application {
 	        Button nyknapp = new Button("Legg til");
 	        
 	        
-	        
-	        
+	        vindu.setScene(scene_kundeBestilling);
+	        vindu.show();
 			
 		} catch(Exception e) {e.printStackTrace();}
 		}

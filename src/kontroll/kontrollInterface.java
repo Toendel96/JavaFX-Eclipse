@@ -38,7 +38,7 @@ public interface kontrollInterface {
 	
 	//Visninger
 	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
-	ResultSet hentVisninger() throws Exception;
+	ResultSet leggInnVisningerIListe() throws Exception;
 	ResultSet finnSpesifikkVisning(String kundenr1) throws Exception;
 
 
