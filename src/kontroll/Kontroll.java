@@ -28,6 +28,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
@@ -145,6 +146,27 @@ public class Kontroll implements kontrollInterface {
 	public int leggTilBillett(String billetNavn) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	public ComboBox<String> hentrader(){
+		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
+		for (Plassbillett p: plassbillett) {
+			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+		}
+		for(Plass p: opptattplass) {
+			plass.remove(p);
+		}
+		ComboBox<String> cb = new ComboBox<String>();
+		int erLik=0;
+		for (Plass p: plass) {
+			if(p.getRadnr()!=erLik) {
+				cb.getItems().add(Integer.toString(p.getRadnr()));
+				erLik=p.getRadnr();
+			}else {
+			}
+		}
+		return cb;
+		
 	}
 
 	@Override
