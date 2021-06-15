@@ -49,6 +49,8 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
 	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
+	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
+	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -118,7 +120,15 @@ public class Kontroll implements kontrollInterface {
 
 	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
-	}	
+	}
+
+	public ObservableList<Visning> getAlleVisninger() {
+		return alleVisninger;
+	}
+
+	public void setAlleVisninger(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
+	}
 
 	@Override
 	public boolean sletteBillett(String billettKode) {
@@ -297,9 +307,26 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentPlassbilletter() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public void hentPlassbilletter() throws Exception {
+		try {
+			ResultSet resultat = null;
+			String sql = "SELECT pb_radnr, pb_setenr, pb_kinosalnr, pb_billettkode FROM tblplassbillett";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			while(resultat.next()) {
+				int radnr = resultat.getInt(1);
+				System.out.println(radnr);
+				int setenr = resultat.getInt(2);
+				System.out.println(setenr);
+				int kinosalnr = resultat.getInt(3);
+				System.out.println(kinosalnr);
+				String billettkode = resultat.getString(4);
+				System.out.println(billettkode);
+				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
+			}
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente fra databasen");
+		}
 	}
 
 	@Override
@@ -347,6 +374,8 @@ public class Kontroll implements kontrollInterface {
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
                
+               setAlleVisninger(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+               
                LocalDate date = LocalDate.now();  
                LocalDate datoFormat = toLocalDate(dato);
                //System.out.println("datoFormat: " + datoFormat.getClass().getName());
@@ -381,23 +410,23 @@ public class Kontroll implements kontrollInterface {
                }
                
                if (erDatoFremITid) {
-            	   System.out.println("Dato frem i tid");
+            	   //System.out.println("Dato frem i tid");
             	   if (erDatoSammeDag) {
             		   if(differanseITid >= 30) {
                 		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-                    	   System.out.println("Mer enn tretti min");
-                    	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+                    	   //System.out.println("Mer enn tretti min");
+                    	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
                 	   } else {
-                		   System.out.println("Ikke mer enn tretti min");
+                		   //System.out.println("Ikke mer enn tretti min");
                 	   }
             	   } else {
             		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
             	   }
                } else {
-            	   System.out.println("Under tretti eller tidligere dato");
-            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   //System.out.println("Under tretti eller tidligere dato");
+            	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
                }
-               System.out.println();
+               //System.out.println();
                /* System.out.println("Alle");
                System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
 		}

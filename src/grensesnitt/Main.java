@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import domene.Billett;
 import domene.Film;
+import domene.Plassbillett;
 import domene.Visning;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -57,13 +58,21 @@ public class Main extends Application {
 			kontroll.hentKinosaler();
 			kontroll.hentVisninger();
 			kontroll.leggInnVisningerIListe();
-			kontroll.slettinnholdAlleTabeller();
+			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
 			lagKundescene();
 			lagMenyscene();
 			lagKinobetjentscene();
+			
+	        ObservableList<Plassbillett> plassbillett = kontroll.getPlassbillett();
+	        
+	        for (Plassbillett pb : plassbillett) {
+	        	System.out.println(pb.toString());
+	        }
+	        
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -447,12 +456,6 @@ public class Main extends Application {
 	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
 
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
-	        
-	        ObservableList<Visning> visning = kontroll.getVisning();
-	        
-	        for (Visning v : visning) {
-	        	System.out.println(v.toString());
-	        }
 	        
 	        tabellVisning.setItems(kontroll.getVisning());
 	        rotpanel.setCenter(tabellVisning);
