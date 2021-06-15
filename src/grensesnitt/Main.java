@@ -33,6 +33,7 @@ public class Main extends Application {
 	Kontroll kontroll = new Kontroll();
 	private Stage vindu;
 	private TableView tabellVisning = new TableView<>();
+	private TableView sletttabell = new TableView<>();
 	public void start(Stage primaryStage) {
 		try {
 			kontroll.lagForbindelse();
@@ -294,7 +295,6 @@ public class Main extends Application {
 		vindu.setHeight(500);
 		BorderPane slettBillettRotpanel = new BorderPane();
 		Scene slettBestillingScene = new Scene(slettBillettRotpanel,400,400);
-		TableView sletttabell = new TableView<>();
 		FlowPane knappePanel = new FlowPane();
 		TableColumn colBillettkode = new TableColumn("Billettkode:");
 		colBillettkode.setMinWidth(100);
@@ -303,17 +303,22 @@ public class Main extends Application {
 		colBetalt.setMinWidth(100);
 		colBetalt.setCellValueFactory(new PropertyValueFactory<Billett, Boolean>("erBetalt"));
 		sletttabell.getColumns().addAll(colBillettkode, colBetalt);
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		Button avbestill = new Button("Slett alle bestillinger");
-		avbestill.setOnAction(e -> kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter()));
+		avbestill.setOnAction(e -> knappBehandleAvbestill());
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake());
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		knappePanel.getChildren().addAll(tilbake, avbestill);
 		knappePanel.setHgap(10);
 		slettBillettRotpanel.setCenter(sletttabell);
 		slettBillettRotpanel.setBottom(knappePanel);
 		vindu.setScene(slettBestillingScene);
 		vindu.show();
+	}
+	public void knappBehandleAvbestill(){
+		kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter());
+		sletttabell.getItems().clear();
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
 	

@@ -137,7 +137,6 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
-        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -161,30 +160,17 @@ public class Kontroll implements kontrollInterface {
 				ubetaltBillettListe.add(b);
 			}
 		}
-		if (ubetaltBillettListe.isEmpty()) {
-			return null;
-		}else {
 		return ubetaltBillettListe;
-		}
 	}
 
 
 	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
-		System.out.println("Du kom hit");
-		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
 		for (Billett u: ubetaltBillettListe) {
-			for(Billett b: billett) {
-				if (b.getBillettkode().equals(u.getBillettkode())) {
-					break;
-					//Ikke lagre dette objektet
-				} else {
-					System.out.println(b.toString() + "Har blitt lagt til i listen");
-					tempbillett.add(b);
-				}
+			billett.remove(u);
 			} 
-		} 
-		billett.clear();
-		billett = tempbillett;
+		for (Billett b:billett) {
+		}
+		ubetaltBillettListe.clear();
 	}
 
 
