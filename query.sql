@@ -29,3 +29,5 @@ FROM tblbillett;
 
 SELECT *
 FROM tblplass;
+
+DELETE FROM tblplassbillett;

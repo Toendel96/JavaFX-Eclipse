@@ -365,6 +365,44 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
-    
+	
+	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
+	public void slettinnholdAlleTabeller() throws Exception {
+		try {
+            //Execute SQL query
+            String sql1 = "DELETE FROM tblplassbillett";
+            String sql2 = "DELETE FROM tblplass";
+            String sql3 = "DELETE FROM tbllogint";
+            String sql4 = "DELETE FROM tblbillett";
+            String sql5 = "DELETE FROM tblvisning";
+            String sql6 = "DELETE FROM tblkinosal";
+            String sql7 = "DELETE FROM tblfilm";
+
+            preparedStatement = forbindelse.prepareStatement(sql1);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql2);
+            preparedStatement.executeUpdate();
+
+            preparedStatement = forbindelse.prepareStatement(sql3);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql4);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql5);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql6);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql7);
+            preparedStatement.executeUpdate();
+            
+        } catch (Exception e) { throw new Exception(e); }
+	}
+	
+	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+	
 
 }
