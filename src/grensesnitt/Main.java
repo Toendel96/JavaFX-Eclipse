@@ -44,6 +44,7 @@ public class Main extends Application {
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
+			kontroll.hentVisninger();
 			vindu=primaryStage;
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -431,6 +432,18 @@ public class Main extends Application {
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
 
+	        TableColumn pris = new TableColumn("Pris");
+	        pris.setMinWidth(100);
+	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
+
+	        TableColumn dato = new TableColumn("Dato");
+	        dato.setMinWidth(100);
+	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
+	        
+	        TableColumn starttid = new TableColumn("Startid");
+	        dato.setMinWidth(100);
+	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
+	        
 	        TableColumn filmnr = new TableColumn("Filmnrn");
 	        filmnr.setMinWidth(50);
 	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
@@ -443,19 +456,7 @@ public class Main extends Application {
 	        kinosal.setMinWidth(150);
 	        kinosal.setCellValueFactory(new PropertyValueFactory<Film, String>("kinosalnr"));
 
-	        TableColumn pris = new TableColumn("Pris");
-	        pris.setMinWidth(100);
-	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-
-	        TableColumn dato = new TableColumn("Dato");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        
-	        TableColumn starttid = new TableColumn("Startid");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-
-	        tabellVisning.getColumns().addAll(visningnr, filmnr, filmnavn, kinosal, pris, dato, starttid);
+	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
 	        kontroll.leggInnVisningerIListe();
 	        tabellVisning.setItems(kontroll.getVisning());
@@ -476,7 +477,7 @@ public class Main extends Application {
 	        
 	        sokKnapp.setOnAction(e -> {
 	            try {
-	                //Metode for aapne nytt vindu for å se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
+	                //Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
