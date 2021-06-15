@@ -60,6 +60,7 @@ public class Main extends Application {
 			kontroll.hentKinosaler();
 			kontroll.leggInnVisningerIListe();
 			kontroll.hentPlasser();
+			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -67,13 +68,6 @@ public class Main extends Application {
 			lagKundescene();
 			lagMenyscene();
 			lagKinobetjentscene();
-			
-	        ObservableList<Plassbillett> plassbillett = kontroll.getPlassbillett();
-	        
-	        for (Plassbillett pb : plassbillett) {
-	        	System.out.println(pb.toString());
-	        }
-	        
 			
 		} catch(Exception e) {
 			e.printStackTrace();

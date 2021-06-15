@@ -333,18 +333,14 @@ public class Kontroll implements kontrollInterface {
 	public void hentPlassbilletter() throws Exception {
 		try {
 			ResultSet resultat = null;
-			String sql = "SELECT pb_radnr, pb_setenr, pb_kinosalnr, pb_billettkode FROM tblplassbillett";
+			String sql = "SELECT * FROM tblplassbillett";
 			preparedStatement = forbindelse.prepareStatement(sql);
 			resultat = preparedStatement.executeQuery(sql);
 			while(resultat.next()) {
 				int radnr = resultat.getInt(1);
-				System.out.println(radnr);
 				int setenr = resultat.getInt(2);
-				System.out.println(setenr);
 				int kinosalnr = resultat.getInt(3);
-				System.out.println(kinosalnr);
 				String billettkode = resultat.getString(4);
-				System.out.println(billettkode);
 				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
 			}
 		}catch(Exception e) {
