@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -83,7 +84,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, brukernavn));
+		film.add(new Film(filmnr, filmnavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -140,7 +141,6 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
-        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -164,30 +164,17 @@ public class Kontroll implements kontrollInterface {
 				ubetaltBillettListe.add(b);
 			}
 		}
-		if (ubetaltBillettListe.isEmpty()) {
-			return null;
-		}else {
 		return ubetaltBillettListe;
-		}
 	}
 
 
 	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
-		System.out.println("Du kom hit");
-		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
 		for (Billett u: ubetaltBillettListe) {
-			for(Billett b: billett) {
-				if (b.getBillettkode().equals(u.getBillettkode())) {
-					break;
-					//Ikke lagre dette objektet
-				} else {
-					System.out.println(b.toString() + "Har blitt lagt til i listen");
-					tempbillett.add(b);
-				}
+			billett.remove(u);
 			} 
-		} 
-		billett.clear();
-		billett = tempbillett;
+		for (Billett b:billett) {
+		}
+		ubetaltBillettListe.clear();
 	}
 
 
@@ -216,6 +203,7 @@ public class Kontroll implements kontrollInterface {
 				String filmNavn = resultat.getString(2);
 				setFilm(filmNr,filmNavn);
 			}
+			System.out.println(film);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -297,7 +285,22 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		int siste = visning.size() -1;
+		int nrPaaSiste = visning.get(siste).getVisningsnr();
+		int nyttVisningsNr = nrPaaSiste +1;
 		
+		int filmNr = Integer.parseInt(filmnr);
+		int kinoSalNr = Integer.parseInt(kinosalnr);
+		//Konverter LocalDate til Date
+		Date datoDate = Date.valueOf(dato);
+		
+		DateTimeFormatter parser = DateTimeFormatter.ofPattern("HH:mm");
+		LocalTime localTime = LocalTime.parse(starttid, parser);
+		Time startTid = Time.valueOf(localTime);
+		
+		Float prisF = Float.parseFloat(pris);
+		
+		setVisning(nyttVisningsNr,filmNr,kinoSalNr,datoDate,startTid,prisF);
 		return false;
 	}
 
@@ -383,13 +386,23 @@ public class Kontroll implements kontrollInterface {
 		return null;
 	}
 
-	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
-		return false;
+	public void hentVisninger() throws Exception {
+		ResultSet resultat = null;
+		String sql = "SELECT * FROM tblvisning";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		resultat = preparedStatement.executeQuery(sql);
+		while(resultat.next()) {
+			int visningnr = resultat.getInt(1);
+            int filmnr = resultat.getInt(2);
+            int kinosalnr = resultat.getInt(3);
+            Date dato = resultat.getDate(4);
+            Time starttid = resultat.getTime(5);
+            float pris = resultat.getFloat(6);
+			setVisning(visningnr,filmnr,kinosalnr,dato,starttid,pris);
+		}
 	}
 	
-	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
+	//------------------------------------ Sletter alt innhold i databasen (kjores nï¿½r applikasjonen avsluttes) --------------------------------------------
 	public void slettinnholdAlleTabeller() throws Exception {
 		try {
             //Execute SQL query

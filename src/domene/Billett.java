@@ -25,6 +25,7 @@ public class Billett {
 	}
 	public boolean getErBetalt() {
 		return erBetalt;
+		
 	}
 	public void setErBetalt(boolean erBetalt) {
 		this.erBetalt = erBetalt;
