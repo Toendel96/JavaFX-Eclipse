@@ -39,6 +39,15 @@ public class Main extends Application {
 	private TableView statistikklinjer;
 	private Scene menyscene;
 	private Scene kinoscene;
+	private Scene rapportScene;
+	private Scene filmStatistikkScene;
+	private Scene kinoStatistikkScene;
+	private Scene slettBestillingScene;
+	private Scene scene_kundeBestilling;
+	private Scene loginscene;
+	private Scene planleggerScene;
+	private Scene nyFilmScene;
+	private Scene nyVisningScene;
 	public void start(Stage primaryStage) {
 		try {
 			kontroll.lagForbindelse();
@@ -89,7 +98,7 @@ public class Main extends Application {
 		vindu.setHeight(200);
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
-		Scene loginscene = new Scene(loginrootpanel,400,400);
+		loginscene = new Scene(loginrootpanel,400,400);
 		gridpane.add(new Label("Brukernavn"), 0, 0);
 		TextField brukernavn = new TextField();
 		gridpane.add(brukernavn, 1, 0);
@@ -108,8 +117,6 @@ public class Main extends Application {
 		vindu.show();
 	}
 	
-	
-
 	public void loggInnBruker(String brukernavn, String passord, String bruker) {
 		Alert loggInnFeilet = new Alert(AlertType.ERROR);
 		if (bruker.equals("planlegger")) {
@@ -133,7 +140,6 @@ public class Main extends Application {
 		} 
 	}
 
-	
 	public void lagPlanleggerscene() {
 		
 		vindu.setWidth(500);
@@ -141,7 +147,7 @@ public class Main extends Application {
 		
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
-		Scene planleggerScene = new Scene(planleggerRotpanel,600,600);
+		planleggerScene = new Scene(planleggerRotpanel,600,600);
 		
 		//Oppretter en knapp for administrasjonsdel:
 		Button administrasjon = new Button("Administrasjon");
@@ -177,7 +183,7 @@ public class Main extends Application {
 	public void lagRapportScene() {
 		BorderPane rapportRotpanel = new BorderPane();
 		GridPane rapportGridpane = new GridPane();
-		Scene rapportScene = new Scene(rapportRotpanel,600,600);
+		rapportScene = new Scene(rapportRotpanel,600,600);
 		
 		//Oppretter en knapp for statistikk for film:
 		Button statistikkFilm = new Button("Statistikk film");
@@ -208,7 +214,7 @@ public class Main extends Application {
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
-		Scene filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
+		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
 		statistikklinjer = new TableView();
 		filmStatistikkPanel.setCenter(statistikklinjer); 
 		filmStatistikkPanel.setTop(filmStatistikkGrid);
@@ -245,14 +251,13 @@ public class Main extends Application {
 		vindu.setScene(filmStatistikkScene);
 		vindu.show();
 		
-			
 	}
 	
 	
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
-		Scene kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
+		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
 		statistikklinjer = new TableView();
 		kinoStatistikkPanel.setCenter(statistikklinjer);
 		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
@@ -290,7 +295,7 @@ public class Main extends Application {
 		vindu.setWidth(300);
 		vindu.setHeight(200);
 		BorderPane nyFilmPanel = new BorderPane();
-		Scene nyFilmScene = new Scene(nyFilmPanel,400,400);
+		nyFilmScene = new Scene(nyFilmPanel,400,400);
 		GridPane panel = new GridPane();
 		Label lblFilmNavn = new Label("Filmnavn:");
 		panel.add(lblFilmNavn, 0, 0);
@@ -314,7 +319,7 @@ public class Main extends Application {
 		vindu.setWidth(300);
 		vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
-		Scene nyVisningScene = new Scene(nyVisningPanel,400,400);
+		nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
 		
 		Label lblFilmNavn = new Label("Filmnavn");
@@ -400,7 +405,7 @@ public class Main extends Application {
 		vindu.setWidth(600);
 		vindu.setHeight(500);
 		BorderPane slettBillettRotpanel = new BorderPane();
-		Scene slettBestillingScene = new Scene(slettBillettRotpanel,400,400);
+		slettBestillingScene = new Scene(slettBillettRotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
 		TableColumn colBillettkode = new TableColumn("Billettkode:");
 		colBillettkode.setMinWidth(100);
@@ -427,12 +432,10 @@ public class Main extends Application {
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
-	
-			
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
-			Scene scene_kundeBestilling = new Scene(rotpanel,600,600);
+			scene_kundeBestilling = new Scene(rotpanel,600,600);
 			
 			vindu.setWidth(1000);
 			vindu.setHeight(600);
