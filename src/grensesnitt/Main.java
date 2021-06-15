@@ -319,7 +319,7 @@ public class Main extends Application {
 			vindu.setWidth(900);
 			vindu.setHeight(600);
 			
-			TableColumn visningnr = new TableColumn("Visningnr");
+			/*TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(150);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("v_visningnr"));
 
@@ -341,9 +341,9 @@ public class Main extends Application {
 	        
 	        TableColumn starttid = new TableColumn("Startid");
 	        dato.setMinWidth(150);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("v_starttid"));
+	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("v_starttid")); */
 
-	        tabellVisning.getColumns().addAll(visningnr, filmnr, pris, dato, starttid);
+	        //tabellVisning.getColumns().addAll(visningnr, filmnr, pris, dato, starttid);
 	        
 	        //hentVisninger();
 	        //tabellVisning.setItems(kontroll.hentVisninger());
@@ -352,9 +352,11 @@ public class Main extends Application {
 	        FlowPane registreringspanel = new FlowPane();
 	        TextField nyttkundenavnPrivat = new TextField();
 	        nyttkundenavnPrivat.setPromptText("Visningnr ");
-	        nyttkundenavnPrivat.setMaxWidth(visningnr.getPrefWidth());
+	        nyttkundenavnPrivat.setMinWidth(100);
 
 	        Button nyknapp = new Button("Legg til");
+	        
+	        
 	        
 	        
 			
@@ -366,8 +368,8 @@ public class Main extends Application {
 		}
 		
 		public void settBetalt(String billettKode) throws Exception {
-			System.out.println(billettKode);
-			kontroll.hentBilletter();
+			//kontroll.hentBilletter();
+			kontroll.settBillettSomBetalt(billettKode);
 		}
 	
 	

@@ -143,7 +143,12 @@ public class Kontroll implements kontrollInterface {
         	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	billett.add(new Billett(billettKode, visningsnr, erBetalt));
         }
-        return resultat;
+        return null;
+	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//
+		return true;
 	}
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
