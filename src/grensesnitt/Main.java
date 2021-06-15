@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
+import java.util.List;
 import domene.Billett;
 import domene.Film;
 import domene.Plassbillett;
@@ -38,8 +38,11 @@ public class Main extends Application {
 	Kontroll kontroll = new Kontroll();
 	private Stage vindu;
 	private TableView tabellVisning = new TableView<>();
+
+	private TableView<List<String>> statistikklinjer = new TableView();
+
 	private TableView sletttabell = new TableView<>();
-	private TableView statistikklinjer;
+	
 	private Scene menyscene;
 	private Scene kinoscene;
 	private Scene rapportScene;
@@ -50,6 +53,7 @@ public class Main extends Application {
 	private Scene planleggerScene;
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
+
 	public void start(Stage primaryStage) {
 		try {
 			vindu=primaryStage;
@@ -60,7 +64,7 @@ public class Main extends Application {
 			kontroll.hentKinosaler();
 			kontroll.leggInnVisningerIListe();
 			kontroll.hentPlasser();
-			kontroll.hentPlassbilletter();
+			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -68,13 +72,6 @@ public class Main extends Application {
 			lagKundescene();
 			lagMenyscene();
 			lagKinobetjentscene();
-			
-	        ObservableList<Plassbillett> plassbillett = kontroll.getPlassbillett();
-	        
-	        for (Plassbillett pb : plassbillett) {
-	        	System.out.println(pb.toString());
-	        }
-	        
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -246,27 +243,38 @@ public class Main extends Application {
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
+
+		Scene filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);
+		FlowPane valgpanel = new FlowPane();
+
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
+
 		statistikklinjer = new TableView();
+		
 		filmStatistikkPanel.setCenter(statistikklinjer); 
 		filmStatistikkPanel.setTop(filmStatistikkGrid);
-		FlowPane valgpanel = new FlowPane();
 		filmStatistikkPanel.setBottom(valgpanel);
+		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colVisningnr = new TableColumn("Visningnr:");
 		colVisningnr.setMinWidth(150);	
-		colVisningnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("visningnr"));
+		//colVisningnr.setCellValueFactory(new PropertyValueFactory< , >("visningnr"));
+		
 		TableColumn colAntallSett = new TableColumn("Antall sett:");
 		colAntallSett.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		TableColumn colSalprosent = new TableColumn("Prosent kinosal:");
 		colSalprosent.setMinWidth(150);	
-		//colSalprosent.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colSalprosent.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		TableColumn colSlettet = new TableColumn("Bestilling slettet:");
 		colSlettet.setMinWidth(150);	
-		//colSlettet.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colSlettet.setCellValueFactory(new PropertyValueFactory< , >(""));
+		
 		statistikklinjer.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
-		//statistikklinjer.setItems(visning);		
+		//statistikklinjer.setItems();		
+		
 		Label lblFilmnr = new Label("Filmnummer: ");
 		filmStatistikkGrid.add(lblFilmnr, 2, 1);
 		TextField filmSok = new TextField();
@@ -289,29 +297,44 @@ public class Main extends Application {
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
+
+		Scene kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
+		FlowPane valgpanel = new FlowPane();
+
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
+
 		statistikklinjer = new TableView();
+		
 		kinoStatistikkPanel.setCenter(statistikklinjer);
 		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
-		FlowPane valgpanel = new FlowPane();
 		kinoStatistikkPanel.setBottom(valgpanel);
+		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
 		colAntallVisninger.setMinWidth(150);	
-		colAntallVisninger.setCellValueFactory(new PropertyValueFactory<Visning, String>("visningnr"));
+		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<, >("visningnr"));
+		
 		TableColumn colProsentSolgt = new TableColumn("Prosent solgt:");
 		colProsentSolgt.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory<, String>(""));
+		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
 		statistikklinjer.getColumns().addAll(colAntallVisninger, colProsentSolgt);
-		//statistikklinjer.setItems(data); 		
+		//statistikklinjer.setItems(); 		
+		
 		Label lblKinosal = new Label("Kinosal: ");
 		kinoStatistikkGrid.add(lblKinosal, 2, 1);
 		TextField kinoSok = new TextField();
 		kinoStatistikkGrid.add(kinoSok, 3, 1);
 		Button btnFinnKino = new Button("Finn kino");
 		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
-		//btnFinnKino.setOnAction(e-> kontroll.behandleFinnKino(kinoSok.getText()));
+		btnFinnKino.setOnAction(e-> {
+			try {
+				kontroll.kinoStatistikk(kinoSok.getText());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
@@ -322,6 +345,8 @@ public class Main extends Application {
 		vindu.show();
 		
 	}
+	
+
 	
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
@@ -521,6 +546,12 @@ public class Main extends Application {
 			//kontroll.hentBilletter();
 			kontroll.settBillettSomBetalt(billettKode);
 		}
+		
+	@Override
+	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
+	public void stop() {
+	    System.out.println("Applikasjon er avsluttet ved � krysse p� X");
+	}
 	
 	
 	public static void main(String[] args) {

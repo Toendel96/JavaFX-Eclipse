@@ -30,8 +30,7 @@ FROM tblvisning;
 SELECT *
 FROM tblbillett;
 
-SELECT * 
-FROM tblplassbillett;
+SELECT * FROM tblplassbillett;
 
 SELECT *
 FROM tblplass;
