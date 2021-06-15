@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
@@ -86,7 +87,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, filmnavn));
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -103,6 +104,21 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
+	
+	public ResultSet hentPlasser() throws Exception {
+        resultat = null;
+        String sql = "SELECT * FROM tblplass";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	int radnr = resultat.getInt(1);
+        	int setenr = resultat.getInt(2);
+        	int kinosalnr = resultat.getInt(3);
+        	setPlass(radnr, setenr, kinosalnr);
+        }
+        return null;
+	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
@@ -118,7 +134,7 @@ public class Kontroll implements kontrollInterface {
 
 	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
-	}
+	}	
 
 	@Override
 	public boolean sletteBillett(String billettKode) {
@@ -149,12 +165,6 @@ public class Kontroll implements kontrollInterface {
         return null;
 	}
 	
-	public boolean settBillettSomBetalt(String billettKode) {
-		//
-		return true;
-	}
-	
-	
 	public ObservableList<Billett> getDataBillettListe() {
         return billett;
     }
@@ -171,20 +181,49 @@ public class Kontroll implements kontrollInterface {
 	}
 
 
-	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
+		if (ubetaltBillettListe.isEmpty()) {
+			showMessageDialog(null, "Finnes ingen ubetalte lister");
+		}else {
 		for (Billett u: ubetaltBillettListe) {
-			billett.remove(u);
-			} 
-		for (Billett b:billett) {
-		}
+				billett.remove(u);
+			}
+		showMessageDialog(null, "Ubetalte billetter er fjernet");
 		ubetaltBillettListe.clear();
+		}
 	}
-
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//Tar imot billettkode som skal settes til betalt
+		boolean billettFinnes= false;
+		for(Billett b: billett) {
+			if(billettKode.equals(b.getBillettkode())){
+				if(b.getErBetalt()) {
+					billettFinnes=true;
+					showMessageDialog(null, "Billetten er allerede betalt");
+
+				} else {
+				System.out.println(b.toString());
+				b.setErBetalt(true);
+				System.out.println(b.toString());
+				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
+				
+				billettFinnes=true;
+				break;
+				}
+			}
+		}
+		if(billettFinnes==false) {
+			showMessageDialog(null, "Billetten finnes ikke");
+			
+		}
+		return true;
 	}
 
 	@Override
@@ -445,14 +484,9 @@ public class Kontroll implements kontrollInterface {
             
         } catch (Exception e) { throw new Exception(e); }
 	}
-
-	@Override
-	public void hentVisninger() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+
 	public void lagreFilmDB() throws Exception {
 		int success = 0;
 		int feil = 0;
@@ -495,13 +529,11 @@ public class Kontroll implements kontrollInterface {
 		System.out.print("Suksess kinosal: " + success1 + "\n");
 		System.out.print("Feil kinosal: " + feil1);
 	}
-	
-	public void lagreVisningDB() {
-		int success = 0;
-		int feil = 0;
-		String sql5 = "INSERT INTO tblvisning"
-				+ "(v_visningsnr,v_flmnr,v_kinosalnr,v_datp,v_starttid,v_pris)"
-				+ "VALUES(?,?,?,?,?,?)";
+		
+	public void leggAltInnItblFilmVedAvslutning() throws Exception {
+        try {
+            //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
+        }catch(Exception e) {throw new Exception(e);}
 	}
 	
 }
