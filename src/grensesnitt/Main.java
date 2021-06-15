@@ -5,7 +5,6 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import domene.Billett;
 import domene.Film;
 import domene.Plassbillett;
