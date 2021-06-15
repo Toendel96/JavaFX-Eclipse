@@ -542,6 +542,12 @@ public class Main extends Application {
 			//kontroll.hentBilletter();
 			kontroll.settBillettSomBetalt(billettKode);
 		}
+		
+	@Override
+	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
+	public void stop() {
+	    System.out.println("Applikasjon er avsluttet ved å krysse på X");
+	}
 	
 	
 	public static void main(String[] args) {
