@@ -179,7 +179,11 @@ public class Kontroll implements kontrollInterface {
 			}
 		}
 		return cb;
+	}
+	
+	public ComboBox<String> hentseter(){
 		
+		return null;
 	}
 
 	@Override
@@ -734,5 +738,7 @@ public class Kontroll implements kontrollInterface {
             //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
         }catch(Exception e) {throw new Exception(e);}
 	}
+
+
 	
 }

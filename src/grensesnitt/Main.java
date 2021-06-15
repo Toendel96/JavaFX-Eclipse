@@ -408,11 +408,20 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
-		ComboBox comboBox = kontroll.hentrader();
+		ComboBox comboBoxrad = kontroll.hentrader();
+		comboBoxrad.setOnAction((e) -> {
+            System.out.println(comboBoxrad.getSelectionModel().getSelectedItem());
+       });
+		comboBoxrad.setPromptText("Velg rad");
+		//ComboBox comboBoxsete = kontroll.hentsete();
+		//comboBoxsete.setPromptText("Velg sete");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBox);
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
+		vindu.setScene(ledigePlasserScene);
+		vindu.show();
 	}
 		
 	public void lagKinobetjentscene() {
