@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -415,7 +416,7 @@ public class Kontroll implements kontrollInterface {
             //Execute SQL query
             String sql1 = "DELETE FROM tblplassbillett";
             String sql2 = "DELETE FROM tblplass";
-            String sql3 = "DELETE FROM tbllogint";
+            String sql3 = "DELETE FROM tbllogin";
             String sql4 = "DELETE FROM tblbillett";
             String sql5 = "DELETE FROM tblvisning";
             String sql6 = "DELETE FROM tblkinosal";
@@ -452,5 +453,55 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+	public void lagreFilmDB() throws Exception {
+		int success = 0;
+		int feil = 0;
+		String sql = "INSERT INTO tblfilm "
+				+ "(f_filmnr,f_filmnavn)"
+				+ "VALUES(?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		for (Film f: film) {
+			preparedStatement.setInt(1, f.getFilmnr());
+			preparedStatement.setString(2, f.getFilmnavn());
+			int insert = preparedStatement.executeUpdate();
+			if(insert == 1) {
+				success += 1;
+			}
+			else {feil += 1;
+			}
+		}
+		System.out.print("Suksess film: " + success + "\n");
+		System.out.print("Feil film: " + feil +"\n");
+	}
+	
+	public void lagreKinosalDB() throws Exception {
+		int success1 = 0;
+		int feil1 = 0;
+		String sql1 = "INSERT INTO tblkinosal"
+				+ "(k_kinosalnr,k_kinonavn,k_kinosalnavn)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql1);
+		for (Kinosal ks: kinosal) {
+			preparedStatement.setInt(1, ks.getKinosalnr());
+			preparedStatement.setString(2, ks.getKinonavn());
+			preparedStatement.setString(3, ks.getKinosalnavn());
+			int insert1 = preparedStatement.executeUpdate();
+			if(insert1 == 1) {
+				success1 += 1;
+			}else {
+				feil1 += 1;
+			}
+		}
+		System.out.print("Suksess kinosal: " + success1 + "\n");
+		System.out.print("Feil kinosal: " + feil1);
+	}
+	
+	public void lagreVisningDB() {
+		int success = 0;
+		int feil = 0;
+		String sql5 = "INSERT INTO tblvisning"
+				+ "(v_visningsnr,v_flmnr,v_kinosalnr,v_datp,v_starttid,v_pris)"
+				+ "VALUES(?,?,?,?,?,?)";
+	}
 	
 }

@@ -9,6 +9,7 @@ import domene.Billett;
 import domene.Film;
 import domene.Visning;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -87,7 +88,20 @@ public class Main extends Application {
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
-		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
+		//Avsluttknapp
+		Button avslutt = new Button("Avslutt");
+		avslutt.setOnAction(e -> {
+			try {
+				kontroll.slettinnholdAlleTabeller();
+				kontroll.lagreFilmDB();
+				kontroll.lagreKinosalDB();
+				Platform.exit();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp,avslutt);
 		//FlowPane settings
 		panel.setHgap(10);
 		menyrotpanel.setCenter(panel);
