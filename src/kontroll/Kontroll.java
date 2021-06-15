@@ -181,9 +181,24 @@ public class Kontroll implements kontrollInterface {
 		return cb;
 	}
 	
-	public ComboBox<String> hentseter(){
-		
-		return null;
+	public ComboBox<String> hentseter(String radnr){
+		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
+		for (Plassbillett p: plassbillett) {
+			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+		}
+		for(Plass p: opptattplass) {
+			plass.remove(p);
+		}
+		ComboBox<String> cb = new ComboBox<String>();
+		int erLik=0;
+		for (Plass p: plass) {
+			if(p.getSetenr()!=erLik) {
+				cb.getItems().add(Integer.toString(p.getRadnr()));
+				erLik=p.getRadnr();
+			}else {
+			}
+		}
+		return cb;
 	}
 
 	@Override

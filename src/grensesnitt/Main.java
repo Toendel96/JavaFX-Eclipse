@@ -403,15 +403,14 @@ public class Main extends Application {
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
 		ComboBox comboBoxrad = kontroll.hentrader();
-		comboBoxrad.setOnAction((e) -> {
-            System.out.println(comboBoxrad.getSelectionModel().getSelectedItem());
-       });
+		Label radnr= new Label();
+		comboBoxrad.setOnAction((e) -> {radnr.setText(comboBoxrad.getValue().toString()); });
 		comboBoxrad.setPromptText("Velg rad");
-		//ComboBox comboBoxsete = kontroll.hentsete();
-		//comboBoxsete.setPromptText("Velg sete");
+		ComboBox comboBoxsete = kontroll.hentseter(radnr.getText());
+		comboBoxsete.setPromptText("Velg sete");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboBoxsete);
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);
