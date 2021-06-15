@@ -533,6 +533,16 @@ public class Kontroll implements kontrollInterface {
 		return resultat;
 	}
 	
+	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
+		int visningsnr = Integer.parseInt(visningsnr1);
+		ObservableList<Visning> visning = getAlleVisninger();
+		
+		for (Visning v : visning) {
+			if (v.getVisningnr() == visningsnr) return v.getKinosalnr();
+		}
+		return 0;
+	}
+	
 	//Metode for aa konvertere timer fra database til LocalTime. Trenger det for aa sammenligne
 	public static LocalTime toLocalTime(java.sql.Time time) {
 	    return time.toLocalTime();
