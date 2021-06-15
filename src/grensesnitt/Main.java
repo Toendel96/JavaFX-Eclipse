@@ -335,15 +335,15 @@ public class Main extends Application {
 			BorderPane rotpanel = new BorderPane();
 			Scene scene_kundeBestilling = new Scene(rotpanel,600,600);
 			
-			vindu.setWidth(900);
+			vindu.setWidth(1000);
 			vindu.setHeight(600);
 			
 			TableColumn visningnr = new TableColumn("Visningnr");
-	        visningnr.setMinWidth(150);
+	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
 
 	        TableColumn filmnr = new TableColumn("Filmnrn");
-	        filmnr.setMinWidth(150);
+	        filmnr.setMinWidth(50);
 	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
 	        
 	        TableColumn filmnavn = new TableColumn("Filmnavn");
@@ -355,30 +355,45 @@ public class Main extends Application {
 	        kinosal.setCellValueFactory(new PropertyValueFactory<Film, String>("kinosalnr"));
 
 	        TableColumn pris = new TableColumn("Pris");
-	        pris.setMinWidth(150);
+	        pris.setMinWidth(100);
 	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
 
 	        TableColumn dato = new TableColumn("Dato");
-	        dato.setMinWidth(150);
+	        dato.setMinWidth(100);
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
 	        
 	        TableColumn starttid = new TableColumn("Startid");
-	        dato.setMinWidth(150);
+	        dato.setMinWidth(100);
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
 
 	        tabellVisning.getColumns().addAll(visningnr, filmnr, filmnavn, kinosal, pris, dato, starttid);
 	        
 	        kontroll.leggInnVisningerIListe();
 	        tabellVisning.setItems(kontroll.getVisning());
+	        rotpanel.setCenter(tabellVisning);
 	        
-	      //Registrering -------------------------------------------------------
-	        FlowPane registreringspanel = new FlowPane();
-	        TextField nyttkundenavnPrivat = new TextField();
-	        nyttkundenavnPrivat.setPromptText("Visningnr ");
-	        nyttkundenavnPrivat.setMinWidth(100);
+	        Button tilbake = new Button("Tilbake");
+	        tilbake.setOnAction(e -> behandleTilbake());
+	        //rotpanel.setRight(tilbake);
+	        //vindu.setScene(scene_faktura);
+	        
+	      //Sok etter visning -------------------------------------------------------
+	        FlowPane sokpanel = new FlowPane();
+	        TextField sokVisninger = new TextField();
+	        sokVisninger.setPromptText("Visningnr ");
+	        sokVisninger.setMinWidth(100);
 
-	        Button nyknapp = new Button("Legg til");
+	        Button sokKnapp = new Button("Velg visning");
 	        
+	        sokKnapp.setOnAction(e -> {
+	            try {
+	                //Metode for aapne nytt vindu for å se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
+	            } catch (Exception exception) { exception.printStackTrace(); }
+	        });	
+	        
+	        rotpanel.setTop(sokpanel);
+	        sokpanel.getChildren().addAll(sokVisninger, sokKnapp, tilbake);
+	        sokpanel.setHgap(10);
 	        
 	        vindu.setScene(scene_kundeBestilling);
 	        vindu.show();
