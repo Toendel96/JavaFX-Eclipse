@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -26,10 +27,13 @@ import domene.Plassbillett;
 import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
@@ -46,7 +50,10 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
 	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
-	   
+
+	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
+	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -54,7 +61,7 @@ public class Kontroll implements kontrollInterface {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppnå kontakt med databasen");
+            throw new Exception("Kan ikke oppnaa kontakt med databasen");
         }
     }
 
@@ -101,6 +108,21 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
+	
+	public ResultSet hentPlasser() throws Exception {
+        resultat = null;
+        String sql = "SELECT * FROM tblplass";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	int radnr = resultat.getInt(1);
+        	int setenr = resultat.getInt(2);
+        	int kinosalnr = resultat.getInt(3);
+        	setPlass(radnr, setenr, kinosalnr);
+        }
+        return null;
+	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
@@ -116,6 +138,14 @@ public class Kontroll implements kontrollInterface {
 
 	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
+	}
+
+	public ObservableList<Visning> getAlleVisninger() {
+		return alleVisninger;
+	}
+
+	public void setAlleVisninger(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
 	@Override
@@ -147,12 +177,6 @@ public class Kontroll implements kontrollInterface {
         return null;
 	}
 	
-	public boolean settBillettSomBetalt(String billettKode) {
-		//
-		return true;
-	}
-	
-	
 	public ObservableList<Billett> getDataBillettListe() {
         return billett;
     }
@@ -165,42 +189,61 @@ public class Kontroll implements kontrollInterface {
 				ubetaltBillettListe.add(b);
 			}
 		}
-		if (ubetaltBillettListe.isEmpty()) {
-			return null;
-		}else {
 		return ubetaltBillettListe;
+	}
+
+
+	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
+		if (ubetaltBillettListe.isEmpty()) {
+			showMessageDialog(null, "Finnes ingen ubetalte lister");
+		}else {
+		for (Billett u: ubetaltBillettListe) {
+				billett.remove(u);
+			}
+		showMessageDialog(null, "Ubetalte billetter er fjernet");
+		ubetaltBillettListe.clear();
 		}
 	}
-
-
-	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
-		System.out.println("Du kom hit");
-		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
-		for (Billett u: ubetaltBillettListe) {
-			for(Billett b: billett) {
-				if (b.getBillettkode().equals(u.getBillettkode())) {
-					break;
-					//Ikke lagre dette objektet
-				} else {
-					System.out.println(b.toString() + "Har blitt lagt til i listen");
-					tempbillett.add(b);
-				}
-			} 
-		} 
-		billett.clear();
-		billett = tempbillett;
-	}
-
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//Tar imot billettkode som skal settes til betalt
+		boolean billettFinnes= false;
+		for(Billett b: billett) {
+			if(billettKode.equals(b.getBillettkode())){
+				if(b.getErBetalt()) {
+					billettFinnes=true;
+					showMessageDialog(null, "Billetten er allerede betalt");
+
+				} else {
+				System.out.println(b.toString());
+				b.setErBetalt(true);
+				System.out.println(b.toString());
+				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
+				
+				billettFinnes=true;
+				break;
+				}
+			}
+		}
+		if(billettFinnes==false) {
+			showMessageDialog(null, "Billetten finnes ikke");
+			
+		}
+		return true;
+	}
 
 	@Override
 	public boolean leggTilFilm(String filmnavn) {
-		// TODO Auto-generated method stub
+		int sisteFilm = film.size() - 1;
+		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
+		int nyttFilmNr = sisteFilmNr + 1;
+		setFilm(nyttFilmNr,filmnavn);
 		return false;
 	}
 
@@ -218,7 +261,7 @@ public class Kontroll implements kontrollInterface {
 				setFilm(filmNr,filmNavn);
 			}
 		}catch(Exception e) {
-			throw new Exception("Kan ikke hente fra databasen");
+			throw new Exception("Kan ikke hente filmer fra databasen");
 		}
 	}
 	
@@ -250,6 +293,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		try {
 		ResultSet resultat = null;
 		String sql = "SELECT * FROM tblkinosal";
 		preparedStatement = forbindelse.prepareStatement(sql);
@@ -261,6 +305,9 @@ public class Kontroll implements kontrollInterface {
 			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
 		}
 		return kinosal;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente kinosaler");
+		}
 	}
 	
 	public ChoiceBox<String> visKinosalerChoice() {
@@ -340,9 +387,26 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentPlassbilletter() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public void hentPlassbilletter() throws Exception {
+		try {
+			ResultSet resultat = null;
+			String sql = "SELECT pb_radnr, pb_setenr, pb_kinosalnr, pb_billettkode FROM tblplassbillett";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			while(resultat.next()) {
+				int radnr = resultat.getInt(1);
+				System.out.println(radnr);
+				int setenr = resultat.getInt(2);
+				System.out.println(setenr);
+				int kinosalnr = resultat.getInt(3);
+				System.out.println(kinosalnr);
+				String billettkode = resultat.getString(4);
+				System.out.println(billettkode);
+				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
+			}
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente fra databasen");
+		}
 	}
 
 	@Override
@@ -353,7 +417,22 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		int siste = visning.size() -1;
+		int nrPaaSiste = visning.get(siste).getVisningnr();
+		int nyttVisningsNr = nrPaaSiste +1;
 		
+		int filmNr = Integer.parseInt(filmnr);
+		int kinoSalNr = Integer.parseInt(kinosalnr);
+		//Konverter LocalDate til Date
+		Date datoDate = Date.valueOf(dato);
+		
+		DateTimeFormatter parser = DateTimeFormatter.ofPattern("HH:mm");
+		LocalTime localTime = LocalTime.parse(starttid, parser);
+		Time startTid = Time.valueOf(localTime);
+		
+		Float prisF = Float.parseFloat(pris);
+		
+		setVisning(nyttVisningsNr,filmNr,kinoSalNr,datoDate,startTid,prisF);
 		return false;
 	}
 
@@ -361,7 +440,8 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
-		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
+		//String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
+		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning";
 		preparedStatement = forbindelse.prepareStatement(sql);
 		resultat = preparedStatement.executeQuery(sql);
 		
@@ -374,6 +454,13 @@ public class Kontroll implements kontrollInterface {
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
                
+               setAlleVisninger(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+               
+               LocalDate date = LocalDate.now();  
+               LocalDate datoFormat = toLocalDate(dato);
+               //System.out.println("datoFormat: " + datoFormat.getClass().getName());
+               //System.out.println("date: " + date.getClass().getName());
+               
                LocalTime startidLocalTime = toLocalTime(starttid);
                
                LocalDateTime naavarendeTid = LocalDateTime.now();
@@ -384,30 +471,56 @@ public class Kontroll implements kontrollInterface {
                //System.out.println(startidLocalTime.getClass().getName());
                //System.out.println(naavarendeTidFormat.getClass().getName());
                
+               boolean erDatoFremITid = false;
+               boolean erDatoSammeDag = false;
+               
                long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               int sjekkDatoer = datoFormat.compareTo(date);
                
-               if (differanseITid >= 30) {
-            	   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-            	   System.out.println("Mer enn tretti min");
-            	   System.out.println(differanseITid);
-            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); 
+               if (sjekkDatoer > 0) {
+            	   //dato fra database er senere enn naavarende dato
+            	   erDatoFremITid = true;
+               } else if (sjekkDatoer < 0) {
+            	   //dato fra databsaae er tidligere enn naavarende dato
+            	   erDatoFremITid = false;
                } else {
-            	   System.out.println("Under tretti:");
-            	   System.out.println(differanseITid);
-            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   //Samme dag
+            	   erDatoFremITid = true;
+            	   erDatoSammeDag = true;
                }
-               System.out.println();
                
-               //System.out.println("startidLocalTime " + startidLocalTime);
-               //System.out.println("naavarendeTidFormat " + naavarendeTidFormat);
-               //System.out.println("Alle:");
-               //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               if (erDatoFremITid) {
+            	   //System.out.println("Dato frem i tid");
+            	   if (erDatoSammeDag) {
+            		   if(differanseITid >= 30) {
+                		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+                    	   //System.out.println("Mer enn tretti min");
+                    	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+                	   } else {
+                		   //System.out.println("Ikke mer enn tretti min");
+                	   }
+            	   } else {
+            		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+            	   }
+               } else {
+            	   //System.out.println("Under tretti eller tidligere dato");
+            	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               }
+               //System.out.println();
+               /* System.out.println("Alle");
+               System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
 		}
 		return resultat;
 	}
 	
+	//Metode for aa konvertere timer fra database til LocalTime. Trenger det for aa sammenligne
 	public static LocalTime toLocalTime(java.sql.Time time) {
 	    return time.toLocalTime();
+	  }
+	
+	//Metode for aa konvertere datoer fra database til LocalDate. Trenger det for aa sammenligne
+	public static LocalDate toLocalDate(java.sql.Date date) {
+	    return date.toLocalDate();
 	  }
 
 	@Override
@@ -421,6 +534,92 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
-    
+	
+	//------------------------------------ Sletter alt innhold i databasen (kjores n�r applikasjonen avsluttes) --------------------------------------------
+	public void slettinnholdAlleTabeller() throws Exception {
+		try {
+            //Execute SQL query
+            String sql1 = "DELETE FROM tblplassbillett";
+            String sql2 = "DELETE FROM tblplass";
+            String sql3 = "DELETE FROM tbllogin";
+            String sql4 = "DELETE FROM tblbillett";
+            String sql5 = "DELETE FROM tblvisning";
+            String sql6 = "DELETE FROM tblkinosal";
+            String sql7 = "DELETE FROM tblfilm";
 
+            preparedStatement = forbindelse.prepareStatement(sql1);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql2);
+            preparedStatement.executeUpdate();
+
+            preparedStatement = forbindelse.prepareStatement(sql3);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql4);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql5);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql6);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql7);
+            preparedStatement.executeUpdate();
+            
+        } catch (Exception e) { throw new Exception(e); }
+	}
+	
+	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+
+	public void lagreFilmDB() throws Exception {
+		int success = 0;
+		int feil = 0;
+		String sql = "INSERT INTO tblfilm "
+				+ "(f_filmnr,f_filmnavn)"
+				+ "VALUES(?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		for (Film f: film) {
+			preparedStatement.setInt(1, f.getFilmnr());
+			preparedStatement.setString(2, f.getFilmnavn());
+			int insert = preparedStatement.executeUpdate();
+			if(insert == 1) {
+				success += 1;
+			}
+			else {feil += 1;
+			}
+		}
+		System.out.print("Suksess film: " + success + "\n");
+		System.out.print("Feil film: " + feil +"\n");
+	}
+	
+	public void lagreKinosalDB() throws Exception {
+		int success1 = 0;
+		int feil1 = 0;
+		String sql1 = "INSERT INTO tblkinosal"
+				+ "(k_kinosalnr,k_kinonavn,k_kinosalnavn)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql1);
+		for (Kinosal ks: kinosal) {
+			preparedStatement.setInt(1, ks.getKinosalnr());
+			preparedStatement.setString(2, ks.getKinonavn());
+			preparedStatement.setString(3, ks.getKinosalnavn());
+			int insert1 = preparedStatement.executeUpdate();
+			if(insert1 == 1) {
+				success1 += 1;
+			}else {
+				feil1 += 1;
+			}
+		}
+		System.out.print("Suksess kinosal: " + success1 + "\n");
+		System.out.print("Feil kinosal: " + feil1);
+	}
+		
+	public void leggAltInnItblFilmVedAvslutning() throws Exception {
+        try {
+            //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
+        }catch(Exception e) {throw new Exception(e);}
+	}
+	
 }

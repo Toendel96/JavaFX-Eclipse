@@ -33,14 +33,14 @@ public interface kontrollInterface {
 	
 	//Plassbillett
 	boolean leggTilPlassbillett(String filmnavn);
-	ResultSet hentPlassbilletter() throws Exception;
+	void hentPlassbilletter() throws Exception;
 	ResultSet finnSpesifikkPlassbillett(String kundenr1) throws Exception;
 	
 	//Visninger
-	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
-	ResultSet leggInnVisningerIListe() throws Exception;
 	boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris);
+	ResultSet leggInnVisningerIListe() throws Exception;
 	ResultSet finnSpesifikkVisning(String kundenr1) throws Exception;
+	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
 
 
 }

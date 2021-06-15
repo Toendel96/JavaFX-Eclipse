@@ -19,6 +19,9 @@ SELECT DATEADD(HOUR, -1, DATE_FORMAT(NOW(), "%H %i %s")) AS DateAdd;
 SELECT DATEDIFF(HOUR,  DATEADD(HOUR, -1, '2013-03-13 00:00:00.000'), NOW());
     
 SELECT *
+FROM tblfilm;
+    
+SELECT *
 FROM tbllogin;
     
 SELECT *
@@ -27,5 +30,10 @@ FROM tblvisning;
 SELECT *
 FROM tblbillett;
 
+SELECT * 
+FROM tblplassbillett;
+
 SELECT *
 FROM tblplass;
+
+DELETE FROM tblplassbillett;
