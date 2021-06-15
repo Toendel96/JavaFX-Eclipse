@@ -36,7 +36,12 @@ public class Kontroll implements kontrollInterface {
 	    private Statement utsagn;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
-	    private ObservableList<Billett> billettListe = FXCollections.observableArrayList();
+	    public ObservableList<Billett> billett = FXCollections.observableArrayList();
+	    public ObservableList<Film> film = FXCollections.observableArrayList();
+	    public ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
+	    public ObservableList<Plass> plass = FXCollections.observableArrayList();
+	    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
+	    public ObservableList<Visning> visning = FXCollections.observableArrayList();
 	
 	//------------------------ ï¿½pne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -59,24 +64,15 @@ public class Kontroll implements kontrollInterface {
         }catch(Exception e) {
             throw new Exception("Kan ikke lukke databaseforbindelse");
         }
-    }
-
-	public ObservableList<Billett> billett = FXCollections.observableArrayList();
-    public ObservableList<Film> film = FXCollections.observableArrayList();
-    public ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
-    public ObservableList<Plass> plass = FXCollections.observableArrayList();
-    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
-    public ObservableList<Visning> visning = FXCollections.observableArrayList();
-    
-    
+    }    
     
 	public ObservableList<Billett> getBillett() {
 		return billett;
 	}
 
-	public void setBillett(ObservableList<Billett> billett) {
-		this.billett = billett;
-	}
+	public void settBillett(String billettkode, int visningsnr, boolean erBetalt) {
+		billett.add(new Billett(billettkode, visningsnr, erBetalt));
+    }
 
 	public ObservableList<Film> getFilm() {
 		return film;
@@ -133,7 +129,7 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public ResultSet hentBilletter() throws Exception {
         resultat = null;
-        String sql = "SELECT b_billettkode, b_visningsnr, b_erBetalt FROM tblbillett";
+        String sql = "SELECT * FROM tblbillett";
         preparedStatement = forbindelse.prepareStatement(sql);
         resultat = preparedStatement.executeQuery(sql);
         
@@ -142,42 +138,27 @@ public class Kontroll implements kontrollInterface {
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
         	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
-        	billett.add(new Billett(billettKode, visningsnr, erBetalt));
+        	settBillett(billettKode, visningsnr, erBetalt);
         }
         return resultat;
 	}
 	
-	public void settDataBillettListe(String billettkode, int visningsnr, boolean erBetalt) {
-		billettListe.add(new Billett(billettkode, visningsnr, erBetalt));
+	
+	public ObservableList<Billett> getDataBillettListe() {
+        return billett;
     }
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
-		try {
-			ResultSet resultat = lesUbetalteBilletter();
-			while(resultat.next()) {
-				String billettkode = resultat.getString(1);
-				int visningsnr = resultat.getInt(2);
-				boolean erBetalt = resultat.getBoolean(3);
-				System.out.println(billettkode + " " + visningsnr + " " + erBetalt);
-				settDataBillettListe(billettkode, visningsnr, erBetalt);
+		ObservableList<Billett> billettListe = FXCollections.observableArrayList();
+		for (Billett b:billett) {
+			if(!b.getErBetalt()) {
+				
 			}
-			for (Billett b : billettListe) {
-				System.out.println(b.getBillettkode());
-			}
-		}catch(Exception e) {System.out.println(e.getMessage());}
+		}
 		return billettListe;
 	}
 	
-	 public ResultSet lesUbetalteBilletter() throws Exception {
-	    	try {
-	    		ResultSet resultat = null;
-		    	String sql = "SELECT * FROM tblbillett";
-	    		utsagn = forbindelse.createStatement();
-	    		resultat = utsagn.executeQuery(sql);
-	    		return resultat;
-	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
-	 }
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {

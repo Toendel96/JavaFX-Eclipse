@@ -8,6 +8,8 @@ import domene.Billett;
 import domene.Film;
 import domene.Visning;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import kontroll.Kontroll;
 import javafx.scene.Scene;
@@ -33,6 +35,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			kontroll.lagForbindelse();
+			kontroll.hentBilletter();
 			vindu=primaryStage;
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -264,7 +267,7 @@ public class Main extends Application {
 			Button oppdater = new Button("Sett som betalt");
 			gridpane.add(oppdater, 1, 2);
 			Button avbestill = new Button("Slett alle bestillinger");
-			avbestill.setOnAction(e -> lagSlettBillettScene());
+			avbestill.setOnAction(e -> {lagSlettBillettScene();});
 			Button tilbake = new Button("Tilbake");
 			tilbake.setOnAction(e -> behandleTilbake());
 			oppdater.setOnAction(e -> {
@@ -284,7 +287,7 @@ public class Main extends Application {
 		}catch(Exception e) {System.out.println("nope");}
 	}
 		
-	public void lagSlettBillettScene(){
+	public void lagSlettBillettScene() {
 		vindu.setWidth(600);
 		vindu.setHeight(500);
 		BorderPane slettBillettRotpanel = new BorderPane();
@@ -293,12 +296,12 @@ public class Main extends Application {
 		FlowPane knappePanel = new FlowPane();
 		TableColumn colBillettkode = new TableColumn("Billettkode:");
 		colBillettkode.setMinWidth(100);
-		colBillettkode.setCellValueFactory(new PropertyValueFactory<Billett, String>("b_billettkode"));
+		colBillettkode.setCellValueFactory(new PropertyValueFactory<Billett, String>("billettkode"));
 		TableColumn colBetalt = new TableColumn("Er betalt:");
 		colBetalt.setMinWidth(100);
-		colBetalt.setCellValueFactory(new PropertyValueFactory<Billett, Boolean>("b_erBetalt"));
+		colBetalt.setCellValueFactory(new PropertyValueFactory<Billett, Boolean>("erBetalt"));
 		sletttabell.getColumns().addAll(colBillettkode, colBetalt);
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
+		sletttabell.setItems(kontroll.getDataBillettListe());
 		Button avbestill = new Button("Slett alle bestillinger");
 		//avbestill.setOnAction(e -> kontroll.slettAlleBestillinger());
 		Button tilbake = new Button("Tilbake");
