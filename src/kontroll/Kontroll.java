@@ -43,7 +43,7 @@ public class Kontroll implements kontrollInterface {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppn� kontakt med databasen");
+            throw new Exception("Kan ikke oppnå kontakt med databasen");
         }
     }
 
