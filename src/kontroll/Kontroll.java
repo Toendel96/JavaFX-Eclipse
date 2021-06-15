@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -84,7 +83,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, filmnavn));
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -141,6 +140,7 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
+        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -203,7 +203,6 @@ public class Kontroll implements kontrollInterface {
 				String filmNavn = resultat.getString(2);
 				setFilm(filmNr,filmNavn);
 			}
-			System.out.println(film);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -286,7 +285,7 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
 		int siste = visning.size() -1;
-		int nrPaaSiste = visning.get(siste).getVisningsnr();
+		int nrPaaSiste = visning.get(siste).getVisningnr();
 		int nyttVisningsNr = nrPaaSiste +1;
 		
 		int filmNr = Integer.parseInt(filmnr);
@@ -356,16 +355,16 @@ public class Kontroll implements kontrollInterface {
                if (erDatoFremITidEllerSammeDag) {
             	   if(differanseITid >= 30) {
             		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-                	   //Mer enn tretti min og samme eller nyere dag
-                	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+                	   System.out.println("Mer enn tretti min og samme eller nyere dag");
+                	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
             	   }
                } else {
-            	   //Under tretti eller tidligere dato
-            	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   System.out.println("Under tretti eller tidligere dato");
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
                }
                System.out.println();
-               //Alle
-               //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               System.out.println("Alle");
+               System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
 		}
 		return resultat;
 	}
@@ -386,23 +385,13 @@ public class Kontroll implements kontrollInterface {
 		return null;
 	}
 
-	public void hentVisninger() throws Exception {
-		ResultSet resultat = null;
-		String sql = "SELECT * FROM tblvisning";
-		preparedStatement = forbindelse.prepareStatement(sql);
-		resultat = preparedStatement.executeQuery(sql);
-		while(resultat.next()) {
-			int visningnr = resultat.getInt(1);
-            int filmnr = resultat.getInt(2);
-            int kinosalnr = resultat.getInt(3);
-            Date dato = resultat.getDate(4);
-            Time starttid = resultat.getTime(5);
-            float pris = resultat.getFloat(6);
-			setVisning(visningnr,filmnr,kinosalnr,dato,starttid,pris);
-		}
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
-	//------------------------------------ Sletter alt innhold i databasen (kjores nï¿½r applikasjonen avsluttes) --------------------------------------------
+	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
 	public void slettinnholdAlleTabeller() throws Exception {
 		try {
             //Execute SQL query
@@ -436,6 +425,12 @@ public class Kontroll implements kontrollInterface {
             preparedStatement.executeUpdate();
             
         } catch (Exception e) { throw new Exception(e); }
+	}
+
+	@Override
+	public void hentVisninger() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
