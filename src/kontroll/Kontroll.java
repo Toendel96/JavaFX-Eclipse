@@ -22,7 +22,7 @@ import domene.Plassbillett;
 import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import javafx.scene.control.ChoiceBox;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,12 +36,12 @@ public class Kontroll implements kontrollInterface {
 	    private Statement utsagn;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
-	    public ObservableList<Billett> billett = FXCollections.observableArrayList();
-	    public ObservableList<Film> film = FXCollections.observableArrayList();
-	    public ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
-	    public ObservableList<Plass> plass = FXCollections.observableArrayList();
-	    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
-	    public ObservableList<Visning> visning = FXCollections.observableArrayList();
+	    private ObservableList<Billett> billett = FXCollections.observableArrayList();
+	    private ObservableList<Film> film = FXCollections.observableArrayList();
+	    private ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
+	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
+	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
+	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -78,40 +78,40 @@ public class Kontroll implements kontrollInterface {
 		return film;
 	}
 
-	public void setFilm(ObservableList<Film> film) {
-		this.film = film;
+	public void setFilm(int filmnr, String filmnavn) {
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
 
-	public void setKinosal(ObservableList<Kinosal> kinosal) {
-		this.kinosal = kinosal;
+	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
+		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
 
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
 
-	public void setPlass(ObservableList<Plass> plass) {
-		this.plass = plass;
+	public void setPlass(int radnr, int setenr, int kinosalnr) {
+		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
 	}
 
-	public void setPlassbillett(ObservableList<Plassbillett> plassbillett) {
-		this.plassbillett = plassbillett;
+	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
+		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
 	}
 
 	public ObservableList<Visning> getVisning() {
 		return visning;
 	}
 
-	public void setVisning(ObservableList<Visning> visning) {
-		this.visning = visning;
+	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
 	@Override
@@ -163,7 +163,8 @@ public class Kontroll implements kontrollInterface {
 		}
 		return billettListe;
 	}
-	
+
+
 	public void slettAlleBestillinger(ObservableList<Billett> billettListe) {
 		for (Billett b: billett) {
 			if (b.getBillettkode().equals(billettListe)) {
@@ -171,6 +172,16 @@ public class Kontroll implements kontrollInterface {
 			}
 		}
 	}
+
+	 public ResultSet lesUbetalteBilletter() throws Exception {
+	    	try {
+	    		ResultSet resultat = null;
+		    	String sql = "SELECT * FROM tblbillett";
+	    		utsagn = forbindelse.createStatement();
+	    		resultat = utsagn.executeQuery(sql);
+	    		return resultat;
+	    	}catch(Exception e) {throw new Exception("Kan ikke �pne databasetabell");}
+	 }
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
@@ -185,23 +196,33 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ArrayList<Film> hentFilmer() throws Exception {
+	public ObservableList<Film> hentFilmer() throws Exception {
+		//Henter alle filmene som ligger i databasen og setter film Observablelisten
 		try {
+			ResultSet resultat = null;
 			String sql = "SELECT * FROM tblfilm";
 			preparedStatement = forbindelse.prepareStatement(sql);
 			resultat = preparedStatement.executeQuery(sql);
-			ArrayList<Film> filmer = new ArrayList<Film>();
 			while(resultat.next()) {
-				int filmNr = resultat.getInt(0);
-				System.out.println(filmNr);
-				String filmNavn = resultat.getString(1);
-				System.out.println(filmNavn);
-				filmer.add(new Film(filmNr,filmNavn));
+				int filmNr = resultat.getInt(1);
+				String filmNavn = resultat.getString(2);
+				setFilm(filmNr,filmNavn);
 			}
-			return filmer;
-		}catch(Exception e) {}
-		return null;
+			return film;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente fra databasen");
+		}
 	}
+	
+	public ChoiceBox<String> visFilmerChoice() {
+		//Returnerer en choicebox med alle filmnavn
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Film f: film) {
+			cb.getItems().add(f.getFilmnavn());
+		}
+		return cb;
+	}
+	
 
 	@Override
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception {
