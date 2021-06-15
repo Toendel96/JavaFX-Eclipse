@@ -69,9 +69,14 @@ public class Main extends Application {
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
+			
+			
 			lagKundescene();
+			lagStatistikkKinosal();
+			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
+			
 			
 	        ObservableList<Plassbillett> plassbillett = kontroll.getPlassbillett();
 	        
@@ -220,12 +225,12 @@ public class Main extends Application {
 		//Oppretter en knapp for statistikk for film:
 		Button statistikkFilm = new Button("Statistikk film");
 		rapportGridpane.add(statistikkFilm,0,0);
-		statistikkFilm.setOnAction(e -> lagStatistikkFilm());
+		statistikkFilm.setOnAction(e -> vindu.setScene(filmStatistikkScene));
 		
 		//Oppretter en knapp for statistikk for kinosal:
 		Button statistikkKinosal = new Button("Statistikk kinosal");
 		rapportGridpane.add(statistikkKinosal, 1, 0);
-		statistikkKinosal.setOnAction(e -> lagStatistikkKinosal());
+		statistikkKinosal.setOnAction(e -> vindu.setScene(kinoStatistikkScene));
 			
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
@@ -247,7 +252,6 @@ public class Main extends Application {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
 
-		Scene filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);
 		FlowPane valgpanel = new FlowPane();
 
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
@@ -291,8 +295,7 @@ public class Main extends Application {
 		valgpanel.getChildren().addAll(btnTilbake);
 		//vindu.setWidth(600);
 		//vindu.setHeight(500);
-		vindu.setScene(filmStatistikkScene);
-		vindu.show();
+		
 		
 	}
 	
@@ -301,7 +304,6 @@ public class Main extends Application {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
 
-		Scene kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
 		FlowPane valgpanel = new FlowPane();
 
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
@@ -344,8 +346,6 @@ public class Main extends Application {
 		valgpanel.getChildren().addAll(btnTilbake);
 		vindu.setWidth(300);
 		vindu.setHeight(500);
-		vindu.setScene(kinoStatistikkScene);
-		vindu.show();
 		
 	}
 	
