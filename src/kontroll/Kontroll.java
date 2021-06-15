@@ -32,6 +32,7 @@ import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Kontroll implements kontrollInterface {
 	 private String databasenavn = "jdbc:mysql://localhost:3306/kino";
@@ -148,12 +149,6 @@ public class Kontroll implements kontrollInterface {
         return null;
 	}
 	
-	public boolean settBillettSomBetalt(String billettKode) {
-		//
-		return true;
-	}
-	
-	
 	public ObservableList<Billett> getDataBillettListe() {
         return billett;
     }
@@ -171,19 +166,48 @@ public class Kontroll implements kontrollInterface {
 
 
 	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+		if (ubetaltBillettListe.isEmpty()) {
+			showMessageDialog(null, "Finnes ingen ubetalte lister");
+		}else {
 		for (Billett u: ubetaltBillettListe) {
-			billett.remove(u);
-			} 
-		for (Billett b:billett) {
-		}
+				billett.remove(u);
+			}
+		showMessageDialog(null, "Ubetalte billetter er fjernet");
 		ubetaltBillettListe.clear();
+		}
 	}
-
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//Tar imot billettkode som skal settes til betalt
+		boolean billettFinnes= false;
+		for(Billett b: billett) {
+			if(billettKode.equals(b.getBillettkode())){
+				if(b.getErBetalt()) {
+					billettFinnes=true;
+					showMessageDialog(null, "Billetten er allerede betalt");
+
+				} else {
+				System.out.println(b.toString());
+				b.setErBetalt(true);
+				System.out.println(b.toString());
+				showMessageDialog(null, b.toString() + "\n"  + "Billetten er nå satt til betalt");
+				
+				billettFinnes=true;
+				break;
+				}
+			}
+		}
+		if(billettFinnes==false) {
+			showMessageDialog(null, "Billetten finnes ikke");
+			
+		}
+		return true;
 	}
 
 	@Override
