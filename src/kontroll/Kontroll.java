@@ -338,35 +338,44 @@ public class Kontroll implements kontrollInterface {
                //System.out.println(startidLocalTime.getClass().getName());
                //System.out.println(naavarendeTidFormat.getClass().getName());
                
-               boolean erDatoFremITidEllerSammeDag = false;
+               boolean erDatoFremITid = false;
+               boolean erDatoSammeDag = false;
                
                long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
                int sjekkDatoer = datoFormat.compareTo(date);
                
                if (sjekkDatoer > 0) {
             	   //dato fra database er senere enn naavarende dato
-            	   erDatoFremITidEllerSammeDag = true;
+            	   erDatoFremITid = true;
                } else if (sjekkDatoer < 0) {
             	   //dato fra databsaae er tidligere enn naavarende dato
-            	   erDatoFremITidEllerSammeDag = false;
+            	   erDatoFremITid = false;
                } else {
             	   //Samme dag
-            	   erDatoFremITidEllerSammeDag = true;
+            	   erDatoFremITid = true;
+            	   erDatoSammeDag = true;
                }
                
-               if (erDatoFremITidEllerSammeDag) {
-            	   if(differanseITid >= 30) {
+               if (erDatoFremITid) {
+            	   System.out.println("Dato frem i tid");
+            	   if (erDatoSammeDag) {
+            		   if(differanseITid >= 30) {
+                		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+                    	   System.out.println("Mer enn tretti min");
+                    	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+                	   } else {
+                		   System.out.println("Ikke mer enn tretti min");
+                	   }
+            	   } else {
             		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-                	   System.out.println("Mer enn tretti min og samme eller nyere dag");
-                	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
             	   }
                } else {
             	   System.out.println("Under tretti eller tidligere dato");
             	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
                }
                System.out.println();
-               System.out.println("Alle");
-               System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               /* System.out.println("Alle");
+               System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
 		}
 		return resultat;
 	}
