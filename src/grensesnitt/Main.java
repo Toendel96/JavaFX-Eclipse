@@ -53,7 +53,7 @@ public class Main extends Application {
 		try {
 			vindu=primaryStage;
 			kontroll.lagForbindelse();
-			//Kaller på metoder som henter ut data fra database og legger det i lister
+			//Kaller pï¿½ metoder som henter ut data fra database og legger det i lister
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
@@ -96,6 +96,8 @@ public class Main extends Application {
 				kontroll.slettinnholdAlleTabeller();
 				kontroll.lagreFilmDB();
 				kontroll.lagreKinosalDB();
+				kontroll.lagrePlassDB();
+				kontroll.lagreVisningDB();
 				Platform.exit();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block

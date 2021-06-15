@@ -455,7 +455,7 @@ public class Kontroll implements kontrollInterface {
             //Execute SQL query
             String sql1 = "DELETE FROM tblplassbillett";
             String sql2 = "DELETE FROM tblplass";
-            String sql3 = "DELETE FROM tbllogin";
+            //String sql3 = "DELETE FROM tbllogin";
             String sql4 = "DELETE FROM tblbillett";
             String sql5 = "DELETE FROM tblvisning";
             String sql6 = "DELETE FROM tblkinosal";
@@ -467,8 +467,8 @@ public class Kontroll implements kontrollInterface {
             preparedStatement = forbindelse.prepareStatement(sql2);
             preparedStatement.executeUpdate();
 
-            preparedStatement = forbindelse.prepareStatement(sql3);
-            preparedStatement.executeUpdate();
+            //preparedStatement = forbindelse.prepareStatement(sql3);
+            //preparedStatement.executeUpdate();
             
             preparedStatement = forbindelse.prepareStatement(sql4);
             preparedStatement.executeUpdate();
@@ -527,8 +527,57 @@ public class Kontroll implements kontrollInterface {
 			}
 		}
 		System.out.print("Suksess kinosal: " + success1 + "\n");
-		System.out.print("Feil kinosal: " + feil1);
+		System.out.print("Feil kinosal: " + feil1 + "\n");
 	}
+	
+	public void lagrePlassDB() throws Exception {
+		int success2 = 0;
+		int feil2 = 0;
+		String sql2 = "INSERT INTO tblplass"
+				+ "(p_radnr,p_setenr,p_kinosalnr)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql2);
+		for (Plass p: plass) {
+			preparedStatement.setInt(1, p.getRadnr());
+			preparedStatement.setInt(2, p.getSetenr());
+			preparedStatement.setInt(3, p.getKinosalnr());
+			int insert2 = preparedStatement.executeUpdate();
+			if(insert2 == 1) {
+				success2 += 1;
+			}else {
+				feil2 += 1;
+			}
+		}
+		System.out.print("Suksess plass: " + success2 + "\n");
+		System.out.print("Feil plass: " + feil2 + "\n");
+	}
+	
+	public void lagreVisningDB() throws Exception {
+		int success3 = 0;
+		int feil3 = 0;
+		String sql3 = "INSERT INTO tblvisning"
+				+ "(v_visningnr,v_filmnr,v_kinosalnr,v_dato,v_starttid,v_pris)"
+				+ "VALUES(?,?,?,?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql3);
+		for (Visning v: visning) {
+			preparedStatement.setInt(1, v.getVisningnr());
+			preparedStatement.setInt(2, v.getFilmnr());
+			preparedStatement.setInt(3, v.getKinosalnr());
+			preparedStatement.setDate(4, v.getDato());
+			preparedStatement.setTime(5, v.getStarttid());
+			preparedStatement.setFloat(6, v.getPris());
+			int insert3 = preparedStatement.executeUpdate();
+			if(insert3 == 1) {
+				success3 += 1;
+			}else {
+				feil3 += 1;
+			}
+		}
+		System.out.print("Suksess visning: " + success3 + "\n");
+		System.out.print("Feil visning: " + feil3 + "\n");
+	}
+	
+	
 		
 	public void leggAltInnItblFilmVedAvslutning() throws Exception {
         try {
