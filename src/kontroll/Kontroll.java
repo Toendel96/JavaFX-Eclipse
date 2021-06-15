@@ -441,7 +441,4 @@ public class Kontroll implements kontrollInterface {
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
 	
-	public void behandleTilbake(Stage vindu,Scene scene) {
-		vindu.setScene(scene);
-	}
 }
