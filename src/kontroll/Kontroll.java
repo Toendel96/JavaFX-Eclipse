@@ -103,6 +103,21 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
+	
+	public ResultSet hentPlasser() throws Exception {
+        resultat = null;
+        String sql = "SELECT * FROM tblplass";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	int radnr = resultat.getInt(1);
+        	int setenr = resultat.getInt(2);
+        	int kinosalnr = resultat.getInt(3);
+        	setPlass(radnr, setenr, kinosalnr);
+        }
+        return null;
+	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
@@ -165,7 +180,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 
-	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
 		if (ubetaltBillettListe.isEmpty()) {
 			showMessageDialog(null, "Finnes ingen ubetalte lister");
 		}else {
@@ -460,12 +475,6 @@ public class Kontroll implements kontrollInterface {
             preparedStatement.executeUpdate();
             
         } catch (Exception e) { throw new Exception(e); }
-	}
-
-	@Override
-	public void hentVisninger() throws Exception {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------

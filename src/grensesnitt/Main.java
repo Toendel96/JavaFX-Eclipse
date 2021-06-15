@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import domene.Billett;
 import domene.Film;
+import domene.Plass;
 import domene.Visning;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -55,9 +56,9 @@ public class Main extends Application {
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
-			kontroll.hentVisninger();
 			kontroll.leggInnVisningerIListe();
-			kontroll.slettinnholdAlleTabeller();
+			kontroll.hentPlasser();
+			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
@@ -367,8 +368,6 @@ public class Main extends Application {
 		vindu.setScene(nyVisningScene);
 		vindu.show();
 	}
-			
-
 		
 	public void lagKinobetjentscene() {
 		vindu.setWidth(600);
@@ -399,7 +398,7 @@ public class Main extends Application {
 		
 	}
 	public void knappBehandleAvbestill(){
-		kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter());
+		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
 		sletttabell.getItems().clear(); 
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
