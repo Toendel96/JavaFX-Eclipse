@@ -148,7 +148,7 @@ COLLATE = utf8_danish_ci;
 -- INSERT
 -- 3 filmer, 5 kinosaler i to kioner og mange hundre plasser
 -- ----------------------------------------------------------
-INSERT INTO `tblfilm` VALUES (1,'Rosen'),(2,'Tulipanen'),(3,'Solsikken');
+INSERT INTO `tblfilm` VALUES (1,'Rosen'),(2,'Tulipanen'),(3,'Solsikken'), (5, 'Test');
 
 INSERT INTO `tblkinosal` VALUES (101,'Ringen','Storsal'),(102,'Ringen','Småsal'),
 (201,'Tiara','Hovedsal'),(202,'Tiara','Sidesal'),(203,'Tiara','Barnesal');
