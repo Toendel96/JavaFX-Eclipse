@@ -71,8 +71,6 @@ public class Main extends Application {
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
-			
-			
 			lagKundescene();
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
@@ -537,6 +535,7 @@ public class Main extends Application {
 			kontroll.lagreVisningDB();
 			kontroll.lagreBillettDB();
 			kontroll.lagrePlassBillett();
+			kontroll.lukk();
 			Platform.exit();
 		}catch(Exception e) {
 	}

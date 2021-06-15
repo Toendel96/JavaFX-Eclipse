@@ -43,8 +43,8 @@ public class Kontroll implements kontrollInterface {
 	    private ResultSet resultat;
 	    private PreparedStatement preparedStatement;
 	    private Statement utsagn;
-	    private String brukernavn = "Case";
-	    private String passord = "Esac";
+	    private final String brukernavn = "Case";
+	    private final String passord = "Esac";
 	    private ObservableList<Billett> billett = FXCollections.observableArrayList();
 	    private ObservableList<Film> film = FXCollections.observableArrayList();
 	    private ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
@@ -60,7 +60,7 @@ public class Kontroll implements kontrollInterface {
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
-            System.out.println("Tilkobling til database fungerte");
+            //System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
             throw new Exception("Kan ikke oppnaa kontakt med databasen");
         }
@@ -71,7 +71,7 @@ public class Kontroll implements kontrollInterface {
             if(forbindelse != null) {
                 forbindelse.close();
                 resultat.close();
-                //preparedStatement.close();
+                preparedStatement.close();
                 //utsagn.close();
             }
         }catch(Exception e) {
@@ -193,7 +193,7 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
-        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
+        	//System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -391,10 +391,7 @@ public class Kontroll implements kontrollInterface {
 				
 				muligePlasser = antallVisninger * antallPlasser;
 				salProsent = antallSalg / antallPlasser * 100;
-				
-				
-				
-				
+						
 			}
 		}
 		
@@ -422,7 +419,7 @@ public class Kontroll implements kontrollInterface {
 				String billettkode = resultat.getString(4);
 				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
 			}
-			System.out.println(plassbillett);
+			//System.out.println(plassbillett);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -609,8 +606,8 @@ public class Kontroll implements kontrollInterface {
 			else {feil += 1;
 			}
 		}
-		System.out.print("Suksess film: " + success + "\n");
-		System.out.print("Feil film: " + feil +"\n");
+		//System.out.print("Suksess film: " + success + "\n");
+		//System.out.print("Feil film: " + feil +"\n");
 	}
 	
 	public void lagreKinosalDB() throws Exception {
@@ -631,8 +628,8 @@ public class Kontroll implements kontrollInterface {
 				feil1 += 1;
 			}
 		}
-		System.out.print("Suksess kinosal: " + success1 + "\n");
-		System.out.print("Feil kinosal: " + feil1 + "\n");
+		//System.out.print("Suksess kinosal: " + success1 + "\n");
+		//System.out.print("Feil kinosal: " + feil1 + "\n");
 	}
 	
 	public void lagrePlassDB() throws Exception {
@@ -653,8 +650,8 @@ public class Kontroll implements kontrollInterface {
 				feil2 += 1;
 			}
 		}
-		System.out.print("Suksess plass: " + success2 + "\n");
-		System.out.print("Feil plass: " + feil2 + "\n");
+		//System.out.print("Suksess plass: " + success2 + "\n");
+		//System.out.print("Feil plass: " + feil2 + "\n");
 	}
 	
 	public void lagreVisningDB() throws Exception {
@@ -678,8 +675,8 @@ public class Kontroll implements kontrollInterface {
 				feil3 += 1;
 			}
 		}
-		System.out.print("Suksess visning: " + success3 + "\n");
-		System.out.print("Feil visning: " + feil3 + "\n");
+		//System.out.print("Suksess visning: " + success3 + "\n");
+		//System.out.print("Feil visning: " + feil3 + "\n");
 	}
 	
 	public void lagreBillettDB() throws Exception {
@@ -700,8 +697,8 @@ public class Kontroll implements kontrollInterface {
 				feil4 += 1;
 			}
 		}
-		System.out.print("Suksess billett: " + success4 + "\n");
-		System.out.print("Feil billett: " + feil4 + "\n");
+		//System.out.print("Suksess billett: " + success4 + "\n");
+		//System.out.print("Feil billett: " + feil4 + "\n");
 	}
 	
 	public void lagrePlassBillett() throws Exception {
@@ -723,8 +720,8 @@ public class Kontroll implements kontrollInterface {
 				feil5 += 1;
 			}
 		}
-		System.out.print("Suksess plassbillett: " + success5 + "\n");
-		System.out.print("Feil plassbillett: " + feil5 + "\n");
+		//System.out.print("Suksess plassbillett: " + success5 + "\n");
+		//System.out.print("Feil plassbillett: " + feil5 + "\n");
 	}
 	
 	
