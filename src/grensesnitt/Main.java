@@ -315,6 +315,8 @@ public class Main extends Application {
 		vindu.setScene(slettBestillingScene);
 		vindu.show();
 	}
+	
+	
 			
 	public void lagKundescene() {
 		try {

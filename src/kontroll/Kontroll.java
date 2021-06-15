@@ -161,16 +161,30 @@ public class Kontroll implements kontrollInterface {
 				billettListe.add(b);
 			}
 		}
+		if (billettListe.isEmpty()) {
+			return null;
+		}else {
 		return billettListe;
+		}
 	}
 
 
-	public void slettAlleBestillinger(ObservableList<Billett> billettListe) {
-		for (Billett b: billett) {
-			if (b.getBillettkode().equals(billettListe)) {
-				
-			}
-		}
+	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+		System.out.println("Du kom hit");
+		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
+		for (Billett u: ubetaltBillettListe) {
+			for(Billett b: billett) {
+				if (b.getBillettkode().equals(u.getBillettkode())) {
+					break;
+					//Ikke lagre dette objektet
+				} else {
+					System.out.println(b.toString() + "Har blitt lagt til i listen");
+					tempbillett.add(b);
+				}
+			} 
+		} 
+		billett.clear();
+		billett = tempbillett;
 	}
 
 	 public ResultSet lesUbetalteBilletter() throws Exception {
