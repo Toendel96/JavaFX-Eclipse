@@ -43,7 +43,7 @@ public class Kontroll implements kontrollInterface {
 	    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
 	    public ObservableList<Visning> visning = FXCollections.observableArrayList();
 	
-	//------------------------ �pne/Lukke forbindelse --------------------------------
+	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
@@ -140,7 +140,12 @@ public class Kontroll implements kontrollInterface {
         	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
-        return resultat;
+        return null;
+	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//
+		return true;
 	}
 	
 	
