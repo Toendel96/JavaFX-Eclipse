@@ -38,7 +38,7 @@ public class Kontroll implements kontrollInterface {
 	    private String passord = "Esac";
 	    private ObservableList<Billett> billettListe = FXCollections.observableArrayList();
 	
-	//------------------------ �pne/Lukke forbindelse --------------------------------
+	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
