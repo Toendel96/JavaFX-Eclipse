@@ -347,6 +347,7 @@ public class Kontroll implements kontrollInterface {
 				System.out.println(billettkode);
 				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
 			}
+			System.out.println(plassbillett);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -588,7 +589,7 @@ public class Kontroll implements kontrollInterface {
 				+ "(v_visningnr,v_filmnr,v_kinosalnr,v_dato,v_starttid,v_pris)"
 				+ "VALUES(?,?,?,?,?,?)";
 		preparedStatement = forbindelse.prepareStatement(sql3);
-		for (Visning v: visning) {
+		for (Visning v: alleVisninger) {
 			preparedStatement.setInt(1, v.getVisningnr());
 			preparedStatement.setInt(2, v.getFilmnr());
 			preparedStatement.setInt(3, v.getKinosalnr());
@@ -604,6 +605,51 @@ public class Kontroll implements kontrollInterface {
 		}
 		System.out.print("Suksess visning: " + success3 + "\n");
 		System.out.print("Feil visning: " + feil3 + "\n");
+	}
+	
+	public void lagreBillettDB() throws Exception {
+		int success4 = 0;
+		int feil4 = 0;
+		String sql4 = "INSERT INTO tblbillett"
+				+ "(b_billettkode,b_visningsnr,b_erBetalt)"
+				+ "VALUES(?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql4);
+		for (Billett b: billett) {
+			preparedStatement.setString(1, b.getBillettkode());
+			preparedStatement.setInt(2, b.getVisningsnr());
+			preparedStatement.setBoolean(3, b.getErBetalt());
+			int insert4 = preparedStatement.executeUpdate();
+			if(insert4 == 1) {
+				success4 += 1;
+			}else {
+				feil4 += 1;
+			}
+		}
+		System.out.print("Suksess billett: " + success4 + "\n");
+		System.out.print("Feil billett: " + feil4 + "\n");
+	}
+	
+	public void lagrePlassBillett() throws Exception {
+		int success5 = 0;
+		int feil5 = 0;
+		String sql5 = "INSERT INTO tblplassbillett"
+				+ "(pb_radnr,pb_setenr,pb_kinosalnr,pb_billettkode)"
+				+ "VALUES(?,?,?,?)";
+		preparedStatement = forbindelse.prepareStatement(sql5);
+		for (Plassbillett pb: plassbillett) {
+			preparedStatement.setInt(1, pb.getRadnr());
+			preparedStatement.setInt(2, pb.getSetenr());
+			preparedStatement.setInt(3, pb.getKinosalnr());
+			preparedStatement.setString(4, pb.getBillettkode());
+			int insert5 = preparedStatement.executeUpdate();
+			if(insert5 == 1) {
+				success5 += 1;
+			}else {
+				feil5 += 1;
+			}
+		}
+		System.out.print("Suksess plassbillett: " + success5 + "\n");
+		System.out.print("Feil plassbillett: " + feil5 + "\n");
 	}
 	
 	

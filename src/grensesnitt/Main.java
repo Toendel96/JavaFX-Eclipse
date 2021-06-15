@@ -60,6 +60,7 @@ public class Main extends Application {
 			kontroll.hentKinosaler();
 			kontroll.leggInnVisningerIListe();
 			kontroll.hentPlasser();
+			kontroll.hentPlassbilletter();
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -107,6 +108,8 @@ public class Main extends Application {
 				kontroll.lagreKinosalDB();
 				kontroll.lagrePlassDB();
 				kontroll.lagreVisningDB();
+				kontroll.lagreBillettDB();
+				kontroll.lagrePlassBillett();
 				Platform.exit();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
