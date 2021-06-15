@@ -53,7 +53,7 @@ public class Kontroll implements kontrollInterface {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppnï¿½ kontakt med databasen");
+            throw new Exception("Kan ikke oppnÃ¥ kontakt med databasen");
         }
     }
 
@@ -140,7 +140,6 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
-        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -164,30 +163,17 @@ public class Kontroll implements kontrollInterface {
 				ubetaltBillettListe.add(b);
 			}
 		}
-		if (ubetaltBillettListe.isEmpty()) {
-			return null;
-		}else {
 		return ubetaltBillettListe;
-		}
 	}
 
 
 	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
-		System.out.println("Du kom hit");
-		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
 		for (Billett u: ubetaltBillettListe) {
-			for(Billett b: billett) {
-				if (b.getBillettkode().equals(u.getBillettkode())) {
-					break;
-					//Ikke lagre dette objektet
-				} else {
-					System.out.println(b.toString() + "Har blitt lagt til i listen");
-					tempbillett.add(b);
-				}
+			billett.remove(u);
 			} 
-		} 
-		billett.clear();
-		billett = tempbillett;
+		for (Billett b:billett) {
+		}
+		ubetaltBillettListe.clear();
 	}
 
 
@@ -380,6 +366,44 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
-    
+	
+	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
+	public void slettinnholdAlleTabeller() throws Exception {
+		try {
+            //Execute SQL query
+            String sql1 = "DELETE FROM tblplassbillett";
+            String sql2 = "DELETE FROM tblplass";
+            String sql3 = "DELETE FROM tbllogint";
+            String sql4 = "DELETE FROM tblbillett";
+            String sql5 = "DELETE FROM tblvisning";
+            String sql6 = "DELETE FROM tblkinosal";
+            String sql7 = "DELETE FROM tblfilm";
+
+            preparedStatement = forbindelse.prepareStatement(sql1);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql2);
+            preparedStatement.executeUpdate();
+
+            preparedStatement = forbindelse.prepareStatement(sql3);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql4);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql5);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql6);
+            preparedStatement.executeUpdate();
+            
+            preparedStatement = forbindelse.prepareStatement(sql7);
+            preparedStatement.executeUpdate();
+            
+        } catch (Exception e) { throw new Exception(e); }
+	}
+	
+	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+	
 
 }
