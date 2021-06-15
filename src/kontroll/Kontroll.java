@@ -10,7 +10,11 @@ import java.util.ArrayList;
 
 import domene.Film;
 import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -22,7 +26,7 @@ import domene.Plassbillett;
 import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import javafx.scene.control.ChoiceBox;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,11 +37,17 @@ public class Kontroll implements kontrollInterface {
 	    private Connection forbindelse;
 	    private ResultSet resultat;
 	    private PreparedStatement preparedStatement;
+	    private Statement utsagn;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
-	    private ObservableList<Billett> billettListe = FXCollections.observableArrayList();
+	    private ObservableList<Billett> billett = FXCollections.observableArrayList();
+	    private ObservableList<Film> film = FXCollections.observableArrayList();
+	    private ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
+	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
+	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
+	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 	
-	//------------------------ �pne/Lukke forbindelse --------------------------------
+	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
@@ -58,63 +68,53 @@ public class Kontroll implements kontrollInterface {
         }catch(Exception e) {
             throw new Exception("Kan ikke lukke databaseforbindelse");
         }
-    }
-
-	public ObservableList<Billett> billett = FXCollections.observableArrayList();
-    public ObservableList<Film> film = FXCollections.observableArrayList();
-    public ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
-    public ObservableList<Plass> plass = FXCollections.observableArrayList();
-    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
-    public ObservableList<Visning> visning = FXCollections.observableArrayList();
-    
-    
+    }    
     
 	public ObservableList<Billett> getBillett() {
 		return billett;
 	}
 
-	public void setBillett(ObservableList<Billett> billett) {
-		this.billett = billett;
-	}
+	public void settBillett(String billettkode, int visningsnr, boolean erBetalt) {
+		billett.add(new Billett(billettkode, visningsnr, erBetalt));
+    }
 
 	public ObservableList<Film> getFilm() {
 		return film;
 	}
 
-	public void setFilm(ObservableList<Film> film) {
-		this.film = film;
+	public void setFilm(int filmnr, String filmnavn) {
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
-
-	public void setKinosal(ObservableList<Kinosal> kinosal) {
-		this.kinosal = kinosal;
+	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
+		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
 
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
 
-	public void setPlass(ObservableList<Plass> plass) {
-		this.plass = plass;
+	public void setPlass(int radnr, int setenr, int kinosalnr) {
+		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
 	}
 
-	public void setPlassbillett(ObservableList<Plassbillett> plassbillett) {
-		this.plassbillett = plassbillett;
+	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
+		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
 	}
 
 	public ObservableList<Visning> getVisning() {
 		return visning;
 	}
 
-	public void setVisning(ObservableList<Visning> visning) {
-		this.visning = visning;
+	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
 	@Override
@@ -131,42 +131,65 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public ResultSet hentBilletter() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+        resultat = null;
+        String sql = "SELECT * FROM tblbillett";
+        preparedStatement = forbindelse.prepareStatement(sql);
+        resultat = preparedStatement.executeQuery(sql);
+        
+        while (resultat.next()) {
+        	String billettKode = resultat.getString(1);
+        	int visningsnr = resultat.getInt(2);
+        	boolean erBetalt = resultat.getBoolean(3);
+        	System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
+        	settBillett(billettKode, visningsnr, erBetalt);
+        }
+        return null;
 	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//
+		return true;
+	}
+	
+	
+	public ObservableList<Billett> getDataBillettListe() {
+        return billett;
+    }
 	
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
-		try {
-			ResultSet resultat = lesUbetalteBilletter();
-			while(resultat.next()) {
-				String billettkode = resultat.getString(1);
-				int visningsnr = resultat.getInt(2);
-				boolean erBetalt = resultat.getBoolean(3);
-				/*boolean erBetalt;
-				if (erBetalt1==0) {
-					erBetalt=false;
-				}else {
-					erBetalt=true;
-				}*/
-				billettListe.add(new Billett(billettkode, visningsnr, erBetalt));
+		ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
+		for (Billett b:billett) {
+			if(!b.getErBetalt()) {
+				ubetaltBillettListe.add(b);
 			}
-		}catch(Exception e) {System.out.println(e.getMessage());}
-		return billettListe;
+		}
+		if (ubetaltBillettListe.isEmpty()) {
+			return null;
+		}else {
+		return ubetaltBillettListe;
+		}
 	}
-	
-	 public ResultSet lesUbetalteBilletter() throws Exception {
-	    	try {
-	    		ResultSet resultat = null;
-		    	String sql = "SELECT * FROM tblbillett";
-	    		preparedStatement = forbindelse.prepareStatement(sql);
-	    		resultat = preparedStatement.executeQuery(sql);
-	    		return resultat;
-	    	}catch(Exception e) {throw new Exception("Kan ikke �pne databasetabell");}
-	 
-	    }
 
-	
+
+	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+		System.out.println("Du kom hit");
+		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
+		for (Billett u: ubetaltBillettListe) {
+			for(Billett b: billett) {
+				if (b.getBillettkode().equals(u.getBillettkode())) {
+					break;
+					//Ikke lagre dette objektet
+				} else {
+					System.out.println(b.toString() + "Har blitt lagt til i listen");
+					tempbillett.add(b);
+				}
+			} 
+		} 
+		billett.clear();
+		billett = tempbillett;
+	}
+
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
@@ -181,23 +204,42 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ArrayList<Film> hentFilmer() throws Exception {
+	public void hentFilmer() throws Exception {
+		//Henter alle filmene som ligger i databasen og setter film Observablelisten
 		try {
+			ResultSet resultat = null;
 			String sql = "SELECT * FROM tblfilm";
 			preparedStatement = forbindelse.prepareStatement(sql);
 			resultat = preparedStatement.executeQuery(sql);
-			ArrayList<Film> filmer = new ArrayList<Film>();
 			while(resultat.next()) {
-				int filmNr = resultat.getInt(0);
-				System.out.println(filmNr);
-				String filmNavn = resultat.getString(1);
-				System.out.println(filmNavn);
-				filmer.add(new Film(filmNr,filmNavn));
+				int filmNr = resultat.getInt(1);
+				String filmNavn = resultat.getString(2);
+				setFilm(filmNr,filmNavn);
 			}
-			return filmer;
-		}catch(Exception e) {}
-		return null;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente fra databasen");
+		}
 	}
+	
+	public int hentFilmnrFraNavn(String filmNavn) {
+		int filmNr = 0;
+		for (Film f: film) {
+			if (f.getFilmnavn().equals(filmNavn)) {
+				filmNr = f.getFilmnr();
+			}
+		}
+		return filmNr;
+	}
+	
+	public ChoiceBox<String> visFilmerChoice() {
+		//Returnerer en choicebox med alle filmnavn
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Film f: film) {
+			cb.getItems().add(f.getFilmnavn());
+		}
+		return cb;
+	}
+	
 
 	@Override
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception {
@@ -206,9 +248,27 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentKinosaler() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		ResultSet resultat = null;
+		String sql = "SELECT * FROM tblkinosal";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		resultat = preparedStatement.executeQuery(sql);
+		while(resultat.next()) {
+			int kinosalNr = resultat.getInt(1);
+			String kinoNavn = resultat.getString(2);
+			String kinoSalNavn = resultat.getString(3);
+			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
+		}
+		return kinosal;
+	}
+	
+	public ChoiceBox<String> visKinosalerChoice() {
+		//Returnerer en choicebox med alle kinosaler
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Kinosal k: kinosal) {
+			cb.getItems().add(String.valueOf(k.getKinosalnr()));
+		}
+		return cb;
 	}
 
 	@Override
@@ -236,26 +296,16 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
+	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		
 		return false;
 	}
 
+
 	@Override
-	public ResultSet hentVisninger() throws Exception {
+	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
-		
-		LocalDateTime now = LocalDateTime.now();  
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");  
-        String formatDateTime = now.format(format);
-		
-		String sql = "SELECT v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato, v_starttid, NOW()- INTERVAL 1 HOUR"
-				+ "FROM tblvisning, tblbillett, tblplass, tblfilm\r\n"
-				+ "WHERE v_visningnr = b_visningsnr\r\n"
-				+ "	AND v_kinosalnr = p_kinosalnr\r\n"
-				+ "			AND v_dato >= CURDATE()\r\n"
-				+ "				AND f_filmnr = v_filmnr\r\n"
-				+ "GROUP BY v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato;";
+		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
 		preparedStatement = forbindelse.prepareStatement(sql);
 		resultat = preparedStatement.executeQuery(sql);
 		
@@ -266,22 +316,54 @@ public class Kontroll implements kontrollInterface {
                int kinosalnr = resultat.getInt(3);
                Date dato = resultat.getDate(4);
                Time starttid = resultat.getTime(5);
-               boolean erBetalt = resultat.getBoolean(5);
-               int totalFakturaPris = resultat.getInt(6);
-               Date datoKlokkeslett = resultat.getDate(7);
+               float pris = resultat.getFloat(6);
                
-               //System.out.println(fakturanummer + " " + kundenummer + " " + dagensDato + " " + forfallsdato + " " + erBetalt); //test print
-               //dataFaktura.add(new Faktura(fakturanummer, kundenummer, dagensDato, forfallsdato, erBetalt, totalFakturaPris));
+               LocalTime startidLocalTime = toLocalTime(starttid);
+               
+               LocalDateTime naavarendeTid = LocalDateTime.now();
+               DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");  
+               String formatString = naavarendeTid.format(format);  
+               LocalTime naavarendeTidFormat = LocalTime.parse(formatString);
+               
+               //System.out.println(startidLocalTime.getClass().getName());
+               //System.out.println(naavarendeTidFormat.getClass().getName());
+               
+               long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               
+               if (differanseITid >= 30) {
+            	   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+            	   System.out.println("Mer enn tretti min");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); 
+               } else {
+            	   System.out.println("Under tretti:");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               }
+               System.out.println();
+               
+               //System.out.println("startidLocalTime " + startidLocalTime);
+               //System.out.println("naavarendeTidFormat " + naavarendeTidFormat);
+               //System.out.println("Alle:");
+               //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
 		}
-		
 		return resultat;
-		
 	}
+	
+	public static LocalTime toLocalTime(java.sql.Time time) {
+	    return time.toLocalTime();
+	  }
 
 	@Override
 	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
 	}
     
 

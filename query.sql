@@ -1,6 +1,6 @@
 use kino; 
 
-SELECT v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato, v_starttid, concat(v_dato,' ', v_starttid) AS LagtSammen, NOW() - INTERVAL 1 HOUR
+SELECT v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato, v_starttid, concat(v_dato,' ', v_starttid) AS LagtSammen, (NOW() - INTERVAL 1 HOUR)
 FROM tblvisning, tblbillett, tblplass, tblfilm
 WHERE v_visningnr = b_visningsnr
 	AND v_kinosalnr = p_kinosalnr
