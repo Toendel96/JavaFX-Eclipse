@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import domene.Film;
 import java.sql.Time;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -88,7 +89,6 @@ public class Kontroll implements kontrollInterface {
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
-
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
@@ -164,16 +164,32 @@ public class Kontroll implements kontrollInterface {
 				ubetaltBillettListe.add(b);
 			}
 		}
+		if (ubetaltBillettListe.isEmpty()) {
+			return null;
+		}else {
 		return ubetaltBillettListe;
-	}
-
-
-	public void slettAlleBestillinger(ObservableList<Billett> billettListe) {
-		for (Billett b: billett) {
-			if (b.getBillettkode().equals(billettListe)) {
-			}
 		}
 	}
+
+
+	public void slettAlleBestillinger(ObservableList<Billett> ubetaltBillettListe) {
+		System.out.println("Du kom hit");
+		ObservableList<Billett> tempbillett = FXCollections.observableArrayList();
+		for (Billett u: ubetaltBillettListe) {
+			for(Billett b: billett) {
+				if (b.getBillettkode().equals(u.getBillettkode())) {
+					break;
+					//Ikke lagre dette objektet
+				} else {
+					System.out.println(b.toString() + "Har blitt lagt til i listen");
+					tempbillett.add(b);
+				}
+			} 
+		} 
+		billett.clear();
+		billett = tempbillett;
+	}
+
 
 	@Override
 	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
@@ -205,6 +221,16 @@ public class Kontroll implements kontrollInterface {
 		}
 	}
 	
+	public int hentFilmnrFraNavn(String filmNavn) {
+		int filmNr = 0;
+		for (Film f: film) {
+			if (f.getFilmnavn().equals(filmNavn)) {
+				filmNr = f.getFilmnr();
+			}
+		}
+		return filmNr;
+	}
+	
 	public ChoiceBox<String> visFilmerChoice() {
 		//Returnerer en choicebox med alle filmnavn
 		ChoiceBox<String> cb = new ChoiceBox<String>();
@@ -222,9 +248,27 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet hentKinosaler() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		ResultSet resultat = null;
+		String sql = "SELECT * FROM tblkinosal";
+		preparedStatement = forbindelse.prepareStatement(sql);
+		resultat = preparedStatement.executeQuery(sql);
+		while(resultat.next()) {
+			int kinosalNr = resultat.getInt(1);
+			String kinoNavn = resultat.getString(2);
+			String kinoSalNavn = resultat.getString(3);
+			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
+		}
+		return kinosal;
+	}
+	
+	public ChoiceBox<String> visKinosalerChoice() {
+		//Returnerer en choicebox med alle kinosaler
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Kinosal k: kinosal) {
+			cb.getItems().add(String.valueOf(k.getKinosalnr()));
+		}
+		return cb;
 	}
 
 	@Override
@@ -252,8 +296,8 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
+	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		
 		return false;
 	}
 
@@ -314,6 +358,12 @@ public class Kontroll implements kontrollInterface {
 	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
 	}
     
 

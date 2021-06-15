@@ -2,6 +2,7 @@ package grensesnitt;
 	
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import domene.Billett;
@@ -38,6 +39,8 @@ public class Main extends Application {
 		try {
 			kontroll.lagForbindelse();
 			kontroll.hentBilletter();
+			kontroll.hentFilmer();
+			kontroll.hentKinosaler();
 			vindu=primaryStage;
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
@@ -222,21 +225,18 @@ public class Main extends Application {
 		BorderPane nyVisningPanel = new BorderPane();
 		Scene nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
-		//String filmnr, String kinosalnr, String dato, String starttid, String pris
+		//String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris
 		
-		//Hent alle filmer
-		try {
-			kontroll.hentFilmer();
-		}catch(Exception e) {}
-		
-		
-		//Hent alle kinosaler
-		
-		Label lblFilmNavn = new Label("Filmnr");
+		Label lblFilmNavn = new Label("Filmnavn");
 		panel.add(lblFilmNavn, 0, 0);
 		//Henter en choicebox med alle filmer fra kontroll
 		ChoiceBox<String> cbxFilmNavn = kontroll.visFilmerChoice();
 		panel.add(cbxFilmNavn, 1, 0);
+		Label lblKinosal = new Label("Kinosal:");
+		panel.add(lblKinosal, 0, 1);
+		//Henter en choicebox med alle kinosaler fra kontroll
+		ChoiceBox<String> cbxKinosal = kontroll.visKinosalerChoice();
+		panel.add(cbxKinosal, 1, 1);
 		Label lblDato = new Label("Dato: ");
 		panel.add(lblDato, 0, 2);
 		DatePicker pcrDato = new DatePicker();
@@ -250,6 +250,17 @@ public class Main extends Application {
 		panel.add(lblPris, 0, 4);
 		TextField txtPris = new TextField();
 		panel.add(txtPris, 1, 4);
+		Button leggTil = new Button("Legg til");
+		panel.add(leggTil, 1, 5);
+		leggTil.setOnAction(e -> {
+			int filmNr = kontroll.hentFilmnrFraNavn(cbxFilmNavn.getValue());
+			String kinosalNr = cbxKinosal.getValue();
+			LocalDate dato = pcrDato.getValue();
+			String tidsPunkt = txtTidspunkt.getText();
+			String pris = txtPris.getText();
+			kontroll.leggTilVisning(String.valueOf(filmNr), kinosalNr, dato, tidsPunkt, pris);
+		});
+		
 		
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
@@ -316,6 +327,8 @@ public class Main extends Application {
 		vindu.setScene(slettBestillingScene);
 		vindu.show();
 	}
+	
+	
 			
 	public void lagKundescene() {
 		try {
