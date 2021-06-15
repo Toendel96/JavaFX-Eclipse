@@ -22,7 +22,7 @@ import domene.Plassbillett;
 import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import javafx.scene.control.ChoiceBox;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -176,7 +176,7 @@ public class Kontroll implements kontrollInterface {
 	    		utsagn = forbindelse.createStatement();
 	    		resultat = utsagn.executeQuery(sql);
 	    		return resultat;
-	    	}catch(Exception e) {throw new Exception("Kan ikke åpne databasetabell");}
+	    	}catch(Exception e) {throw new Exception("Kan ikke ï¿½pne databasetabell");}
 	 }
 
 	@Override
@@ -192,23 +192,33 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ArrayList<Film> hentFilmer() throws Exception {
+	public ObservableList<Film> hentFilmer() throws Exception {
+		//Henter alle filmene som ligger i databasen og setter film Observablelisten
 		try {
+			ResultSet resultat = null;
 			String sql = "SELECT * FROM tblfilm";
 			preparedStatement = forbindelse.prepareStatement(sql);
 			resultat = preparedStatement.executeQuery(sql);
-			ArrayList<Film> filmer = new ArrayList<Film>();
 			while(resultat.next()) {
-				int filmNr = resultat.getInt(0);
-				System.out.println(filmNr);
-				String filmNavn = resultat.getString(1);
-				System.out.println(filmNavn);
-				filmer.add(new Film(filmNr,filmNavn));
+				int filmNr = resultat.getInt(1);
+				String filmNavn = resultat.getString(2);
+				film.add(new Film(filmNr,filmNavn));
 			}
-			return filmer;
-		}catch(Exception e) {}
-		return null;
+			return film;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente fra databasen");
+		}
 	}
+	
+	public ChoiceBox<String> visFilmerChoice() {
+		//Returnerer en choicebox med alle filmnavn
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Film f: film) {
+			cb.getItems().add(f.getFilmnavn());
+		}
+		return cb;
+	}
+	
 
 	@Override
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception {
