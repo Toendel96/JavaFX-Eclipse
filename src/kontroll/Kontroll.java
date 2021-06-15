@@ -36,12 +36,12 @@ public class Kontroll implements kontrollInterface {
 	    private Statement utsagn;
 	    private String brukernavn = "Case";
 	    private String passord = "Esac";
-	    public ObservableList<Billett> billett = FXCollections.observableArrayList();
-	    public ObservableList<Film> film = FXCollections.observableArrayList();
-	    public ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
-	    public ObservableList<Plass> plass = FXCollections.observableArrayList();
-	    public ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
-	    public ObservableList<Visning> visning = FXCollections.observableArrayList();
+	    private ObservableList<Billett> billett = FXCollections.observableArrayList();
+	    private ObservableList<Film> film = FXCollections.observableArrayList();
+	    private ObservableList<Kinosal> kinosal = FXCollections.observableArrayList();
+	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
+	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
+	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
