@@ -85,7 +85,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, filmnavn));
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -117,7 +117,7 @@ public class Kontroll implements kontrollInterface {
 
 	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
-	}
+	}	
 
 	@Override
 	public boolean sletteBillett(String billettKode) {
@@ -188,11 +188,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilFilm(String filmnavn) {
-		int sisteFilm = film.size() - 1;
-		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
-		int nyttFilmNr = sisteFilmNr + 1;
-		setFilm(nyttFilmNr,filmnavn);
-		System.out.println(film);
+		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -406,13 +402,13 @@ public class Kontroll implements kontrollInterface {
 		return false;
 	}
 	
-	//------------------------------------ Sletter alt innhold i databasen (kjores nï¿½r applikasjonen avsluttes) --------------------------------------------
+	//------------------------------------ Sletter alt innhold i databasen (kjores når applikasjonen avsluttes) --------------------------------------------
 	public void slettinnholdAlleTabeller() throws Exception {
 		try {
             //Execute SQL query
             String sql1 = "DELETE FROM tblplassbillett";
             String sql2 = "DELETE FROM tblplass";
-            String sql3 = "DELETE FROM tbllogint";
+            String sql3 = "DELETE FROM tbllogin";
             String sql4 = "DELETE FROM tblbillett";
             String sql5 = "DELETE FROM tblvisning";
             String sql6 = "DELETE FROM tblkinosal";
@@ -449,5 +445,10 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
+	public void leggAltInnItblFilmVedAvslutning() throws Exception {
+        try {
+            //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
+        }catch(Exception e) {throw new Exception(e);}
+	}
 	
 }

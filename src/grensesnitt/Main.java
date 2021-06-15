@@ -57,6 +57,7 @@ public class Main extends Application {
 			kontroll.hentKinosaler();
 			kontroll.hentVisninger();
 			kontroll.leggInnVisningerIListe();
+			kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);

@@ -57,7 +57,7 @@ public class Visning {
 	public void setPris(float pris) {
 		this.pris = pris;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Visning [visningnr=" + visningnr + ", filmnr=" + filmnr + ", kinosalnr=" + kinosalnr + ", dato="
