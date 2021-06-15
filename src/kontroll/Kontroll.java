@@ -26,7 +26,9 @@ import domene.Plassbillett;
 import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -390,5 +392,7 @@ public class Kontroll implements kontrollInterface {
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
 	
-
+	public void behandleTilbake(Stage vindu,Scene scene) {
+		vindu.setScene(scene);
+	}
 }

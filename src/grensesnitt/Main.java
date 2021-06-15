@@ -37,6 +37,7 @@ public class Main extends Application {
 	private TableView tabellVisning = new TableView<>();
 	private TableView sletttabell = new TableView<>();
 	private TableView statistikklinjer;
+	Scene kinoscene;
 	public void start(Stage primaryStage) {
 		try {
 			kontroll.lagForbindelse();
@@ -358,7 +359,7 @@ public class Main extends Application {
 			vindu.setHeight(300);
 			BorderPane kinobetjentrotpanel = new BorderPane();
 			GridPane gridpane = new GridPane();
-			Scene kinoscene = new Scene(kinobetjentrotpanel,400,400);
+			kinoscene = new Scene(kinobetjentrotpanel,400,400);
 			gridpane.add(new Label("Skriv ned billettkoden:"), 0, 0);
 			TextField billettkode = new TextField();
 			gridpane.add(billettkode, 1, 0);
@@ -401,7 +402,7 @@ public class Main extends Application {
 		Button avbestill = new Button("Slett alle bestillinger");
 		avbestill.setOnAction(e -> knappBehandleAvbestill());
 		Button tilbake = new Button("Tilbake");
-		tilbake.setOnAction(e -> behandleTilbake());
+		tilbake.setOnAction(e -> kontroll.behandleTilbake(vindu, kinoscene));
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		knappePanel.getChildren().addAll(tilbake, avbestill);
 		knappePanel.setHgap(10);
