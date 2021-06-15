@@ -78,40 +78,40 @@ public class Kontroll implements kontrollInterface {
 		return film;
 	}
 
-	public void setFilm(ObservableList<Film> film) {
-		this.film = film;
+	public void setFilm(int filmnr, String filmnavn) {
+		film.add(new Film(filmnr, brukernavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
 		return kinosal;
 	}
 
-	public void setKinosal(ObservableList<Kinosal> kinosal) {
-		this.kinosal = kinosal;
+	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
+		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
 
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
 
-	public void setPlass(ObservableList<Plass> plass) {
-		this.plass = plass;
+	public void setPlass(int radnr, int setenr, int kinosalnr) {
+		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 
 	public ObservableList<Plassbillett> getPlassbillett() {
 		return plassbillett;
 	}
 
-	public void setPlassbillett(ObservableList<Plassbillett> plassbillett) {
-		this.plassbillett = plassbillett;
+	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
+		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
 	}
 
 	public ObservableList<Visning> getVisning() {
 		return visning;
 	}
 
-	public void setVisning(ObservableList<Visning> visning) {
-		this.visning = visning;
+	public void setVisning(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
+		visning.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
 	@Override
@@ -189,7 +189,7 @@ public class Kontroll implements kontrollInterface {
 				System.out.println(filmNr);
 				String filmNavn = resultat.getString(1);
 				System.out.println(filmNavn);
-				filmer.add(new Film(filmNr,filmNavn));
+				setFilm(filmNr,filmNavn);
 			}
 			return filmer;
 		}catch(Exception e) {}
