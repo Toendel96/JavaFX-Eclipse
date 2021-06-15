@@ -21,10 +21,10 @@ public class Visning {
 		this.pris = pris;
 	}
 	
-	public int getVisningsnr() {
+	public int getVisningnr() {
 		return visningnr;
 	}
-	public void setVisningsnr(int visningsnr) {
+	public void setVisningnr(int visningsnr) {
 		this.visningnr = visningsnr;
 	}
 	public int getFilmnr() {

@@ -53,7 +53,7 @@ public class Kontroll implements kontrollInterface {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
             System.out.println("Tilkobling til database fungerte");
         } catch (Exception e) {
-            throw new Exception("Kan ikke oppnå kontakt med databasen");
+            throw new Exception("Kan ikke oppnaa kontakt med databasen");
         }
     }
 
@@ -305,7 +305,8 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
-		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
+		//String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
+		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning";
 		preparedStatement = forbindelse.prepareStatement(sql);
 		resultat = preparedStatement.executeQuery(sql);
 		
@@ -318,6 +319,11 @@ public class Kontroll implements kontrollInterface {
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
                
+               LocalDate date = LocalDate.now();  
+               LocalDate datoFormat = toLocalDate(dato);
+               //System.out.println("datoFormat: " + datoFormat.getClass().getName());
+               //System.out.println("date: " + date.getClass().getName());
+               
                LocalTime startidLocalTime = toLocalTime(starttid);
                
                LocalDateTime naavarendeTid = LocalDateTime.now();
@@ -328,30 +334,47 @@ public class Kontroll implements kontrollInterface {
                //System.out.println(startidLocalTime.getClass().getName());
                //System.out.println(naavarendeTidFormat.getClass().getName());
                
-               long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               boolean erDatoFremITidEllerSammeDag = false;
                
-               if (differanseITid >= 30) {
-            	   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-            	   System.out.println("Mer enn tretti min");
-            	   System.out.println(differanseITid);
-            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); 
+               long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               int sjekkDatoer = datoFormat.compareTo(date);
+               
+               if (sjekkDatoer > 0) {
+            	   //dato fra database er senere enn naavarende dato
+            	   erDatoFremITidEllerSammeDag = true;
+               } else if (sjekkDatoer < 0) {
+            	   //dato fra databsaae er tidligere enn naavarende dato
+            	   erDatoFremITidEllerSammeDag = false;
                } else {
-            	   System.out.println("Under tretti:");
-            	   System.out.println(differanseITid);
-            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   //Samme dag
+            	   erDatoFremITidEllerSammeDag = true;
+               }
+               
+               if (erDatoFremITidEllerSammeDag) {
+            	   if(differanseITid >= 30) {
+            		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+                	   //Mer enn tretti min og samme eller nyere dag
+                	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   }
+               } else {
+            	   //Under tretti eller tidligere dato
+            	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
                }
                System.out.println();
-               
-               //System.out.println("startidLocalTime " + startidLocalTime);
-               //System.out.println("naavarendeTidFormat " + naavarendeTidFormat);
-               //System.out.println("Alle:");
+               //Alle
                //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
 		}
 		return resultat;
 	}
 	
+	//Metode for aa konvertere timer fra database til LocalTime. Trenger det for aa sammenligne
 	public static LocalTime toLocalTime(java.sql.Time time) {
 	    return time.toLocalTime();
+	  }
+	
+	//Metode for aa konvertere datoer fra database til LocalDate. Trenger det for aa sammenligne
+	public static LocalDate toLocalDate(java.sql.Date date) {
+	    return date.toLocalDate();
 	  }
 
 	@Override
