@@ -37,7 +37,8 @@ public class Main extends Application {
 	private TableView tabellVisning = new TableView<>();
 	private TableView sletttabell = new TableView<>();
 	private TableView statistikklinjer;
-	Scene kinoscene;
+	private Scene menyscene;
+	private Scene kinoscene;
 	public void start(Stage primaryStage) {
 		try {
 			kontroll.lagForbindelse();
@@ -62,7 +63,7 @@ public class Main extends Application {
 		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
 		FlowPane panel = new FlowPane();
-		Scene menyscene = new Scene(menyrotpanel,600,600);
+		menyscene = new Scene(menyrotpanel,600,600);
 		//Oppretter en knapp for planlegger:
 		Button planleggerknapp = new Button("Kinosentralens planlegger");
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
@@ -98,7 +99,7 @@ public class Main extends Application {
 		Button loggInn = new Button("Logg inn");
 		gridpane.add(loggInn, 1, 2);
 		Button tilbake = new Button("Tilbake");
-		tilbake.setOnAction(e -> behandleTilbake());
+		tilbake.setOnAction(e -> behandleTilbake(menyscene));
 		loggInn.setOnAction(e -> loggInnBruker(brukernavn.getText(), passord.getText(), bruker));
 		gridpane.getChildren().addAll();
 		loginrootpanel.setCenter(gridpane);
@@ -161,7 +162,7 @@ public class Main extends Application {
 		planleggerGridpane.add(leggTilVisning,3,0);
 		
 		Button tilbake = new Button("Logg ut");
-		tilbake.setOnAction(e -> behandleTilbake());
+		tilbake.setOnAction(e -> behandleTilbake(menyscene));
 		
 		planleggerGridpane.getChildren().addAll();
 		
@@ -189,7 +190,7 @@ public class Main extends Application {
 		statistikkKinosal.setOnAction(e -> lagStatistikkKinosal());
 			
 		Button tilbake = new Button("Logg ut");
-		tilbake.setOnAction(e -> behandleTilbake()); //Opprette ny tilbake funksjon her
+		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
 		
 		rapportGridpane.getChildren().addAll();
 		
@@ -236,7 +237,7 @@ public class Main extends Application {
 		filmStatistikkGrid.add(btnFinnFilm, 2, 2);
 		//btnFinnFilm.setOnAction(e-> kontroll.behandleFinnFilm(filmSok.getText()));
 		Button btnTilbake = new Button("Tilbake");
-		btnTilbake.setOnAction(e-> behandleTilbake());
+		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
 		valgpanel.getChildren().addAll(btnTilbake);
 		vindu.setWidth(600);
@@ -275,7 +276,7 @@ public class Main extends Application {
 		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
 		//btnFinnKino.setOnAction(e-> kontroll.behandleFinnKino(kinoSok.getText()));
 		Button btnTilbake = new Button("Tilbake");
-		btnTilbake.setOnAction(e-> behandleTilbake());
+		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
 		valgpanel.getChildren().addAll(btnTilbake);
 		vindu.setWidth(300);
@@ -369,7 +370,7 @@ public class Main extends Application {
 			Button avbestill = new Button("Slett alle bestillinger");
 			avbestill.setOnAction(e -> {lagSlettBillettScene();});
 			Button tilbake = new Button("Tilbake");
-			tilbake.setOnAction(e -> behandleTilbake());
+			tilbake.setOnAction(e -> behandleTilbake(menyscene));
 			oppdater.setOnAction(e -> {
 				try {
 					settBetalt(billettkode.getText());
@@ -403,7 +404,7 @@ public class Main extends Application {
 		Button avbestill = new Button("Slett alle bestillinger");
 		avbestill.setOnAction(e -> knappBehandleAvbestill());
 		Button tilbake = new Button("Tilbake");
-		tilbake.setOnAction(e -> kontroll.behandleTilbake(vindu, kinoscene));
+		tilbake.setOnAction(e -> behandleTilbake(kinoscene));
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		knappePanel.getChildren().addAll(tilbake, avbestill);
 		knappePanel.setHgap(10);
@@ -463,7 +464,7 @@ public class Main extends Application {
 	        rotpanel.setCenter(tabellVisning);
 	        
 	        Button tilbake = new Button("Tilbake");
-	        tilbake.setOnAction(e -> behandleTilbake());
+	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
 	        //rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
@@ -491,8 +492,8 @@ public class Main extends Application {
 		} catch(Exception e) {e.printStackTrace();}
 		}
 	
-		public void behandleTilbake() {
-			lagMenyscene();
+		public void behandleTilbake(Scene scene) {
+			vindu.setScene(scene);
 		}
 		
 		public void settBetalt(String billettKode) throws Exception {
