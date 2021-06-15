@@ -245,7 +245,6 @@ public class Main extends Application {
 		vindu.setScene(filmStatistikkScene);
 		vindu.show();
 		
-			
 	}
 	
 	
@@ -299,20 +298,23 @@ public class Main extends Application {
 		Button leggTil = new Button("Legg til");
 		panel.add(leggTil, 1, 1);
 		leggTil.setOnAction(e -> kontroll.leggTilFilm(txtFilmNavn.getText()));
+		Button tilbake = new Button("Tilbake");
+		panel.add(tilbake, 0, 6);
+		tilbake.setOnAction(e -> lagPlanleggerscene());
 		
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
+		nyFilmPanel.setBottom(tilbake);
 		vindu.setScene(nyFilmScene);
 		vindu.show();
 	}
 	
 	public void lagNyVisningScene(){
 		vindu.setWidth(300);
-		vindu.setHeight(200);
+		vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
 		Scene nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
-		//String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris
 		
 		Label lblFilmNavn = new Label("Filmnavn");
 		panel.add(lblFilmNavn, 0, 0);
@@ -347,10 +349,13 @@ public class Main extends Application {
 			String pris = txtPris.getText();
 			kontroll.leggTilVisning(String.valueOf(filmNr), kinosalNr, dato, tidsPunkt, pris);
 		});
-		
+		Button tilbake = new Button("Tilbake");
+		panel.add(tilbake, 0, 6);
+		tilbake.setOnAction(e -> lagPlanleggerscene());
 		
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
+		nyVisningPanel.setBottom(tilbake);
 		vindu.setScene(nyVisningScene);
 		vindu.show();
 	}
@@ -419,8 +424,6 @@ public class Main extends Application {
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
-	
-			
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
