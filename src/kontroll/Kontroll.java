@@ -209,7 +209,7 @@ public class Kontroll implements kontrollInterface {
 				setFilm(filmNr,filmNavn);
 			}
 		}catch(Exception e) {
-			throw new Exception("Kan ikke hente fra databasen");
+			throw new Exception("Kan ikke hente filmer fra databasen");
 		}
 	}
 	
@@ -241,6 +241,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public ObservableList<Kinosal> hentKinosaler() throws Exception {
+		try {
 		ResultSet resultat = null;
 		String sql = "SELECT * FROM tblkinosal";
 		preparedStatement = forbindelse.prepareStatement(sql);
@@ -252,6 +253,9 @@ public class Kontroll implements kontrollInterface {
 			setKinosal(kinosalNr,kinoNavn,kinoSalNavn);
 		}
 		return kinosal;
+		}catch(Exception e) {
+			throw new Exception("Kan ikke hente kinosaler");
+		}
 	}
 	
 	public ChoiceBox<String> visKinosalerChoice() {
