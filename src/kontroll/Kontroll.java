@@ -10,8 +10,10 @@ import java.util.ArrayList;
 
 import domene.Film;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -296,32 +298,29 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
+		int siste = visning.size() -1;
+		int nrPaaSiste = visning.get(siste).getVisningsnr();
+		System.out.println(nrPaaSiste);
+		
 		int filmNr = Integer.parseInt(filmnr);
 		int kinoSalNr = Integer.parseInt(kinosalnr);
 		//Konverter LocalDate til Date
-		String starttidString = starttid.toString();
-		Date datoDate = Date.valueOf(starttidString);
-		System.out.println(datoDate);
-		Time startTid = new Time(Integer.parseInt(starttid));
+		Date datoDate = Date.valueOf(dato);
+		
+		DateTimeFormatter parser = DateTimeFormatter.ofPattern("HH:mm");
+		LocalTime localTime = LocalTime.parse(starttid, parser);
+		Time startTid = Time.valueOf(localTime);
+		
 		Float prisF = Float.parseFloat(pris);
+		
 		return false;
 	}
 
+
 	@Override
-	public ResultSet hentVisninger() throws Exception {
+	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
-		
-		LocalDateTime now = LocalDateTime.now();  
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");  
-        String formatDateTime = now.format(format);
-		
-		String sql = "SELECT v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato, v_starttid, NOW()- INTERVAL 1 HOUR"
-				+ "FROM tblvisning, tblbillett, tblplass, tblfilm\r\n"
-				+ "WHERE v_visningnr = b_visningsnr\r\n"
-				+ "	AND v_kinosalnr = p_kinosalnr\r\n"
-				+ "			AND v_dato >= CURDATE()\r\n"
-				+ "				AND f_filmnr = v_filmnr\r\n"
-				+ "GROUP BY v_visningnr, v_filmnr, f_filmnavn, v_pris, v_dato;";
+		String sql = "SELECT v_visningnr, v_filmnr, v_kinosalnr, v_dato, v_starttid, v_pris FROM tblvisning WHERE v_dato >= CURDATE()";
 		preparedStatement = forbindelse.prepareStatement(sql);
 		resultat = preparedStatement.executeQuery(sql);
 		
@@ -332,22 +331,54 @@ public class Kontroll implements kontrollInterface {
                int kinosalnr = resultat.getInt(3);
                Date dato = resultat.getDate(4);
                Time starttid = resultat.getTime(5);
-               boolean erBetalt = resultat.getBoolean(5);
-               int totalFakturaPris = resultat.getInt(6);
-               Date datoKlokkeslett = resultat.getDate(7);
+               float pris = resultat.getFloat(6);
                
-               //System.out.println(fakturanummer + " " + kundenummer + " " + dagensDato + " " + forfallsdato + " " + erBetalt); //test print
-               //dataFaktura.add(new Faktura(fakturanummer, kundenummer, dagensDato, forfallsdato, erBetalt, totalFakturaPris));
+               LocalTime startidLocalTime = toLocalTime(starttid);
+               
+               LocalDateTime naavarendeTid = LocalDateTime.now();
+               DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");  
+               String formatString = naavarendeTid.format(format);  
+               LocalTime naavarendeTidFormat = LocalTime.parse(formatString);
+               
+               //System.out.println(startidLocalTime.getClass().getName());
+               //System.out.println(naavarendeTidFormat.getClass().getName());
+               
+               long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+               
+               if (differanseITid >= 30) {
+            	   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
+            	   System.out.println("Mer enn tretti min");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); 
+               } else {
+            	   System.out.println("Under tretti:");
+            	   System.out.println(differanseITid);
+            	   System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+               }
+               System.out.println();
+               
+               //System.out.println("startidLocalTime " + startidLocalTime);
+               //System.out.println("naavarendeTidFormat " + naavarendeTidFormat);
+               //System.out.println("Alle:");
+               //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
 		}
-		
 		return resultat;
-		
 	}
+	
+	public static LocalTime toLocalTime(java.sql.Time time) {
+	    return time.toLocalTime();
+	  }
 
 	@Override
 	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
+		// TODO Auto-generated method stub
+		return false;
 	}
     
 
