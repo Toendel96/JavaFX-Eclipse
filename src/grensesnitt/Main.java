@@ -340,6 +340,8 @@ public class Main extends Application {
 		panel.add(lblPris, 0, 4);
 		TextField txtPris = new TextField();
 		panel.add(txtPris, 1, 4);
+		Label lblKr = new Label("Kr");
+		panel.add(lblKr, 2, 4);
 		Button leggTil = new Button("Legg til");
 		panel.add(leggTil, 1, 5);
 		leggTil.setOnAction(e -> {

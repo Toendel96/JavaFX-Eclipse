@@ -192,7 +192,6 @@ public class Kontroll implements kontrollInterface {
 		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
 		int nyttFilmNr = sisteFilmNr + 1;
 		setFilm(nyttFilmNr,filmnavn);
-		System.out.println(film);
 		return false;
 	}
 
