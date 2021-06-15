@@ -50,15 +50,18 @@ public class Main extends Application {
 	private Scene nyVisningScene;
 	public void start(Stage primaryStage) {
 		try {
+			vindu=primaryStage;
 			kontroll.lagForbindelse();
 			kontroll.hentBilletter();
 			kontroll.hentFilmer();
 			kontroll.hentKinosaler();
 			kontroll.hentVisninger();
-			vindu=primaryStage;
+			kontroll.leggInnVisningerIListe();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
+			lagKundescene();
+			lagSlettBillettScene();
 			lagMenyscene();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -83,7 +86,7 @@ public class Main extends Application {
 		kinobetjentknapp.setOnAction(e -> lagKinobetjentscene());
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
-		kundeknapp.setOnAction(e -> lagKundescene());
+		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
 		panel.getChildren().addAll(planleggerknapp,kinobetjentknapp,kundeknapp);
 		//FlowPane settings
 		panel.setHgap(10);
@@ -381,7 +384,7 @@ public class Main extends Application {
 			Button oppdater = new Button("Sett som betalt");
 			gridpane.add(oppdater, 1, 2);
 			Button avbestill = new Button("Slett alle bestillinger");
-			avbestill.setOnAction(e -> {lagSlettBillettScene();});
+			avbestill.setOnAction(e -> {vindu.setScene(slettBestillingScene);});
 			Button tilbake = new Button("Tilbake");
 			tilbake.setOnAction(e -> behandleTilbake(menyscene));
 			oppdater.setOnAction(e -> {
@@ -423,8 +426,7 @@ public class Main extends Application {
 		knappePanel.setHgap(10);
 		slettBillettRotpanel.setCenter(sletttabell);
 		slettBillettRotpanel.setBottom(knappePanel);
-		vindu.setScene(slettBestillingScene);
-		vindu.show();
+		
 	}
 	public void knappBehandleAvbestill(){
 		kontroll.slettAlleBestillinger(kontroll.hentUbetalteBilletter());
@@ -470,7 +472,7 @@ public class Main extends Application {
 
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
-	        kontroll.leggInnVisningerIListe();
+	       
 	        tabellVisning.setItems(kontroll.getVisning());
 	        rotpanel.setCenter(tabellVisning);
 	        
