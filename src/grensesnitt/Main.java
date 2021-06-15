@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -53,6 +54,7 @@ public class Main extends Application {
 	private Scene planleggerScene;
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
+	private Scene ledigePlasserScene;
 
 	public void start(Stage primaryStage) {
 		try {
@@ -69,10 +71,15 @@ public class Main extends Application {
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
 			vindu.setHeight(600);
+			
+			
 			lagKundescene();
+			lagStatistikkKinosal();
+			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
 			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -185,8 +192,7 @@ public class Main extends Application {
 		planleggerGridpane.setHgap(10);
 		planleggerRotpanel.setBottom(tilbake);
 		planleggerRotpanel.setCenter(planleggerGridpane);
-		vindu.setScene(planleggerScene);
-		vindu.show();
+		
 	}
 	
 	public void lagRapportScene() {
@@ -197,12 +203,12 @@ public class Main extends Application {
 		//Oppretter en knapp for statistikk for film:
 		Button statistikkFilm = new Button("Statistikk film");
 		rapportGridpane.add(statistikkFilm,0,0);
-		statistikkFilm.setOnAction(e -> lagStatistikkFilm());
+		statistikkFilm.setOnAction(e -> vindu.setScene(filmStatistikkScene));
 		
 		//Oppretter en knapp for statistikk for kinosal:
 		Button statistikkKinosal = new Button("Statistikk kinosal");
 		rapportGridpane.add(statistikkKinosal, 1, 0);
-		statistikkKinosal.setOnAction(e -> lagStatistikkKinosal());
+		statistikkKinosal.setOnAction(e -> vindu.setScene(kinoStatistikkScene));
 			
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
@@ -215,14 +221,14 @@ public class Main extends Application {
 		rapportRotpanel.setCenter(rapportGridpane);
 		
 		vindu.setScene(rapportScene);
-		vindu.show();	
+		vindu.show();
+	
 	}
 	
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
 
-		Scene filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);
 		FlowPane valgpanel = new FlowPane();
 
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
@@ -275,7 +281,6 @@ public class Main extends Application {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
 
-		Scene kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
 		FlowPane valgpanel = new FlowPane();
 
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
@@ -318,6 +323,7 @@ public class Main extends Application {
 		valgpanel.getChildren().addAll(btnTilbake);
 		vindu.setWidth(300);
 		vindu.setHeight(500);
+
 		vindu.setScene(kinoStatistikkScene);
 		vindu.show();
 	}
@@ -342,8 +348,6 @@ public class Main extends Application {
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
 		nyFilmPanel.setBottom(tilbake);
-		vindu.setScene(nyFilmScene);
-		vindu.show();
 	}
 	
 	public void lagNyVisningScene(){
@@ -394,8 +398,17 @@ public class Main extends Application {
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
 		nyVisningPanel.setBottom(tilbake);
-		vindu.setScene(nyVisningScene);
-		vindu.show();
+	}
+	
+	public void lagLedigePlasserVisning(String visningsnr) {
+		BorderPane ledigePlasserPanel = new BorderPane();
+		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
+		FlowPane comboBoxPanel = new FlowPane();
+		ComboBox comboBox = kontroll.hentrader();
+		Button tilbake = new Button("Tilbake");
+		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		comboBoxPanel.getChildren().addAll(tilbake, comboBox);
+		ledigePlasserPanel.setTop(comboBoxPanel);
 	}
 		
 	public void lagKinobetjentscene() {
@@ -424,52 +437,32 @@ public class Main extends Application {
 		knappePanel.setHgap(10);
 		kinorotpanel.setCenter(sletttabell);
 		kinorotpanel.setBottom(knappePanel);
-		
-	}
-	public void knappBehandleAvbestill(){
-		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
-		sletttabell.getItems().clear(); 
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
-	}
-	
-	public void knappBehandleSettBetalt(String billettkode) {
-		kontroll.settBillettSomBetalt(billettkode);
-		sletttabell.getItems().clear();
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			
 			//vindu.setWidth(1000);
 			//vindu.setHeight(600);
-			
 			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
-
 	        TableColumn pris = new TableColumn("Pris");
 	        pris.setMinWidth(100);
 	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-
 	        TableColumn dato = new TableColumn("Dato");
 	        dato.setMinWidth(100);
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        
 	        TableColumn starttid = new TableColumn("Startid");
 	        starttid.setMinWidth(100);
 	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-	        
 	        TableColumn filmnr = new TableColumn("Filmnrn");
 	        filmnr.setMinWidth(50);
 	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
-	        
 	        TableColumn filmnavn = new TableColumn("Filmnavn");
 	        filmnavn.setMinWidth(150);
 	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
-	        
 	        TableColumn kinosal = new TableColumn("Kinosal");
 	        kinosal.setMinWidth(150);
 	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
@@ -494,7 +487,9 @@ public class Main extends Application {
 	        
 	        sokKnapp.setOnAction(e -> {
 	            try {
-	                //Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
+	            	//Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. 
+	            	//Maa vise totalbelop og antall plasser
+	            	lagLedigePlasserVisning(sokVisninger.getText());
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
@@ -502,25 +497,35 @@ public class Main extends Application {
 	        sokpanel.getChildren().addAll(sokVisninger, sokKnapp, tilbake);
 	        sokpanel.setHgap(10);
 	        
-	        vindu.setScene(scene_kundeBestilling);
-	        vindu.show();
 			
 		} catch(Exception e) {e.printStackTrace();}
-		}
+	}
 	
-		public void behandleTilbake(Scene scene) {
-			vindu.setScene(scene);
-		}
-		
-		public void settStorrelse(Scene scene, int bredde, int hoyde) {
-			//
-		}
-		
-		public void settBetalt(String billettKode) throws Exception {
-			//kontroll.hentBilletter();
-			kontroll.settBillettSomBetalt(billettKode);
-		}
-		
+	public void knappBehandleAvbestill(){
+		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
+		sletttabell.getItems().clear(); 
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
+	}
+	
+	public void knappBehandleSettBetalt(String billettkode) {
+		kontroll.settBillettSomBetalt(billettkode);
+		sletttabell.getItems().clear();
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
+	}
+	
+	public void behandleTilbake(Scene scene) {
+		vindu.setScene(scene);
+	}
+	
+	public void settStorrelse(Scene scene, int bredde, int hoyde) {
+		//
+	}
+	
+	public void settBetalt(String billettKode) throws Exception {
+		//kontroll.hentBilletter();
+		kontroll.settBillettSomBetalt(billettKode);
+	}
+	
 	@Override
 	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
 	public void stop() {
@@ -534,7 +539,7 @@ public class Main extends Application {
 			kontroll.lagrePlassBillett();
 			Platform.exit();
 		}catch(Exception e) {
-		}
+	}
 		
 	}
 	
