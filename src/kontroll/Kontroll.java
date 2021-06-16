@@ -402,7 +402,7 @@ public class Kontroll implements kontrollInterface {
 		System.out.println("du vil fjerne: " + plass);
 		int index=99999999;
 		for (Plass p:tempreservasjon) {
-			//Fjerner ønsket plass fra listen
+			//Fjerner ï¿½nsket plass fra listen
 			if(p.getRadnr()==radnr && p.getSetenr()==setenr) {
 				index= tempreservasjon.indexOf(p);
 			}
@@ -676,12 +676,11 @@ public String getStatistikkFilm(String filmNr) {
 		String filmnr = filmNr;
 		int visningnr = 0;
 		int antall = 0;
+		int antallSett = 0;
 		//int antallSett = 0;
 		//int prosentKino = 0;
 		//int bestillingSlettet = 0;
 		//System.out.println(filmnr);
-		
-		
 		
 		string = string + " " + "Visningnr" + "         ";
 		string = string + " " + "Antall sett" + "         ";	
@@ -691,13 +690,38 @@ public String getStatistikkFilm(String filmNr) {
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
-			
-			
+			string = string + "   " + visningnr+" \n ";
 			}
 			
 		}
-		string = string + "   " + visningnr+"      ";	
-		//string = string + " " + antallPlasser + "\n";
+		//Henter alle billetter solgt pÃ¥ en visning
+				for (Visning v : getAlleVisninger()) {
+					if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
+						visningnr = v.getVisningnr();
+						
+						Date dato = v.getDato();
+						Time tid = v.getStarttid();
+						boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
+						if(!status) {
+							visningnr = v.getVisningnr();
+							for (Billett b : getBillett()) {
+								if (b.getVisningsnr()==(visningnr)) {
+								if (!b.getErBetalt()) {
+									
+									string = string + " " + antallSett + "\n";
+								}
+							} 
+						}
+						
+					}
+					
+				}
+						
+					
+				}
+				
+				
+		
 		return string;
 	}	
 
@@ -709,9 +733,10 @@ public String getStatistikkKino(String kinosalNr) {
 		String kinosalnr = kinosalNr;
 		int antallVisninger = 0;
 		int antallPlasser = 0;
+		int totalPlasser = 0;
 		int antallSolgt = 0;
 		int visningnr = 0;
-		//String antallLedigePlasser = null;
+		int salProsent = 0;
 		
 		string = string + " " + "Antall visninger" + "         ";		
 		string = string + " " + "Prosent sal" + "\n";
@@ -735,7 +760,7 @@ public String getStatistikkKino(String kinosalNr) {
 				antallPlasser++;	
 			}
 		}
-		//Henter alle billetter solgt til en 
+		//Henter alle billetter solgt til en kinosal
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
 				visningnr = v.getVisningnr();
@@ -743,26 +768,22 @@ public String getStatistikkKino(String kinosalNr) {
 				Time tid = v.getStarttid();
 				boolean status = sjekkOmDatoTidErFremtid(tid,dato, 0);
 				if(!status) {
-					visningnr = v.getVisningnr();
-					
-					
-					for (Billett b : getBillett()) {
-						if (b.getVisningsnr()==(visningnr));
-						if (b.getErBetalt()) {
-							antallSolgt++;
-							System.out.println(antallSolgt);
-							
-							
-						} break;
-				
-					}
+					visningnr = v.getVisningnr();	
 				}
-				
 			}
 		}
+		for (Billett b : getBillett()) {
+			if (b.getVisningsnr()==(visningnr));
+			if (b.getErBetalt()) {
+				antallSolgt++;			
+			} 
+		} 
+		totalPlasser = antallVisninger * antallPlasser;
+		if (totalPlasser != 0) {
+		salProsent = antallSolgt/totalPlasser*100;
+		}
 			string = string + "             " + antallVisninger + "                          ";	
-			string = string + " " + antallPlasser + "\n";
-			
+			string = string + " " + salProsent + "\n";
 		return string;
 	}
 		
