@@ -24,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -57,6 +58,8 @@ public class Main extends Application {
 	private Scene planleggerScene;
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
+	private Scene ledigePlasserScene;
+	private String radnr;
 
 	public void start(Stage primaryStage) {
 		try {
@@ -71,16 +74,21 @@ public class Main extends Application {
 			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
-			vindu.setWidth(800);
-			vindu.setHeight(600);
-			
-			
+			vindu.setWidth(900);
+			vindu.setHeight(800);
 			lagKundescene();
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
+			lagPlanleggerscene();
 			lagMenyscene();
 			lagKinobetjentscene();
 			
+			kontroll.hentAntallLedigePlasserSporring();
+			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
+			
+			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
+				System.out.println(i);
+			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -88,8 +96,6 @@ public class Main extends Application {
 	}
 	
 	public void lagMenyscene() {
-		vindu.setWidth(800);
-		vindu.setHeight(800);
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
@@ -118,8 +124,6 @@ public class Main extends Application {
 	}
 	
 	public void lagLoginscene(String bruker) {
-		//vindu.setWidth(300);
-		//vindu.setHeight(200);
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
 		loginscene = new Scene(loginrootpanel,400,400);
@@ -146,7 +150,7 @@ public class Main extends Application {
 		if (bruker.equals("planlegger")) {
 			if (brukernavn.equals("tunk")) {
 				if (passord.equals("4321")) {
-					lagPlanleggerscene();
+					vindu.setScene(planleggerScene);
 				}else {loggInnFeilet.setContentText("Feil passord");
 						loggInnFeilet.show();}
 			}else {loggInnFeilet.setContentText("Feil brukernavn");
@@ -165,10 +169,6 @@ public class Main extends Application {
 	}
 
 	public void lagPlanleggerscene() {
-		
-		//vindu.setWidth(500);
-		//vindu.setHeight(200);
-		
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
 		planleggerScene = new Scene(planleggerRotpanel,600,600);
@@ -200,8 +200,7 @@ public class Main extends Application {
 		planleggerGridpane.setHgap(10);
 		planleggerRotpanel.setBottom(tilbake);
 		planleggerRotpanel.setCenter(planleggerGridpane);
-		vindu.setScene(planleggerScene);
-		vindu.show();
+		
 	}
 	
 	public void lagRapportScene() {
@@ -231,8 +230,7 @@ public class Main extends Application {
 		
 		vindu.setScene(rapportScene);
 		vindu.show();
-		
-		
+	
 	}
 	
 	public void lagStatistikkFilm() {
@@ -276,7 +274,7 @@ public class Main extends Application {
 		filmStatistikkPanel.setTop(filmStatistikkGrid);
 		filmStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
-		
+
 	}
 	
 	
@@ -321,12 +319,9 @@ public class Main extends Application {
 		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
 		kinoStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
-		vindu.setWidth(300);
-		vindu.setHeight(500);
+
 		
 	}
-	
-
 	
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
@@ -348,13 +343,9 @@ public class Main extends Application {
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
 		nyFilmPanel.setBottom(tilbake);
-		vindu.setScene(nyFilmScene);
-		vindu.show();
 	}
 	
 	public void lagNyVisningScene(){
-		//vindu.setWidth(300);
-		//vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
@@ -400,13 +391,35 @@ public class Main extends Application {
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
 		nyVisningPanel.setBottom(tilbake);
-		vindu.setScene(nyVisningScene);
+	}
+	
+	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
+		BorderPane ledigePlasserPanel = new BorderPane();
+		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
+		FlowPane comboBoxPanel = new FlowPane();
+		ComboBox comboBoxrad = kontroll.hentrader(kinosalnr);
+		comboBoxrad.setPromptText("Velg rad");
+		Button tilbake = new Button("Tilbake");
+		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
+		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 });
+		comboBoxPanel.setHgap(10);
+		ledigePlasserPanel.setTop(comboBoxPanel);
+		vindu.setScene(ledigePlasserScene);
 		vindu.show();
+	}
+	public void hentseter(String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+		System.out.println("radnummer: " + radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(radnr);
+		comboBoxsete.setPromptText("Velg sete");
+		comboBoxPanel.getChildren().addAll(comboBoxsete);
+		
+		
 	}
 		
 	public void lagKinobetjentscene() {
-		vindu.setWidth(600);
-		vindu.setHeight(500);
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
@@ -430,18 +443,6 @@ public class Main extends Application {
 		knappePanel.setHgap(10);
 		kinorotpanel.setCenter(sletttabell);
 		kinorotpanel.setBottom(knappePanel);
-		
-	}
-	public void knappBehandleAvbestill(){
-		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
-		sletttabell.getItems().clear(); 
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
-	}
-	
-	public void knappBehandleSettBetalt(String billettkode) {
-		kontroll.settBillettSomBetalt(billettkode);
-		sletttabell.getItems().clear();
-		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
 	
 	public void lagKundescene() {
@@ -449,33 +450,24 @@ public class Main extends Application {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
 			
-			//vindu.setWidth(1000);
-			//vindu.setHeight(600);
-			
-			TableColumn visningnr = new TableColumn("Visningnr");
+			/* TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
-
 	        TableColumn pris = new TableColumn("Pris");
 	        pris.setMinWidth(100);
 	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-
 	        TableColumn dato = new TableColumn("Dato");
 	        dato.setMinWidth(100);
 	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        
 	        TableColumn starttid = new TableColumn("Startid");
 	        starttid.setMinWidth(100);
 	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-	        
 	        TableColumn filmnr = new TableColumn("Filmnrn");
 	        filmnr.setMinWidth(50);
 	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
-	        
 	        TableColumn filmnavn = new TableColumn("Filmnavn");
 	        filmnavn.setMinWidth(150);
 	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
-	        
 	        TableColumn kinosal = new TableColumn("Kinosal");
 	        kinosal.setMinWidth(150);
 	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
@@ -483,11 +475,19 @@ public class Main extends Application {
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
 	        tabellVisning.setItems(kontroll.getVisning());
-	        rotpanel.setCenter(tabellVisning);
+	        
+	        rotpanel.setCenter(tabellVisning); */
+	        
+	        //Tekst - startside
+	        Label label1= new Label(
+	                kontroll.getFormattertString());
+	        VBox layout1 = new VBox(20);
+	        layout1.getChildren().addAll(label1);
+	        rotpanel.setCenter(layout1);
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
-	        //rotpanel.setRight(tilbake);
+	        rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
 	      //Sok etter visning -------------------------------------------------------
@@ -500,7 +500,13 @@ public class Main extends Application {
 	        
 	        sokKnapp.setOnAction(e -> {
 	            try {
-	                //Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. Maa vise totalbelop og antall plasser
+	            	//Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. 
+	            	//Maa vise totalbelop og antall plasser
+	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	//Metode for � sjekke om kinosal finnes
+	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
+	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+	            	} 
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
@@ -508,25 +514,35 @@ public class Main extends Application {
 	        sokpanel.getChildren().addAll(sokVisninger, sokKnapp, tilbake);
 	        sokpanel.setHgap(10);
 	        
-	        vindu.setScene(scene_kundeBestilling);
-	        vindu.show();
 			
 		} catch(Exception e) {e.printStackTrace();}
-		}
+	}
 	
-		public void behandleTilbake(Scene scene) {
-			vindu.setScene(scene);
-		}
-		
-		public void settStorrelse(Scene scene, int bredde, int hoyde) {
-			//
-		}
-		
-		public void settBetalt(String billettKode) throws Exception {
-			//kontroll.hentBilletter();
-			kontroll.settBillettSomBetalt(billettKode);
-		}
-		
+	public void knappBehandleAvbestill(){
+		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
+		sletttabell.getItems().clear(); 
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
+	}
+	
+	public void knappBehandleSettBetalt(String billettkode) {
+		kontroll.settBillettSomBetalt(billettkode);
+		sletttabell.getItems().clear();
+		sletttabell.setItems(kontroll.hentUbetalteBilletter());
+	}
+	
+	public void behandleTilbake(Scene scene) {
+		vindu.setScene(scene);
+	}
+	
+	public void settStorrelse(Scene scene, int bredde, int hoyde) {
+		//
+	}
+	
+	public void settBetalt(String billettKode) throws Exception {
+		//kontroll.hentBilletter();
+		kontroll.settBillettSomBetalt(billettKode);
+	}
+	
 	@Override
 	//Ref javadoc: https://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
 	public void stop() {
@@ -538,10 +554,10 @@ public class Main extends Application {
 			kontroll.lagreVisningDB();
 			kontroll.lagreBillettDB();
 			kontroll.lagrePlassBillett();
+			kontroll.lukk();
 			Platform.exit();
 		}catch(Exception e) {
-		}
-		
+	}	
 	}
 	
 	
