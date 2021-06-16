@@ -55,6 +55,7 @@ public class Main extends Application {
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
+	private String radnr;
 
 	public void start(Stage primaryStage) {
 		try {
@@ -400,19 +401,26 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
-		ComboBox comboBoxrad = kontroll.hentrader();
-		Label radnr= new Label();
-		comboBoxrad.setOnAction((e) -> {radnr.setText(comboBoxrad.getValue().toString()); });
+		ComboBox comboBoxrad = kontroll.hentrader(kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
-		ComboBox comboBoxsete = kontroll.hentseter(radnr.getText());
-		comboBoxsete.setPromptText("Velg sete");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboBoxsete);
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
+		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 });
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
+	}
+	public void hentseter(String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+		System.out.println("radnummer: " + radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(radnr);
+		comboBoxsete.setPromptText("Velg sete");
+		comboBoxPanel.getChildren().addAll(comboBoxsete);
+		
+		
 	}
 		
 	public void lagKinobetjentscene() {
@@ -445,7 +453,8 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			TableColumn visningnr = new TableColumn("Visningnr");
+			
+			/* TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
 	        TableColumn pris = new TableColumn("Pris");
@@ -470,11 +479,19 @@ public class Main extends Application {
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
 	        tabellVisning.setItems(kontroll.getVisning());
-	        rotpanel.setCenter(tabellVisning);
+	        
+	        rotpanel.setCenter(tabellVisning); */
+	        
+	        //Tekst - startside
+	        Label label1= new Label(
+	                kontroll.getFormattertString());
+	        VBox layout1 = new VBox(20);
+	        layout1.getChildren().addAll(label1);
+	        rotpanel.setCenter(layout1);
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
-	        //rotpanel.setRight(tilbake);
+	        rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
 	      //Sok etter visning -------------------------------------------------------
@@ -490,7 +507,10 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	//Metode for å sjekke om kinosal finnes
+	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
 	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+	            	} 
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
