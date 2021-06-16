@@ -274,22 +274,32 @@ public class Kontroll implements kontrollInterface {
 				break;
 			}
 		}
-		System.out.println("prisen for filmen er "+ pris);
 		int antallseter=tempreservasjon.size();
-		System.out.println("Du har reservert: "+antallseter + " seter");
 		float totalpris=antallseter*pris;
-		System.out.println("totalpris er : "+totalpris);
-		return "";
+		String faktiskpris=String.valueOf(totalpris);
+		return faktiskpris;
+	}
+	
+	public ObservableList<Plass> fjernplass(int radnr, int setenr) {
+		System.out.println("du vil fjerne: " + plass);
+		int index=99999999;
+		for (Plass p:tempreservasjon) {
+			//Fjerner ønsket plass fra listen
+			if(p.getRadnr()==radnr && p.getSetenr()==setenr) {
+				index= tempreservasjon.indexOf(p);
+				
+			}
+		}
+		tempreservasjon.remove(index);
+		return tempreservasjon;
 	}
 	
 	public int finnLedigePlasserForKinosal(String visningsnr, int kinosalnr) {
 		ObservableList<Plass> ledigplass = hentledigplass(visningsnr, kinosalnr);
 		int teller = 0;
-		
 		for (Plass p : ledigplass) {
 				teller++;
 		}
-		
 		return teller;
 	}
 	
