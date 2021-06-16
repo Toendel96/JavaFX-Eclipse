@@ -765,8 +765,8 @@ public String getStatistikkFilm(String filmNr) {
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
-		String antallSett;
-		String billettKode;
+		int antallSett = 0;
+		String billettKode = null;
 		
 		
 		string = string + " " + "Visningnr" + "         ";
@@ -777,43 +777,36 @@ public String getStatistikkFilm(String filmNr) {
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
-			string = string + "   " + visningnr+" \n ";
-			}
+			string = string + "   " + visningnr+" ";
 			
+			}
+			Date dato = v.getDato();
+			Time tid = v.getStarttid();
+			boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
+			if(!status) {
+				
+			
+			for (Billett b : getBillett()) {
+				if (b.getVisningsnr()==(visningnr)) {
+					if (b.getErBetalt()) {
+						billettKode = b.getBillettkode();
+					}
+				}
+			}
+			for (Plassbillett pb : getPlassbillett()) {
+				if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
+					antallSett++;
+				}
+				else {
+					antallSett=0;
+				}
+			}
+			}
+			//string = string + " " + visningnr + "  "; 
+			string = string + " " + antallSett + "\n";	
 		}
-		//Henter alle billetter solgt på en visning
-				for (Visning v : getAlleVisninger()) {
-					if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
-						visningnr = v.getVisningnr();
-						
-						Date dato = v.getDato();
-						Time tid = v.getStarttid();
-						boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
-						if(!status) {
-							visningnr = v.getVisningnr();
-							for (Billett b : getBillett()) {
-								if (b.getVisningsnr()==(visningnr)) {
-								if (b.getErBetalt()) {
-									billettKode = b.getBillettkode();
-									System.out.println(billettKode);
-									for (Plassbillett pb : getPlassbillett()) {
-										if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
-											antallSett = String.valueOf(pb.getBillettkode());
-											System.out.print(antallSett);
-										} 
-									}			
-									//string = string + " " + antallSett + "\n";
-								}
-							} 
-						}	
-					}	
-				}
-						
-					
-				}
-				
-				
 		
+								
 		return string;
 	}	
 
