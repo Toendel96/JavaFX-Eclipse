@@ -490,8 +490,14 @@ public class Kontroll implements kontrollInterface {
 		//Returner en liste med ubetalte billetter
 		ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 		for (Billett b:billett) {
-			if(!b.getErBetalt()) {
-				ubetaltBillettListe.add(b);
+			for (Visning v: alleVisninger) {
+				if(b.getVisningsnr()==v.getVisningnr()) {
+					//Kall på metode som sjekker mot 30 min
+					
+					if(!b.getErBetalt()) {
+						ubetaltBillettListe.add(b);
+					}
+				}
 			}
 		}
 		return ubetaltBillettListe;
@@ -706,13 +712,8 @@ public String getStatistikkKino(String kinosalNr) {
 		if (ubetaltBillettListe.isEmpty()) {
 			showMessageDialog(null, "Finnes ingen ubetalte billetter");
 		}else {
+			lagreSlettetBillett(ubetaltBillettListe);
 		for (Billett u: ubetaltBillettListe) {
-			for (Visning v: alleVisninger) {
-				if(v.getVisningnr()==u.getVisningsnr()) {
-					lagreSlettetBillett();
-					
-				}
-			}
 			billett.remove(u);
 			}
 		showMessageDialog(null, "Ubetalte billetter er slettet");
@@ -720,11 +721,16 @@ public String getStatistikkKino(String kinosalNr) {
 		}
 	}
 	
-	public void lagreSlettetBillett(Billett ubetaltBillettListe){
+	public void lagreSlettetBillett(ObservableList<Billett> ubetaltBillettListe){
 		try{
 			PrintWriter utfil = Filer.lagSkriveForbindelse("SLETTEFIL");
 			for (Billett u: ubetaltBillettListe) {
-				utfil.println(u.toFile()+","+v.getFilmnr());
+				System.out.println(u.toString());
+				for (Visning v:alleVisninger) {
+					if (v.getVisningnr()==u.getVisningsnr()) {
+						utfil.println(u.toFile()+","+v.getFilmnr());
+					}
+				}
 			}
 			utfil.close();
 		}catch(Exception e) {}
