@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import domene.Film;
 import java.sql.Time;
@@ -28,8 +29,10 @@ import domene.Visning;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import domene.Billett;
 import javafx.collections.FXCollections;
@@ -53,9 +56,10 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
+	    
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
-
-	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
+	    private ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
+	    private ObservableList<Plass> tempreservasjon = FXCollections.observableArrayList();
 
 
 	
@@ -223,7 +227,6 @@ public class Kontroll implements kontrollInterface {
 		for(Plass l: ledigplass) {
 			for(Plass o:opptattplass) {
 				if(o.getRadnr()==l.getRadnr() && o.getSetenr()==l.getSetenr()) {
-					//Setet er opptatt"
 					finnes=true;
 					break;
 				} else {
@@ -237,15 +240,46 @@ public class Kontroll implements kontrollInterface {
 	
 	public ComboBox<String> hentseter(String visningsnr, String radnr, int kinosalnr){
 		ComboBox<String> cb = new ComboBox<String>();
-		int erLik=0;
-		for (Plass p: plass) {
-			if(p.getSetenr()!=erLik) {
-				cb.getItems().add(Integer.toString(p.getRadnr()));
-				erLik=p.getRadnr();
-			}else {
+		ObservableList<Plass> ledigplasser=hentledigplass(visningsnr,kinosalnr);
+		//ObservableList<String> rader=hentrader(radnr, kinosalnr).getItems();
+		for(Plass p: ledigplasser) {
+			if(p.getRadnr()==Integer.parseInt(radnr)) {
+				cb.getItems().add(Integer.toString(p.getSetenr()));
 			}
 		}
 		return cb;
+	}
+	
+	public ObservableList<Plass> leggTilSete(String sete,String rad, int kinosalnr){
+		if(tempreservasjon.isEmpty()) {
+			tempreservasjon.add(new Plass(Integer.parseInt(rad), Integer.parseInt(sete), kinosalnr));
+		}else {
+			boolean finnes=false;
+			for(Plass p:tempreservasjon ) {
+				if(p.getRadnr()==Integer.parseInt(rad) && p.getSetenr()==Integer.parseInt(sete)) {
+					showMessageDialog(null, "Du har allerede lagt til denne plassen");
+					finnes=true;
+				}
+			}if(!finnes) {
+				tempreservasjon.add(new Plass(Integer.parseInt(rad), Integer.parseInt(sete), kinosalnr));
+			}
+		}return tempreservasjon;
+	}
+	
+	public String regnutpris(String visningsnr){
+		float pris=0;
+		for (Visning v: alleVisninger) {
+			if(v.getVisningnr()==Integer.parseInt(visningsnr)) {
+				pris=v.getPris();
+				break;
+			}
+		}
+		System.out.println("prisen for filmen er "+ pris);
+		int antallseter=tempreservasjon.size();
+		System.out.println("Du har reservert: "+antallseter + " seter");
+		float totalpris=antallseter*pris;
+		System.out.println("totalpris er : "+totalpris);
+		return "";
 	}
 	
 	public int finnLedigePlasserForKinosal(String visningsnr, int kinosalnr) {
@@ -259,11 +293,12 @@ public class Kontroll implements kontrollInterface {
 		return teller;
 	}
 	
-	public String getFormattertString(int valg) {
+	public String getFormattertString1() {
+		
+		ObservableList<Visning> visningOrdinar = getAlleVisninger();
+		visningOrdinar.sort(Comparator.comparingInt(Visning::getVisningnr));
 		
 		String string = "";
-		String string2 = "";
-		String string3 = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
 		
@@ -275,6 +310,59 @@ public class Kontroll implements kontrollInterface {
 		string = string + " " + "starttid" + "           ";
 		string = string + " " + "pris" + "         ";
 		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		for (Visning v : visningOrdinar) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+		}
+		
+		return string;
+	}
+	
+	//Sortert paa film
+	public String getFormattertString2() {
+		
+	ObservableList<Visning> visningOrdinar = getAlleVisninger();
+	visningOrdinar.sort(Comparator.comparingInt(Visning::getFilmnr).reversed());
+		
+		String string = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
+		
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
 		
 		for (Visning v : getAlleVisninger()) {
 			String visningsnr = String.valueOf(v.getVisningnr());
@@ -306,17 +394,61 @@ public class Kontroll implements kontrollInterface {
 			string = string + " " + antallLedigePlasser + "\n";
 		}
 		
-		//-------------------------- String2 ----------------------	
-		string2 = 
-				"test3";
+		return string;
+	}
+
+	//Sortert basert paa tidspunkt (dato og tid)
+	public String getFormattertString3() {
 		
-		string3 = 
-				"test3";
+		String string = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
 		
-		if (valg == 1) return string;
-		else if (valg == 2) return string2;
-		else if (valg == 3) return string3;
-		else return null;
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		
+		ObservableList<Visning> visningOrdinar = getAlleVisninger();
+		visningOrdinar.sort(Comparator.comparing(Visning::getDato).reversed());
+		
+		
+		for (Visning v : visningOrdinar) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+	
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+		}
+		
+		return string;
 	}
 
 
@@ -350,60 +482,7 @@ public class Kontroll implements kontrollInterface {
 		}
 		return ubetaltBillettListe;
 	}
-
-
-	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
-		if (ubetaltBillettListe.isEmpty()) {
-			showMessageDialog(null, "Finnes ingen ubetalte billetter");
-		}else {
-		for (Billett u: ubetaltBillettListe) {
-				billett.remove(u);
-			}
-		showMessageDialog(null, "Ubetalte billetter er fjernet");
-		ubetaltBillettListe.clear();
-		}
-	}
-
-	@Override
-	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
-	public boolean settBillettSomBetalt(String billettKode) {
-		//Tar imot billettkode som skal settes til betalt
-		boolean billettFinnes= false;
-		for(Billett b: billett) {
-			if(billettKode.equals(b.getBillettkode())){
-				if(b.getErBetalt()) {
-					billettFinnes=true;
-					showMessageDialog(null, "Billetten er allerede betalt");
-
-				} else {
-				b.setErBetalt(true);
-				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
-				
-				billettFinnes=true;
-				break;
-				}
-			}
-		}
-		if(billettFinnes==false) {
-			showMessageDialog(null, "Billetten finnes ikke");
-			
-		}
-		return true;
-	}
-
-	@Override
-	public boolean leggTilFilm(String filmnavn) {
-		int sisteFilm = film.size() - 1;
-		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
-		int nyttFilmNr = sisteFilmNr + 1;
-		setFilm(nyttFilmNr,filmnavn);
-		return false;
-	}
-
 	@Override
 	public void hentFilmer() throws Exception {
 		//Henter alle filmene som ligger i databasen og setter film Observablelisten
@@ -432,16 +511,6 @@ public class Kontroll implements kontrollInterface {
 		return filmNr;
 	}
 	
-	public ChoiceBox<String> visFilmerChoice() {
-		//Returnerer en choicebox med alle filmnavn
-		ChoiceBox<String> cb = new ChoiceBox<String>();
-		for (Film f: film) {
-			cb.getItems().add(f.getFilmnavn());
-		}
-		return cb;
-	}
-	
-
 	@Override
 	public ResultSet finnSpesifikkFilm(String filmnr) throws Exception {
 		// TODO Auto-generated method stub
@@ -467,24 +536,8 @@ public class Kontroll implements kontrollInterface {
 		}
 	}
 	
-	public ChoiceBox<String> visKinosalerChoice() {
-		//Returnerer en choicebox med alle kinosaler
-		ChoiceBox<String> cb = new ChoiceBox<String>();
-		for (Kinosal k: kinosal) {
-			cb.getItems().add(String.valueOf(k.getKinosalnr()));
-		}
-		return cb;
-	}
-
-	@Override
-	public boolean finnSpesifikkKinosal(int kinosalnr) {
-		return false;
-		// TODO Auto-generated method stub
-	}
-	
-	
-	
 public String getStatistikkFilm(String filmNr) {
+
 		
 		String string = "";
 		String filmnr = filmNr;
@@ -512,13 +565,12 @@ public String getStatistikkFilm(String filmNr) {
 		}
 		string = string + "   " + visningnr+"      ";	
 		//string = string + " " + antallPlasser + "\n";
-		
 		return string;
 	}	
 
 	
-//Lager statistikk for kinosal
 public String getStatistikkKino(String kinosalNr) {
+
 		
 		String string = "";
 		String kinosalnr = kinosalNr;
@@ -578,7 +630,6 @@ public String getStatistikkKino(String kinosalNr) {
 			string = string + "             " + antallVisninger + "                          ";	
 			string = string + " " + antallPlasser + "\n";
 			
-		
 		return string;
 	}
 		
@@ -606,6 +657,106 @@ public String getStatistikkKino(String kinosalNr) {
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
+	}
+	
+	@Override
+	public boolean finnSpesifikkKinosal(int kinosalnr) {
+		return false;
+		// TODO Auto-generated method stub
+	}
+	
+	public void hentAntallLedigePlasserSporring() {
+		try {
+			resultat = null;
+			String sql = "SELECT COUNT(p_setenr), p_kinosalnr AS Antall_seter from tblplass";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			
+			while(resultat.next()) {
+				int ledigePlasser = resultat.getInt(1);
+	            //int setenr = resultat.getInt(2);
+	            int kinosalnr = resultat.getInt(2);
+	            
+	            setAntallLedigePlasserListe(ledigePlasser);
+	            //setAntallLedigePlasserListe(setenr);
+	            setAntallLedigePlasserListe(kinosalnr);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
+		if (ubetaltBillettListe.isEmpty()) {
+			showMessageDialog(null, "Finnes ingen ubetalte billetter");
+		}else {
+		for (Billett u: ubetaltBillettListe) {
+				billett.remove(u);
+			}
+		showMessageDialog(null, "Ubetalte billetter er fjernet");
+		ubetaltBillettListe.clear();
+		}
+	}
+
+	@Override
+	public ResultSet finnSpesifikkBillett(String billettKode) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public boolean settBillettSomBetalt(String billettKode) {
+		//Tar imot billettkode som skal settes til betalt
+		boolean billettFinnes= false;
+		for(Billett b: billett) {
+			if(billettKode.equals(b.getBillettkode())){
+				if(b.getErBetalt()) {
+					billettFinnes=true;
+					showMessageDialog(null, "Billetten er allerede betalt");
+
+				} else {
+				b.setErBetalt(true);
+				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
+				
+				billettFinnes=true;
+				break;
+				}
+			}
+		}
+		if(billettFinnes==false) {
+			showMessageDialog(null, "Billetten finnes ikke");
+			
+		}
+		return true;
+	}
+
+	@Override
+	public boolean leggTilFilm(String filmnavn) {
+		int sisteFilm = film.size() - 1;
+		int sisteFilmNr = film.get(sisteFilm).getFilmnr();
+		int nyttFilmNr = sisteFilmNr + 1;
+		setFilm(nyttFilmNr,filmnavn);
+		return false;
+	}
+
+	
+	public ChoiceBox<String> visFilmerChoice() {
+		//Returnerer en choicebox med alle filmnavn
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Film f: film) {
+			cb.getItems().add(f.getFilmnavn());
+		}
+		return cb;
+	}
+	
+	public ChoiceBox<String> visKinosalerChoice() {
+		//Returnerer en choicebox med alle kinosaler
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Kinosal k: kinosal) {
+			cb.getItems().add(String.valueOf(k.getKinosalnr()));
+		}
+		return cb;
 	}
 
 	@Override
@@ -652,9 +803,6 @@ public String getStatistikkKino(String kinosalNr) {
                Date dato = resultat.getDate(4);
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
-               
-               System.out.println("Startid: " + starttid + ", dato: " + dato);
-               System.out.println(sjekkOmDatoTidErFremtid(starttid, dato));
                
                setAlleVisninger(visningnr, filmnr, kinosalnr, dato, starttid, pris);
                
@@ -759,28 +907,6 @@ public String getStatistikkKino(String kinosalNr) {
         	return false;
         }
 		return true;
-	}
-	
-	public void hentAntallLedigePlasserSporring() {
-		try {
-			resultat = null;
-			String sql = "SELECT COUNT(p_setenr), p_kinosalnr AS Antall_seter from tblplass";
-			preparedStatement = forbindelse.prepareStatement(sql);
-			resultat = preparedStatement.executeQuery(sql);
-			
-			while(resultat.next()) {
-				int ledigePlasser = resultat.getInt(1);
-	            //int setenr = resultat.getInt(2);
-	            int kinosalnr = resultat.getInt(2);
-	            
-	            setAntallLedigePlasserListe(ledigePlasser);
-	            //setAntallLedigePlasserListe(setenr);
-	            setAntallLedigePlasserListe(kinosalnr);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	//public ObservableList<List<String>> visningMedFilmnnavnOgAntallLedigePlasser() {
@@ -1001,16 +1127,6 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
-	
-		
-	public void leggAltInnItblFilmVedAvslutning() throws Exception {
-        try {
-            //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
-        }catch(Exception e) {throw new Exception(e);}
-	}
-
-
 
 	
 }
