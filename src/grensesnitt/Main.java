@@ -83,12 +83,12 @@ public class Main extends Application {
 			lagMenyscene();
 			lagKinobetjentscene();
 			
-			kontroll.hentAntallLedigePlasserSporring();
+			/* kontroll.hentAntallLedigePlasserSporring();
 			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
 			
 			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
 				System.out.println(i);
-			}
+			} */
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -350,22 +350,22 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
-		ComboBox comboBoxrad = kontroll.hentrader(kinosalnr);
+		ComboBox comboBoxrad = kontroll.hentrader(visningsnr,kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 hentseter(visningsnr, kinosalnr, radnr, tilbake, comboBoxrad, comboBoxPanel); 
 		 });
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
 	}
-	public void hentseter(String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
 		System.out.println("radnummer: " + radnr);
-		ComboBox comboBoxsete = kontroll.hentseter(radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
 		comboBoxsete.setPromptText("Velg sete");
 		comboBoxPanel.getChildren().addAll(comboBoxsete);
 		
@@ -441,18 +441,25 @@ public class Main extends Application {
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
+	        Button standard = new Button("Standard");
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
 	        
+	        standard.setOnAction(e -> {
+	        	try {
+	        		label1.setText(kontroll.getFormattertString(1));
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
 	        sorterFilm.setOnAction(e -> {
 	        	try {
-	        		label1.setText("test");
+	        		label1.setText(kontroll.getFormattertString(2));
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterTidspunkt.setOnAction(e -> {
 	        	try {
-	        		label1.setText("test2");
+	        		label1.setText(kontroll.getFormattertString(3));
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
@@ -472,15 +479,17 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
-	            	//Metode for ï¿½ sjekke om kinosal finnes
-	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
-	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
-	            	} 
+	            	//Metode for å sjekke om Visning finnes
+	            	if (hentetKinosalnr!=0) {
+		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
+		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            	}
+	            	}
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        
 	        rotpanel.setTop(sokpanel);
-	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt);
+	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt, standard);
 	        sokpanel.setHgap(10);
 	        
 			
