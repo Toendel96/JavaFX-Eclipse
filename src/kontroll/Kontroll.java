@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import domene.Billett;
 import domene.Film;
@@ -26,12 +27,16 @@ import domene.Kinosal;
 import domene.Plass;
 import domene.Plassbillett;
 import domene.Visning;
+import grensesnitt.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import domene.Billett;
@@ -54,9 +59,7 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Plass> plass = FXCollections.observableArrayList();
 	    private ObservableList<Plassbillett> plassbillett = FXCollections.observableArrayList();
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
-
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
-	    
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 	    private ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
 	    private ObservableList<Plass> tempreservasjon = FXCollections.observableArrayList();
@@ -171,6 +174,15 @@ public class Kontroll implements kontrollInterface {
 	public void setVisningString(ObservableList<List<String>> visningString) {
 		this.visningString = visningString;
 	}
+	
+	
+	public ObservableList<Plass> getTempreservasjon() {
+		return tempreservasjon;
+	}
+
+	public void setTempreservasjon(ObservableList<Plass> tempreservasjon) {
+		this.tempreservasjon = tempreservasjon;
+	}
 
 	@Override
 	public boolean sletteBillett(String billettKode) {
@@ -264,6 +276,95 @@ public class Kontroll implements kontrollInterface {
 				tempreservasjon.add(new Plass(Integer.parseInt(rad), Integer.parseInt(sete), kinosalnr));
 			}
 		}return tempreservasjon;
+	}
+	
+	public boolean giBestillingBekreftelse(String visningsnr) {
+		boolean status = false;
+	    String string = "";
+	    String filmnavn = null;
+	    int filmnr1 = 0;
+	    String totalpris = regnutpris(visningsnr);
+	    System.out.println("fffff " + totalpris);
+		
+		ObservableList<Plass> tempreservasjon = getTempreservasjon();
+		ObservableList<Billett> billett = getBillett();
+	    ObservableList<Film> film = getFilm();
+	    ObservableList<Plass> plass = getPlass();
+	    ObservableList<Plassbillett> plassbillett = getPlassbillett();
+	    ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
+	    
+		string = "                                                                      Vil du bekrefte bestillingen?\n\n";
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         \n";
+		
+		
+		for (Visning v : getAlleVisninger()) {
+			if (visningsnr.equals(String.valueOf(v.getVisningnr()))) {
+				filmnr1 = v.getFilmnr();
+			}
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + totalpris + "                    \n";
+		}
+	    
+	    System.out.println(string);
+		
+		
+		Alert avbrytEllerBekreft = new Alert(AlertType.CONFIRMATION);
+		Alert ok = new Alert(AlertType.INFORMATION);
+		Alert avbrutt = new Alert(AlertType.INFORMATION);
+		avbrytEllerBekreft.getDialogPane().setMinHeight(800);
+		avbrytEllerBekreft.getDialogPane().setMinWidth(800);
+		
+		avbrytEllerBekreft.setContentText(string);
+		ok.setContentText("Bestilling bekreftet");
+		avbrutt.setContentText("Du fullforte ikke bestillingen");
+		
+		 Optional<ButtonType> result = avbrytEllerBekreft.showAndWait();
+		 if (result.isPresent() && result.get() == ButtonType.OK) {
+			 status = true;
+			 ok.show();
+		 } else {
+			avbrutt.show();
+			status = false;
+		 }
+		 
+		 if (status) {
+			 bestillingBekreftetLeggInnIListe(visningsnr);
+			 return true; 
+		 } else {
+			 return false;
+		 }
+	}
+	
+	public void bestillingBekreftetLeggInnIListe(String visningsnr) {
+		
 	}
 	
 	public String regnutpris(String visningsnr){

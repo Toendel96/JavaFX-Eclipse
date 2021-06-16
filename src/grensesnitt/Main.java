@@ -423,13 +423,22 @@ public class Main extends Application {
 		ComboBox<Plass> comboboxplass= new ComboBox();
 		comboboxsete.setPromptText("Velg sete");
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
+		ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
 		 comboboxsete.setItems(seter);
 		 });
 		leggtil.setOnAction((e) -> {
 			comboboxplass.setItems(kontroll.leggTilSete(comboboxsete.getValue().toString(),comboBoxrad.getValue().toString(),kinosalnr));
 			kontroll.regnutpris(visningsnr);
 		});
+		
+		
+		reserver.setOnAction(e -> {
+        	try {
+        		boolean status = kontroll.giBestillingBekreftelse(visningsnr);
+        		if (status) behandleTilbake(menyscene);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+		
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboboxsete,leggtil);
 		comboBoxPanel.setHgap(10);
 		Region tomt= new Region();
@@ -526,6 +535,7 @@ public class Main extends Application {
 	            	if (hentetKinosalnr!=0) {
 		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
 		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            		sokVisninger.clear();
 		            	}
 	            	}
 	            } catch (Exception exception) { exception.printStackTrace(); }
