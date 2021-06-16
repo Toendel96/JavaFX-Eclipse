@@ -472,8 +472,6 @@ public class Main extends Application {
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
 	        
-	        kontroll.setAlleVisningerEkstra();
-	        
 	        standard.setOnAction(e -> {
 	        	try {
 	        		label1.setText(kontroll.getFormattertString1());
