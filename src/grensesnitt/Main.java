@@ -96,7 +96,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
-	
+	/** Kodet av 7104, kontrollert og godkjent av 7085 */
 	public void lagMenyscene() {
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
@@ -124,7 +124,7 @@ public class Main extends Application {
 		vindu.setScene(menyscene);
 		vindu.show();
 	}
-	
+	/** Kodet av 7104, kontrollert og godkjent av 7085 */
 	public void lagLoginscene(String bruker) {
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
@@ -146,7 +146,7 @@ public class Main extends Application {
 		vindu.setScene(loginscene);
 		vindu.show();
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7079 */
 	public void loggInnBruker(String brukernavn, String passord, String bruker) {
 		Alert loggInnFeilet = new Alert(AlertType.ERROR);
 		if (bruker.equals("planlegger")) {
@@ -169,7 +169,7 @@ public class Main extends Application {
 			}
 		} 
 	}
-
+	/** Kodet av 7079, kontrollert og godkjent av 7088  */
 	public void lagPlanleggerscene() {
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
@@ -204,7 +204,7 @@ public class Main extends Application {
 		planleggerRotpanel.setCenter(planleggerGridpane);
 		
 	}
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7074 */
 	public void lagRapportScene() {
 		BorderPane rapportRotpanel = new BorderPane();
 		GridPane rapportGridpane = new GridPane();
@@ -234,7 +234,7 @@ public class Main extends Application {
 		vindu.show();
 	
 	}
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7088  */
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);						
@@ -252,12 +252,9 @@ public class Main extends Application {
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		valgpanel.getChildren().addAll(filmSok,sokKnapp,btnTilbake);
 		filmStatistikkPanel.setTop(valgpanel);
-		
-		
-
 	}
 	
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7088  */
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
@@ -277,7 +274,7 @@ public class Main extends Application {
 		kinoStatistikkPanel.setTop(valgpanel);
 		
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
 		//vindu.setHeight(200);
@@ -299,7 +296,7 @@ public class Main extends Application {
 		nyFilmPanel.setCenter(panel);
 		nyFilmPanel.setBottom(tilbake);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagNyVisningScene(){
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
@@ -347,7 +344,7 @@ public class Main extends Application {
 		nyVisningPanel.setCenter(panel);
 		nyVisningPanel.setBottom(tilbake);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
@@ -387,6 +384,7 @@ public class Main extends Application {
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
 	}
+	/** Kodet av 7074, kontrollert og godkjent av 7079 */
 	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
 		System.out.println("radnummer: " + radnr);
 		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
@@ -394,7 +392,7 @@ public class Main extends Application {
 		comboBoxPanel.getChildren().addAll(comboBoxsete);
 		
 	}
-		
+	/** Kodet av 7074, kontrollert og godkjent av 7104 */
 	public void lagKinobetjentscene() {
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
@@ -425,7 +423,7 @@ public class Main extends Application {
 		kinorotpanel.setCenter(sletttabell);
 		kinorotpanel.setBottom(knappePanel);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void registrerBillettKBScene() {
 		//Kopi av lagKundeScene;
 		GridPane rotpanel = new GridPane();
@@ -445,7 +443,7 @@ public class Main extends Application {
         Button tilbake = new Button("Tilbake");
         tilbake.setOnAction(e -> behandleTilbake(menyscene));
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
@@ -516,27 +514,27 @@ public class Main extends Application {
 			
 		} catch(Exception e) {e.printStackTrace();}
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void knappBehandleAvbestill(){
 		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
 		sletttabell.getItems().clear(); 
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void knappBehandleSettBetalt(String billettkode) {
 		kontroll.settBillettSomBetalt(billettkode);
 		sletttabell.getItems().clear();
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void behandleTilbake(Scene scene) {
 		vindu.setScene(scene);
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void settStorrelse(Scene scene, int bredde, int hoyde) {
 		//
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void settBetalt(String billettKode) throws Exception {
 		//kontroll.hentBilletter();
 		kontroll.settBillettSomBetalt(billettKode);

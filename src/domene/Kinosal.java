@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7079, kontrollert og godkjent av 7088 */
 public class Kinosal {
 	private int kinosalnr;
 	private String kinonavn;

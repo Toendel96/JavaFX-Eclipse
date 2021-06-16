@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import domene.*;
-
+/** Kodet av 7088, kontrollert og godkjent av 7085*/
 public interface kontrollInterface {
 	//Lister
 	public ObservableList<Billett> billett = FXCollections.observableArrayList();
