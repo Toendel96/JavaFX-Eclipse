@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7104 , kontrollert og godkjent av 7088 */
 public class Plassbillett {
 	private int radnr;
 	private int setenr;
@@ -39,6 +39,30 @@ public class Plassbillett {
 	public void setBillettkode(String billettkode) {
 		this.billettkode = billettkode;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Plassbillett other = (Plassbillett) obj;
+		if (billettkode == null) {
+			if (other.billettkode != null)
+				return false;
+		} else if (!billettkode.equals(other.billettkode))
+			return false;
+		if (kinosalnr != other.kinosalnr)
+			return false;
+		if (radnr != other.radnr)
+			return false;
+		if (setenr != other.setenr)
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		return "Plassbillett [radnr=" + radnr + ", setenr=" + setenr + ", kinosalnr=" + kinosalnr + ", billettkode="

@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7074, kontrollert og godkjent av 7104 */
 public class Billett {
 	private String billettkode;
 	private int visningsnr;
@@ -33,6 +33,28 @@ public class Billett {
 	
 	public String toFile() {
 		return(billettkode+ "," + visningsnr);
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Billett other = (Billett) obj;
+		if (billettkode == null) {
+			if (other.billettkode != null)
+				return false;
+		} else if (!billettkode.equals(other.billettkode))
+			return false;
+		if (erBetalt != other.erBetalt)
+			return false;
+		if (visningsnr != other.visningsnr)
+			return false;
+		return true;
 	}
 	
 	@Override

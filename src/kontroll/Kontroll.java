@@ -74,6 +74,7 @@ public class Kontroll implements kontrollInterface {
 
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
+	    /** Kodet av 7088, kontrollert og godkjent av 7074*/
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
@@ -82,7 +83,7 @@ public class Kontroll implements kontrollInterface {
             throw new Exception("Kan ikke oppnaa kontakt med databasen");
         }
     }
-
+    /** Kodet av 7088, kontrollert og godkjent av 7044*/
     public void lukk() throws Exception {
         try {
             if(forbindelse != null) {
@@ -103,13 +104,17 @@ public class Kontroll implements kontrollInterface {
 	public void settBillett(String billettkode, int visningsnr, boolean erBetalt) {
 		billett.add(new Billett(billettkode, visningsnr, erBetalt));
     }
+	
+	public void settBillettNy(ObservableList<Billett> billett) {
+		this.billett = billett;
+	}
 
 	public ObservableList<Film> getFilm() {
 		return film;
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, brukernavn));
+		film.add(new Film(filmnr, filmnavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -126,7 +131,7 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
-	
+
 	public ObservableList<Integer> getAntallLedigePlasserListe() {
 		return antallLedigePlasserListe;
 	}
@@ -134,7 +139,7 @@ public class Kontroll implements kontrollInterface {
 	public void setAntallLedigePlasserListe(int verdi) {
 		antallLedigePlasserListe.add(verdi);
 	}
-
+	/** Kodet av 7088 , kontrollert og godkjent av 7079 */
 	public ResultSet hentPlasser() throws Exception {
         resultat = null;
         String sql = "SELECT * FROM tblplass";
@@ -156,6 +161,10 @@ public class Kontroll implements kontrollInterface {
 
 	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
 		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
+	}
+	
+	public void settPlassbillettNy(ObservableList<Plassbillett> plassbillett) {
+		this.plassbillett = plassbillett;
 	}
 
 	public ObservableList<Visning> getVisning() {
@@ -190,6 +199,10 @@ public class Kontroll implements kontrollInterface {
 	public void setTempreservasjon(ObservableList<Plass> tempreservasjon) {
 		this.tempreservasjon = tempreservasjon;
 	}
+	
+	public void setTempreservasjonNull() {
+		tempreservasjon.clear();
+	}
 
 	@Override
 	public boolean sletteBillett(String billettKode) {
@@ -202,7 +215,7 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7085 */
 	public ComboBox<String> hentrader(String visningsnr, int kinosalnr){
 		ObservableList<Plass> ledigplass=hentledigplass(visningsnr,kinosalnr);
 		ComboBox<String> cb = new ComboBox<String>();
@@ -222,7 +235,7 @@ public class Kontroll implements kontrollInterface {
 		}
 		return cb;
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7088*/
 	public ObservableList<Plass> hentledigplass(String visningsnr,int kinosalnr){
 		try {
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
@@ -256,7 +269,7 @@ public class Kontroll implements kontrollInterface {
 		return faktiskledigplass;
 		}catch (Exception e){ e.printStackTrace(); return null;}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7104*/
 	public ComboBox<String> hentseter(String visningsnr, String radnr, int kinosalnr){
 		ComboBox<String> cb = new ComboBox<String>();
 		ObservableList<Plass> ledigplasser=hentledigplass(visningsnr,kinosalnr);
@@ -268,7 +281,7 @@ public class Kontroll implements kontrollInterface {
 		}
 		return cb;
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085*/
 	public ObservableList<Plass> leggTilSete(String sete,String rad, int kinosalnr){
 		if(tempreservasjon.isEmpty()) {
 			tempreservasjon.add(new Plass(Integer.parseInt(rad), Integer.parseInt(sete), kinosalnr));
@@ -285,6 +298,8 @@ public class Kontroll implements kontrollInterface {
 		}return tempreservasjon;
 	}
 	
+	/** Kodet av 7074, kontrollert og godkjent av 7104 */
+	
 	public boolean giBestillingBekreftelse(String visningsnr) {
 		boolean status = false;
 	    String string = "";
@@ -297,16 +312,15 @@ public class Kontroll implements kontrollInterface {
 		
 		for (Plass p : tempreservasjon) {
 			kinosalnrtemp = p.getKinosalnr();
+			//System.out.println(kinosalnrtemp);
 		}
 		
 		ObservableList<Billett> billett = getBillett();
 		
-		for (Billett b : billett) {
-			System.out.println(b.toString());
-		}
-		
-		int index = billett.size();
+		int index = billett.size()-1;
 		Billett billettVerdi = billett.get(index);
+		int billettkode = Integer.parseInt(billettVerdi.getBillettkode());
+		billettkode = billettkode+1;
 		
 	    ObservableList<Film> film = getFilm();
 	    ObservableList<Plass> plass = getPlass();
@@ -315,6 +329,7 @@ public class Kontroll implements kontrollInterface {
 	    
 		string = "                                                                      Vil du bekrefte bestillingen?\n\n";
 		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "billettkode" + "     ";
 		string = string + " " + "filmnr "+ "       ";
 		string = string + " " + "filmnavn "+ "          ";
 		string = string + " " + "kinosalnr" + "         ";
@@ -344,13 +359,28 @@ public class Kontroll implements kontrollInterface {
 			String pris = String.valueOf(v.getPris());
 			
 
-			string = string + " " + visningsnr + "                    ";
-			string = string + " " + filmnr + "                 ";
-			string = string + " " + filmnavn + "                 ";
+			string = string + " " + visningsnr + "                           ";
+			string = string + " " + billettkode + "                ";
+			string = string + " " + filmnr + "               ";
+			string = string + " " + filmnavn + "                  ";
 			string = string + " " + kinosalnr + "          ";
-			string = string + " " + dato + "        ";
-			string = string + " " + starttid + "        ";
-			string = string + " " + totalpris + "                    \n";
+			string = string + " " + dato + "      ";
+			string = string + " " + starttid + "          ";
+			string = string + " " + totalpris + "     \n";
+			
+			string = string + "\n";
+			string = string + " " + "radnr" + "     ";
+			string = string + " " + "setenr" + "     \n";
+			
+			for (Plass p : tempreservasjon) {
+				if (kinosalnrtemp == p.getKinosalnr()) {
+				string = string + "     " + String.valueOf(p.getRadnr());
+				string = string + "           " + String.valueOf(p.getSetenr()) + "\n";	
+				
+				setPlassbillett(p.getRadnr(), p.getSetenr(), Integer.parseInt(kinosalnr), String.valueOf(billettkode));
+				}
+			}
+			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), false);
 			break;
 		}
 		
@@ -360,9 +390,17 @@ public class Kontroll implements kontrollInterface {
 		Alert avbrutt = new Alert(AlertType.INFORMATION);
 		avbrytEllerBekreft.getDialogPane().setMinHeight(400);
 		avbrytEllerBekreft.getDialogPane().setMinWidth(800);
+		ok.getDialogPane().setMinWidth(600);
 		
 		avbrytEllerBekreft.setContentText(string);
-		ok.setContentText("Bestilling bekreftet");
+		
+		String string2 = "";
+		
+		string2 = "Bestilling bekreftet\n";
+		string2 = string2 + "Billettene må hentes senest 30 minutter før forestillingen\n";
+		string2 = string2 + "Du må oppgi billettkoden når du kommer";
+		
+		ok.setContentText(string2);
 		avbrutt.setContentText("Du fullforte ikke bestillingen");
 		
 		 Optional<ButtonType> result = avbrytEllerBekreft.showAndWait();
@@ -378,8 +416,58 @@ public class Kontroll implements kontrollInterface {
 			 bestillingBekreftetLeggInnIListe(visningsnr);
 			 return true; 
 		 } else {
+			 
+			//Skal slettes --------------------------
+			 for (Billett b : getBillett()) {
+					System.out.println(b.toString());
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					System.out.println(pb.toString());
+				}
+			
+			
+			ObservableList<Billett> billettTemp = FXCollections.observableArrayList();
+			ObservableList<Plassbillett> plassbillettTemp = FXCollections.observableArrayList();
+			 
+			 
+			 for (Billett b : getBillett()) {
+				 System.out.println("getBillettkode: " + b.getBillettkode());
+				 System.out.println("billettkode: " + billettkode);
+					if (Integer.parseInt(b.getBillettkode()) == billettkode) {
+						System.out.println("treff");
+					} else {
+						System.out.println("ikke treff");
+						billettTemp.add(new Billett(b.getBillettkode(), b.getVisningsnr(), b.getErBetalt()));
+					}
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					if (Integer.parseInt(pb.getBillettkode()) == billettkode) {
+					} else {
+						plassbillettTemp.add(new Plassbillett(pb.getRadnr(), pb.getSetenr(), pb.getKinosalnr(), pb.getBillettkode()));
+					}
+				}
+				
+				billett.clear();
+				plassbillett.clear();
+				
+				settBillettNy(billettTemp);
+				settPlassbillettNy(plassbillettTemp);
+				
+				
+				//Skal slettes --------------------------
+				System.out.println("Slette");
+				for (Billett b : getBillett()) {
+					System.out.println(b.toString());
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					System.out.println(pb.toString());
+				}
+				
 			 return false;
-		 }
+		 }	 
 	}
 	
 	public void bestillingBekreftetLeggInnIListe(String visningsnr) {
@@ -411,7 +499,7 @@ public class Kontroll implements kontrollInterface {
 		tempreservasjon.remove(index);
 		return tempreservasjon;
 	}
-	
+	/** Kodet av 7104 , kontrollert og godkjent av 7074*/
 	public int finnLedigePlasserForKinosal(String visningsnr, int kinosalnr) {
 		ObservableList<Plass> ledigplass = hentledigplass(visningsnr, kinosalnr);
 		int teller = 0;
@@ -420,7 +508,7 @@ public class Kontroll implements kontrollInterface {
 		}
 		return teller;
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7085*/
 	public String getFormattertString1() {
 		
 		ObservableList<Visning> visningOrdinar = getAlleVisninger();
@@ -473,6 +561,7 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	//Sortert paa film
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public String getFormattertString2() {
 		
 	ObservableList<Visning> visningOrdinar = getAlleVisninger();
@@ -526,6 +615,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	//Sortert basert paa tidspunkt (dato og tid)
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public String getFormattertString3() {
 		
 		String string = "";
@@ -579,7 +669,7 @@ public class Kontroll implements kontrollInterface {
 		return string;
 	}
 
-
+	/** Kodet av 7088, kontrollert og godkjent av 7079 */
 	@Override
 	public ResultSet hentBilletter() throws Exception {
         resultat = null;
@@ -599,7 +689,7 @@ public class Kontroll implements kontrollInterface {
 	public ObservableList<Billett> getDataBillettListe() {
         return billett;
     }
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085*/
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
 		ubetaltBillettListe.clear();
@@ -619,7 +709,7 @@ public class Kontroll implements kontrollInterface {
 		}
 		return ubetaltBillettListe;
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	@Override
 	public void hentFilmer() throws Exception {
 		//Henter alle filmene som ligger i databasen og setter film Observablelisten
@@ -637,7 +727,7 @@ public class Kontroll implements kontrollInterface {
 			throw new Exception("Kan ikke hente filmer fra databasen");
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public int hentFilmnrFraNavn(String filmNavn) {
 		int filmNr = 0;
 		for (Film f: film) {
@@ -653,7 +743,7 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/** Kodet av 7088, kontrollert og godkjent av 7085 */
 	@Override
 	public ObservableList<Kinosal> hentKinosaler() throws Exception {
 		try {
@@ -672,19 +762,16 @@ public class Kontroll implements kontrollInterface {
 			throw new Exception("Kan ikke hente kinosaler");
 		}
 	}
-	
+	/** Kodet av 7085 , kontrollert og godkjent av 7079 */
 public String getStatistikkFilm(String filmNr) {
 
 		
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
-		int antall = 0;
 		int antallSett = 0;
-		//int antallSett = 0;
-		//int prosentKino = 0;
-		//int bestillingSlettet = 0;
-		//System.out.println(filmnr);
+		String billettKode = null;
+		
 		
 		string = string + " " + "Visningnr" + "         ";
 		string = string + " " + "Antall sett" + "         ";	
@@ -694,42 +781,40 @@ public String getStatistikkFilm(String filmNr) {
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
-			string = string + "   " + visningnr+" \n ";
-			}
+			string = string + "   " + visningnr+" ";
 			
-		}
-		//Henter alle billetter solgt pÃ¥ en visning
-				for (Visning v : getAlleVisninger()) {
-					if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
-						visningnr = v.getVisningnr();
-						
-						Date dato = v.getDato();
-						Time tid = v.getStarttid();
-						boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
-						if(!status) {
-							visningnr = v.getVisningnr();
-							for (Billett b : getBillett()) {
-								if (b.getVisningsnr()==(visningnr)) {
-								if (!b.getErBetalt()) {
-									
-									string = string + " " + antallSett + "\n";
-								}
-							} 
-						}
-						
+			}
+			Date dato = v.getDato();
+			Time tid = v.getStarttid();
+			boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
+			if(!status) {
+				
+			
+			for (Billett b : getBillett()) {
+				if (b.getVisningsnr()==(visningnr)) {
+					if (b.getErBetalt()) {
+						billettKode = b.getBillettkode();
 					}
-					
 				}
-						
-					
+			}
+			for (Plassbillett pb : getPlassbillett()) {
+				if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
+					antallSett++;
 				}
-				
-				
+				else {
+					antallSett=0;
+				}
+			}
+			}
+			//string = string + " " + visningnr + "  "; 
+			string = string + " " + antallSett + "\n";	
+		}
 		
+								
 		return string;
 	}	
 
-	
+/** Kodet av 7085 , kontrollert og godkjent av 7079 */
 public String getStatistikkKino(String kinosalNr) {
 
 		
@@ -796,7 +881,7 @@ public String getStatistikkKino(String kinosalNr) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	/** Kodet av 7074, kontrollert og godkjent av 7104*/
 	@Override
 	public void hentPlassbilletter() throws Exception {
 		try {
@@ -811,7 +896,6 @@ public String getStatistikkKino(String kinosalNr) {
 				String billettkode = resultat.getString(4);
 				setPlassbillett(radnr, setenr, kinosalnr, billettkode);
 			}
-			//System.out.println(plassbillett);
 		}catch(Exception e) {
 			throw new Exception("Kan ikke hente fra databasen");
 		}
@@ -822,7 +906,7 @@ public String getStatistikkKino(String kinosalNr) {
 		return false;
 		// TODO Auto-generated method stub
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085*/
 	public void hentAntallLedigePlasserSporring() {
 		try {
 			resultat = null;
@@ -845,7 +929,7 @@ public String getStatistikkKino(String kinosalNr) {
 		}
 	}
 
-
+	/** Kodet av 7074, kontrollert og godkjent av 7104 */
 	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
 		if (ubetaltBillettListe.isEmpty()) {
 			showMessageDialog(null, "Finnes ingen ubetalte billetter");
@@ -899,7 +983,7 @@ public String getStatistikkKino(String kinosalNr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+	/** Kodet av 7104 , kontrollert og godkjent av 7074*/
 	public boolean settBillettSomBetalt(String billettKode) {
 		//Tar imot billettkode som skal settes til betalt
 		boolean billettFinnes= false;
@@ -924,7 +1008,7 @@ public String getStatistikkKino(String kinosalNr) {
 		}
 		return true;
 	}
-
+	/** Kodet av 7079, kontrollert og godkjent av 7085*/
 	@Override
 	public boolean leggTilFilm(String filmnavn) {
 		int sisteFilm = film.size() - 1;
@@ -934,7 +1018,7 @@ public String getStatistikkKino(String kinosalNr) {
 		return false;
 	}
 
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7174  */
 	public ChoiceBox<String> visFilmerChoice() {
 		//Returnerer en choicebox med alle filmnavn
 		ChoiceBox<String> cb = new ChoiceBox<String>();
@@ -943,7 +1027,7 @@ public String getStatistikkKino(String kinosalNr) {
 		}
 		return cb;
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7104  */
 	public ChoiceBox<String> visKinosalerChoice() {
 		//Returnerer en choicebox med alle kinosaler
 		ChoiceBox<String> cb = new ChoiceBox<String>();
@@ -958,7 +1042,7 @@ public String getStatistikkKino(String kinosalNr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/** Kodet av 7085 , kontrollert og godkjent av 7079 */
 	@Override
 	public boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris) {
 		int siste = visning.size() -1;
@@ -980,7 +1064,7 @@ public String getStatistikkKino(String kinosalNr) {
 		return false;
 	}
 
-
+	/** Kodet av 7088, kontrollert og godkjent av 7085  */
 	@Override
 	public ResultSet leggInnVisningerIListe() throws Exception {
 		resultat = null;
@@ -1053,6 +1137,16 @@ public String getStatistikkKino(String kinosalNr) {
 		return resultat;
 	}
 	
+	/** Kodet av 7079, kontrollert og godkjent av 7104  */
+	public ChoiceBox<String> visVisningerChoice() {
+		//Returnerer en choicebox med alle visningsnre
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Visning v: visning) {
+			cb.getItems().add(String.valueOf(v.getVisningnr()));
+		}
+		return cb;
+	}
+	/** Kodet av 7088, kontrollert og godkjent av 7085  */
 	public boolean sjekkOmDatoTidErFremtid(Time starttid, Date dato, int minutter) {
 		LocalDate date = LocalDate.now(); 
 		LocalDate datoFormat = toLocalDate(dato);
@@ -1109,10 +1203,9 @@ public String getStatistikkKino(String kinosalNr) {
 		ObservableList<Visning> visninger = getAlleVisninger();
 		ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 		//final String slutt = "slutt";
-		
 		setVisningString(visningString);
 	}
-	
+	/** Kodet av 7088, kontrollert og godkjent av 7074 */
 	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
 		try {
 		if(visningsnr1.isEmpty())  { 
@@ -1144,7 +1237,7 @@ public String getStatistikkKino(String kinosalNr) {
 	public static LocalDate toLocalDate(java.sql.Date date) {
 	    return date.toLocalDate();
 	  }
-
+	/** Kodet av 7074, kontrollert og godkjent av 7104*/
 	@Override
 	public boolean finnSpesifikkVisning(String visningsnr) {
 		boolean finnes=false;
@@ -1160,6 +1253,7 @@ public String getStatistikkKino(String kinosalNr) {
 	}
 	
 	//------------------------------------ Sletter alt innhold i databasen (kjores nï¿½r applikasjonen avsluttes) --------------------------------------------
+	/** Kodet av 7088, kontrollert og godkjent av 7085  */
 	public void slettinnholdAlleTabeller() throws Exception {
 		try {
             //Execute SQL query
@@ -1196,7 +1290,7 @@ public String getStatistikkKino(String kinosalNr) {
 	}
 	
 	//------------------------------------ Legger alt innhold i databasen --------------------------------------------
-
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void lagreFilmDB() throws Exception {
 		int success = 0;
 		int feil = 0;
@@ -1215,7 +1309,7 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public void lagreKinosalDB() throws Exception {
 		int success1 = 0;
 		int feil1 = 0;
@@ -1235,7 +1329,7 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7085 */
 	public void lagrePlassDB() throws Exception {
 		int success2 = 0;
 		int feil2 = 0;
@@ -1255,7 +1349,7 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagreVisningDB() throws Exception {
 		int success3 = 0;
 		int feil3 = 0;
@@ -1278,7 +1372,7 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagreBillettDB() throws Exception {
 		int success4 = 0;
 		int feil4 = 0;
@@ -1298,7 +1392,7 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public void lagrePlassBillett() throws Exception {
 		int success5 = 0;
 		int feil5 = 0;
@@ -1319,6 +1413,10 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 	}
-
-	
+		
+	public void leggAltInnItblFilmVedAvslutning() throws Exception {
+        try {
+            //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
+        }catch(Exception e) {throw new Exception(e);}
+	}
 }

@@ -2,7 +2,7 @@ package domene;
 
 import java.sql.Date;
 import java.sql.Time;
-
+/** Kodet av 7085 , kontrollert og godkjent av 7104 */
 public class Visning implements Comparable<Visning> {
 	private int visningnr;
 	private int filmnr;
