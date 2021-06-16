@@ -280,12 +280,12 @@ public class Main extends Application {
 	
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
-		GridPane kinoStatistikkGrid = new GridPane();
-		FlowPane valgpanel = new FlowPane();
+		//GridPane kinoStatistikkGrid = new GridPane();
+		
 
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
 		
-		
+		/*
 		//Bygger opp innholdet i tabellen:
 		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
 		colAntallVisninger.setMinWidth(150);	
@@ -311,14 +311,28 @@ public class Main extends Application {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		});
+		}); */
+		
+		TextField kinoSok = new TextField();
+		Label label1 = new Label(kontroll.getStatistikkString(kinoSok.getText()));
+		VBox layout1 = new VBox(20);
+		layout1.getChildren().addAll(label1);
+		kinoStatistikkPanel.setCenter(layout1);
+		
+		FlowPane valgpanel = new FlowPane();
+		//TextField kinoSok = new TextField();
+		kinoSok.setPromptText("Kinosalnr");
+		kinoSok.setMinWidth(100);
+		Button sokKnapp = new Button ("Hent statistikk");
+		sokKnapp.setOnAction(e-> kontroll.getStatistikkString(kinoSok.getText()));
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
-		kinoStatistikkPanel.setCenter(statistikkTabell);
-		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
-		kinoStatistikkPanel.setBottom(valgpanel);
-		valgpanel.getChildren().addAll(btnTilbake);
+		//kinoStatistikkPanel.setCenter(statistikkTabell);
+		//kinoStatistikkPanel.setTop(kinoStatistikkGrid);
+		valgpanel.getChildren().addAll(kinoSok,sokKnapp,btnTilbake);
+		kinoStatistikkPanel.setTop(valgpanel);
+		
 
 		
 	}

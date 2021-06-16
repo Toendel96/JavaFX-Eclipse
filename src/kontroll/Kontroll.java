@@ -531,6 +531,64 @@ public class Kontroll implements kontrollInterface {
 		
 		return null;
 	}
+public String getStatistikkString(String kinosalNr) {
+		
+		String string = "";
+		String kinosalnr = kinosalNr;
+		int antallVisninger = 0;
+		int antallPlasser = 0;
+		int antallSolgt = 0;
+		int visningnr = 0;
+		//String antallLedigePlasser = null;
+		
+		string = string + " " + "Antall visninger" + "         ";		
+		string = string + " " + "Prosent sal" + "\n";
+		
+		
+		
+		for (Visning v : getAlleVisninger()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				antallVisninger++;
+				
+			}
+			/*System.out.println(v.toString());
+			String visningsnr = String.valueOf(v.getVisningnr());
+			String filmnr = String.valueOf(v.getFilmnr());
+			int kinosalnr1 = v.getKinosalnr();
+			//antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(kinosalnr1));
+			
+			//String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			System.out.println(starttid);
+			String pris = String.valueOf(v.getPris());*/
+			
+		}	
+		
+		for (Plass p : getPlass()) {
+			if (String.valueOf(p.getKinosalnr()).equals(kinosalnr)) {
+				antallPlasser++;
+				
+			}
+		}
+		
+		for (Visning v : getVisning()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				
+				
+			}
+		}
+			string = string + " " + antallVisninger + "  ";	
+			string = string + " " + antallPlasser + "\n";
+			
+			
+			
+				
+		
+		System.out.println(antallVisninger);
+		System.out.println(antallPlasser);
+		return string;
+	}
 		
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
