@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7085, kontrollert og godkjent av 7088 */
 public class Film {
 	private int filmnr;
 	private String filmnavn;

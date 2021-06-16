@@ -27,6 +27,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -60,6 +63,7 @@ public class Main extends Application {
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
+	private Scene registrerBillettKBScene;
 	private String radnr;
 
 	public void start(Stage primaryStage) {
@@ -81,15 +85,18 @@ public class Main extends Application {
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
 			lagPlanleggerscene();
+			lagNyFilmScene();
+			lagNyVisningScene();
 			lagMenyscene();
 			lagKinobetjentscene();
+			registrerBillettKBScene();
 			
 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+	/** Kodet av 7104, kontrollert og godkjent av 7085 */
 	public void lagMenyscene() {
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
@@ -117,7 +124,7 @@ public class Main extends Application {
 		vindu.setScene(menyscene);
 		vindu.show();
 	}
-	
+	/** Kodet av 7104, kontrollert og godkjent av 7085 */
 	public void lagLoginscene(String bruker) {
 		BorderPane loginrootpanel = new BorderPane();
 		GridPane gridpane = new GridPane();
@@ -139,7 +146,7 @@ public class Main extends Application {
 		vindu.setScene(loginscene);
 		vindu.show();
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7079 */
 	public void loggInnBruker(String brukernavn, String passord, String bruker) {
 		Alert loggInnFeilet = new Alert(AlertType.ERROR);
 		if (bruker.equals("planlegger")) {
@@ -162,7 +169,7 @@ public class Main extends Application {
 			}
 		} 
 	}
-
+	/** Kodet av 7079, kontrollert og godkjent av 7088  */
 	public void lagPlanleggerscene() {
 		BorderPane planleggerRotpanel = new BorderPane();
 		GridPane planleggerGridpane = new GridPane();
@@ -179,11 +186,11 @@ public class Main extends Application {
 		rapport.setOnAction(e -> lagRapportScene());
 		
 		Button leggTilFilm = new Button("Legg til en film");
-		leggTilFilm.setOnAction(e -> lagNyFilmScene());
+		leggTilFilm.setOnAction(e -> vindu.setScene(nyFilmScene));
 		planleggerGridpane.add(leggTilFilm,2,0);
 		
 		Button leggTilVisning = new Button("Ny visning");
-		leggTilVisning.setOnAction(e -> lagNyVisningScene());
+		leggTilVisning.setOnAction(e -> vindu.setScene(nyVisningScene));
 		planleggerGridpane.add(leggTilVisning,3,0);
 		
 		Button tilbake = new Button("Logg ut");
@@ -197,7 +204,7 @@ public class Main extends Application {
 		planleggerRotpanel.setCenter(planleggerGridpane);
 		
 	}
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7074 */
 	public void lagRapportScene() {
 		BorderPane rapportRotpanel = new BorderPane();
 		GridPane rapportGridpane = new GridPane();
@@ -227,7 +234,7 @@ public class Main extends Application {
 		vindu.show();
 	
 	}
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7088  */
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);						
@@ -245,12 +252,9 @@ public class Main extends Application {
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		valgpanel.getChildren().addAll(filmSok,sokKnapp,btnTilbake);
 		filmStatistikkPanel.setTop(valgpanel);
-		
-		
-
 	}
 	
-	
+	/** Kodet av 7085, kontrollert og godkjent av 7088  */
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
@@ -270,7 +274,7 @@ public class Main extends Application {
 		kinoStatistikkPanel.setTop(valgpanel);
 		
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagNyFilmScene() {
 		//vindu.setWidth(300);
 		//vindu.setHeight(200);
@@ -286,13 +290,13 @@ public class Main extends Application {
 		leggTil.setOnAction(e -> kontroll.leggTilFilm(txtFilmNavn.getText()));
 		Button tilbake = new Button("Tilbake");
 		panel.add(tilbake, 0, 6);
-		tilbake.setOnAction(e -> lagPlanleggerscene());
+		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
 		nyFilmPanel.setBottom(tilbake);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7088 */
 	public void lagNyVisningScene(){
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
@@ -335,12 +339,12 @@ public class Main extends Application {
 		});
 		Button tilbake = new Button("Tilbake");
 		panel.add(tilbake, 0, 6);
-		tilbake.setOnAction(e -> lagPlanleggerscene());
+		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
 		nyVisningPanel.setBottom(tilbake);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7074 */
 	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
@@ -394,13 +398,24 @@ public class Main extends Application {
 		ledigePlasserPanel.setBottom(bunnpanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
-	}	
-
+	}
+	/** Kodet av 7074, kontrollert og godkjent av 7079 */
+	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+		System.out.println("radnummer: " + radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
+		comboBoxsete.setPromptText("Velg sete");
+		comboBoxPanel.getChildren().addAll(comboBoxsete);
 		
+	}
+	/** Kodet av 7074, kontrollert og godkjent av 7104 */
 	public void lagKinobetjentscene() {
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
+		
+		Button registrerBilletter = new Button("Registrer billetter");
+		registrerBilletter.setOnAction(e -> vindu.setScene(registrerBillettKBScene));
+		
 		TableColumn colBillettkode = new TableColumn("Billettkode:");
 		colBillettkode.setMinWidth(100);
 		colBillettkode.setCellValueFactory(new PropertyValueFactory<Billett, String>("billettkode"));
@@ -419,10 +434,31 @@ public class Main extends Application {
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		knappePanel.getChildren().addAll(tilbake,billettkode,oppdater,avbestill);
 		knappePanel.setHgap(10);
+		kinorotpanel.setTop(registrerBilletter);
 		kinorotpanel.setCenter(sletttabell);
 		kinorotpanel.setBottom(knappePanel);
 	}
-	
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
+	public void registrerBillettKBScene() {
+		//Kopi av lagKundeScene;
+		GridPane rotpanel = new GridPane();
+		registrerBillettKBScene = new Scene(rotpanel,600,600);
+		Label lblVisningsNr = new Label("Visningsnr: ");
+		rotpanel.add(lblVisningsNr,0,0);
+		ChoiceBox<String> cbxVisningsNr = kontroll.visVisningerChoice();
+		rotpanel.add(cbxVisningsNr, 1, 0);
+		Label lblRadNr = new Label("Rad nummer: ");
+		rotpanel.add(lblRadNr, 0, 1);
+		ComboBox<String> cbxRadNr = new ComboBox<>();
+		rotpanel.add(cbxRadNr, 1, 1);
+		cbxVisningsNr.setOnAction(e -> {
+			try {
+			}catch(Exception except) {}
+		});
+        Button tilbake = new Button("Tilbake");
+        tilbake.setOnAction(e -> behandleTilbake(menyscene));
+	}
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void lagKundescene() {
 		try {
 			BorderPane rotpanel = new BorderPane();
@@ -477,7 +513,7 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
-	            	//Metode for å sjekke om Visning finnes
+	            	//Metode for ï¿½ sjekke om Visning finnes
 	            	if (hentetKinosalnr!=0) {
 		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
 		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
@@ -494,27 +530,27 @@ public class Main extends Application {
 			
 		} catch(Exception e) {e.printStackTrace();}
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void knappBehandleAvbestill(){
 		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());
 		sletttabell.getItems().clear(); 
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void knappBehandleSettBetalt(String billettkode) {
 		kontroll.settBillettSomBetalt(billettkode);
 		sletttabell.getItems().clear();
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void behandleTilbake(Scene scene) {
 		vindu.setScene(scene);
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void settStorrelse(Scene scene, int bredde, int hoyde) {
 		//
 	}
-	
+	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void settBetalt(String billettKode) throws Exception {
 		//kontroll.hentBilletter();
 		kontroll.settBillettSomBetalt(billettKode);

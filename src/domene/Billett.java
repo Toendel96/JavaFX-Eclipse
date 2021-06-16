@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7074, kontrollert og godkjent av 7104 */
 public class Billett {
 	private String billettkode;
 	private int visningsnr;

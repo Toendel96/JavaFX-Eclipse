@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7074 , kontrollert og godkjent av 7079 */
 public class Plass {
 	private int radnr; 
 	private int setenr; 
