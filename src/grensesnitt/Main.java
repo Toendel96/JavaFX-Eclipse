@@ -494,7 +494,7 @@ public class Main extends Application {
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString(1));
+	                kontroll.getFormattertString1());
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
@@ -507,19 +507,19 @@ public class Main extends Application {
 	        
 	        standard.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(1));
+	        		label1.setText(kontroll.getFormattertString1());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterFilm.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(2));
+	        		label1.setText(kontroll.getFormattertString2());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterTidspunkt.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(3));
+	        		label1.setText(kontroll.getFormattertString3());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        

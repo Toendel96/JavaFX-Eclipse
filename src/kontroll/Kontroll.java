@@ -259,7 +259,7 @@ public class Kontroll implements kontrollInterface {
 		return teller;
 	}
 	
-	public String getFormattertString(int valg) {
+	public String getFormattertString1() {
 		
 		String string = "";
 		String string2 = "";
@@ -306,17 +306,107 @@ public class Kontroll implements kontrollInterface {
 			string = string + " " + antallLedigePlasser + "\n";
 		}
 		
-		//-------------------------- String2 ----------------------	
-		string2 = 
-				"test3";
+		return string;
+	}
+	
+	public String getFormattertString2() {
+			
+			String string = "";
+			String string2 = "";
+			String string3 = "";
+			String antallLedigePlasser = null;
+			String filmnavn = null;
+			
+			string = string + " " + "visningsnr" + "     ";
+			string = string + " " + "filmnr "+ "       ";
+			string = string + " " + "filmnavn "+ "          ";
+			string = string + " " + "kinosalnr" + "         ";
+			string = string + " " + "dato" + "               ";
+			string = string + " " + "starttid" + "           ";
+			string = string + " " + "pris" + "         ";
+			string = string + " " + "antallLedigePlasser" + "\n";
+			
+			for (Visning v : getAlleVisninger()) {
+				String visningsnr = String.valueOf(v.getVisningnr());
+				int filmnr1 = v.getFilmnr();
+				
+				for (Film f : getFilm()) {
+					if (filmnr1 == f.getFilmnr()) {
+						filmnavn = f.getFilmnavn();
+					}
+				}
+				
+				String filmnr = String.valueOf(filmnr1);
+				int kinosalnr1 = v.getKinosalnr();
+				antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+				
+				String kinosalnr = String.valueOf(kinosalnr1);
+				String dato = String.valueOf(v.getDato());
+				String starttid = String.valueOf(v.getStarttid());
+				String pris = String.valueOf(v.getPris());
+				
+	
+				string = string + " " + visningsnr + "                    ";
+				string = string + " " + filmnr + "                 ";
+				string = string + " " + filmnavn + "                 ";
+				string = string + " " + kinosalnr + "          ";
+				string = string + " " + dato + "        ";
+				string = string + " " + starttid + "        ";
+				string = string + " " + pris + "                    ";
+				string = string + " " + antallLedigePlasser + "\n";
+			}
+			
+			return string;
+		}
+
+	public String getFormattertString3() {
 		
-		string3 = 
-				"test3";
+		String string = "";
+		String string2 = "";
+		String string3 = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
 		
-		if (valg == 1) return string;
-		else if (valg == 2) return string2;
-		else if (valg == 3) return string3;
-		else return null;
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		for (Visning v : getAlleVisninger()) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+	
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+		}
+		
+		return string;
 	}
 
 
@@ -664,9 +754,6 @@ public String getStatistikkString(String kinosalNr) {
                Date dato = resultat.getDate(4);
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
-               
-               System.out.println("Startid: " + starttid + ", dato: " + dato);
-               System.out.println(sjekkOmDatoTidErFremtid(starttid, dato));
                
                setAlleVisninger(visningnr, filmnr, kinosalnr, dato, starttid, pris);
                
