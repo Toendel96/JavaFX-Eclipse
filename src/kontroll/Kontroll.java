@@ -262,6 +262,8 @@ public class Kontroll implements kontrollInterface {
 	public String getFormattertString(int valg) {
 		
 		String string = "";
+		String string2 = "";
+		String string3 = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
 		
@@ -302,13 +304,13 @@ public class Kontroll implements kontrollInterface {
 			string = string + " " + starttid + "        ";
 			string = string + " " + pris + "                    ";
 			string = string + " " + antallLedigePlasser + "\n";
-				
 		}
 		
-		String string2 = 
-				"test2";
+		//-------------------------- String2 ----------------------	
+		string2 = 
+				"test3";
 		
-		String string3 = 
+		string3 = 
 				"test3";
 		
 		if (valg == 1) return string;
@@ -663,6 +665,9 @@ public String getStatistikkString(String kinosalNr) {
                Time starttid = resultat.getTime(5);
                float pris = resultat.getFloat(6);
                
+               System.out.println("Startid: " + starttid + ", dato: " + dato);
+               System.out.println(sjekkOmDatoTidErFremtid(starttid, dato));
+               
                setAlleVisninger(visningnr, filmnr, kinosalnr, dato, starttid, pris);
                
                LocalDate date = LocalDate.now();  
@@ -716,6 +721,56 @@ public String getStatistikkString(String kinosalNr) {
                //Alle
 		}
 		return resultat;
+	}
+	
+	public boolean sjekkOmDatoTidErFremtid(Time starttid, Date dato) {
+		LocalDate date = LocalDate.now(); 
+		LocalDate datoFormat = toLocalDate(dato);
+		
+		LocalTime startidLocalTime = toLocalTime(starttid);
+		
+		LocalDateTime naavarendeTid = LocalDateTime.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");  
+        String formatString = naavarendeTid.format(format);  
+        LocalTime naavarendeTidFormat = LocalTime.parse(formatString);
+        
+        boolean erDatoFremITid = false;
+        boolean erDatoSammeDag = false;
+        
+        long differanseITid = Duration.between(naavarendeTidFormat, startidLocalTime).toMinutes();
+        int sjekkDatoer = datoFormat.compareTo(date);
+        
+        if (sjekkDatoer > 0) {
+     	   //dato fra database/objekt er senere enn naavarende dato
+     	   erDatoFremITid = true;
+        } else if (sjekkDatoer < 0) {
+     	   //dato fra database/objekt er tidligere enn naavarende dato
+     	   erDatoFremITid = false;
+     	   return false;
+        } else {
+     	   //Samme dag
+     	   erDatoFremITid = true;
+     	   erDatoSammeDag = true;
+        }
+        
+        if (erDatoFremITid) {
+     	   //Dato frem i tid
+     	   if (erDatoSammeDag) {
+     		   if(differanseITid >= 0) {
+         		   return true;
+             	   //Visning har ikke begynt enda
+         	   } else {
+         		   //Visning har startet for samme dag
+         		   return false;
+         	   }
+     	   } else {
+     		   
+     	   }
+        } else {
+     	   //Under tretti eller tidligere dato
+        	return false;
+        }
+		return true;
 	}
 	
 	public void hentAntallLedigePlasserSporring() {
