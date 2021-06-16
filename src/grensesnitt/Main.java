@@ -487,18 +487,25 @@ public class Main extends Application {
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
+	        Button standard = new Button("Standard");
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
 	        
+	        standard.setOnAction(e -> {
+	        	try {
+	        		label1.setText(kontroll.getFormattertString(1));
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
 	        sorterFilm.setOnAction(e -> {
 	        	try {
-	        		label1.setText("test");
+	        		label1.setText(kontroll.getFormattertString(2));
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterTidspunkt.setOnAction(e -> {
 	        	try {
-	        		label1.setText("test2");
+	        		label1.setText(kontroll.getFormattertString(3));
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
@@ -526,7 +533,7 @@ public class Main extends Application {
 	        });	
 	        
 	        rotpanel.setTop(sokpanel);
-	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt);
+	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt, standard);
 	        sokpanel.setHgap(10);
 	        
 			

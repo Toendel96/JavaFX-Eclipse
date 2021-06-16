@@ -181,16 +181,16 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentrader(int kinosalnr){
-		System.out.println("Kinosalnummeret er: "+kinosalnr);
+		//System.out.println("Kinosalnummeret er: "+kinosalnr);
 		ObservableList<Plass> ledigplass=hentledigplass(kinosalnr);
-		System.out.println("Koden kom hit");
+		//System.out.println("Koden kom hit");
 		ComboBox<String> cb = new ComboBox<String>();
 		if(ledigplass.isEmpty()) {
 			System.out.println("Listen er tom");
 		}
 		int erLik=0;
 		for (Plass p: ledigplass) {
-			System.out.println(p.toString());
+			//System.out.println(p.toString());
 			if(p.getRadnr()!=erLik) {
 				cb.getItems().add(Integer.toString(p.getRadnr()));
 				erLik=p.getRadnr();
@@ -224,7 +224,7 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentseter(String radnr){
-		System.out.println("Dette er radnummeret: " + radnr);
+		//System.out.println("Dette er radnummeret: " + radnr);
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
 		for (Plassbillett p: plassbillett) {
 			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
@@ -306,20 +306,14 @@ public class Kontroll implements kontrollInterface {
 		}
 		
 		String string2 = 
-				"Oppgave: Oblig 1\n\n" +
-			    "Laget av: Petter T�ndel\n" +
-			    "Studentnummer: 233211\n" +
-			    "Fagkode: OBJ2100\n" +
-			    "Fagnavn: Objektorientert programmering 2\n" +
-			    "Tidspunkt: 2021 V�r\n" +
-			    "Forutsetning: M� importere mysq-connector-java inn i prosjektet, opprette/sette inn data i database (to SQL-script) og endre til dine databaseinnstillinger\n\n" +
-			    "Teknologi: \n" +
-			    "                 Java  - bibliotek: JavaFX, mysql-connector-java, Lombok - Compiler: Java8 - IntelliJ\n" +
-			    "                 MySQL - form�l: CRUD - MySQL Workbench\n" +
-			    "                 Git   - form�l: Versjonskontrollering - Github\n";
+				"test2";
+		
+		String string3 = 
+				"test3";
 		
 		if (valg == 1) return string;
 		else if (valg == 2) return string2;
+		else if (valg == 3) return string3;
 		else return null;
 	}
 
@@ -385,9 +379,9 @@ public class Kontroll implements kontrollInterface {
 					showMessageDialog(null, "Billetten er allerede betalt");
 
 				} else {
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				b.setErBetalt(true);
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
 				
 				billettFinnes=true;
@@ -536,7 +530,7 @@ public class Kontroll implements kontrollInterface {
 
 				String salP = Integer.toString(salProsent);
 				String antallV = Integer.toString(antallVisninger);
-				System.out.println(antallV + salP);
+				//System.out.println(antallV + salP);
 
 			}
 		}
@@ -731,7 +725,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean finnSpesifikkVisning(String visningsnr) {
-		System.out.println("Finn spesifikk visning kj�rer");
+		//System.out.println("Finn spesifikk visning kj�rer");
 		boolean finnes=false;
 		for(Visning v: visning) {
 			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
