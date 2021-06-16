@@ -53,6 +53,9 @@ public class Kontroll implements kontrollInterface {
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+	    
+	    
+	    
 
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
@@ -100,7 +103,7 @@ public class Kontroll implements kontrollInterface {
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
-
+	
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
@@ -326,9 +329,8 @@ public class Kontroll implements kontrollInterface {
 		return null;
 	}
 	
-	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
+	public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
 		
-		final ObservableList<List<String>> statistikkKino = FXCollections.observableArrayList();
 		
 		int kinoSalnr = Integer.parseInt(kinosalnr);
 		int antallVisninger = 0;
@@ -336,6 +338,7 @@ public class Kontroll implements kontrollInterface {
 		int antallSalg = 0;
 		int muligePlasser = 0;
 		int salProsent = 0;
+		
 		for (Kinosal k : kinosal) {
 			if (k.getKinosalnr()==(kinoSalnr)) {
 				resultat = null;
@@ -344,6 +347,7 @@ public class Kontroll implements kontrollInterface {
 				resultat = preparedStatement.executeQuery(sql);
 				
 				while (resultat.next()) {
+					
 					antallVisninger = resultat.getInt(1);
 					
 				}
@@ -369,17 +373,16 @@ public class Kontroll implements kontrollInterface {
 				
 				muligePlasser = antallVisninger * antallPlasser;
 				salProsent = antallSalg / antallPlasser * 100;
-				
-				
-				
+				String salP = Integer.toString(salProsent);
+				String antallV = Integer.toString(antallVisninger);
+				System.out.println(antallV + salP);
 				
 			}
 		}
 		
 		return null;
 	}
-	
-
+		
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
 		// TODO Auto-generated method stub

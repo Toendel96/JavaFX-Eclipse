@@ -5,6 +5,9 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mysql.cj.conf.StringProperty;
+
 import domene.Billett;
 import domene.Film;
 import domene.Plassbillett;
@@ -39,8 +42,9 @@ public class Main extends Application {
 	private Stage vindu;
 	private TableView tabellVisning = new TableView<>();
 
-	private TableView<List<String>> statistikklinjer = new TableView();
-
+	private TableView statistikkTabell = new TableView();
+	
+	
 	private TableView sletttabell = new TableView<>();
 	
 	private Scene menyscene;
@@ -234,16 +238,9 @@ public class Main extends Application {
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
-
 		FlowPane valgpanel = new FlowPane();
 
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
-
-		statistikklinjer = new TableView();
-		
-		filmStatistikkPanel.setCenter(statistikklinjer); 
-		filmStatistikkPanel.setTop(filmStatistikkGrid);
-		filmStatistikkPanel.setBottom(valgpanel);
 		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colVisningnr = new TableColumn("Visningnr:");
@@ -262,8 +259,8 @@ public class Main extends Application {
 		colSlettet.setMinWidth(150);	
 		//colSlettet.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
-		statistikklinjer.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
-		//statistikklinjer.setItems();		
+		statistikkTabell.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
+				
 		
 		Label lblFilmnr = new Label("Filmnummer: ");
 		filmStatistikkGrid.add(lblFilmnr, 2, 1);
@@ -275,10 +272,10 @@ public class Main extends Application {
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
+		filmStatistikkPanel.setCenter(statistikkTabell); 
+		filmStatistikkPanel.setTop(filmStatistikkGrid);
+		filmStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
-		//vindu.setWidth(600);
-		//vindu.setHeight(500);
-		
 		
 	}
 	
@@ -286,27 +283,21 @@ public class Main extends Application {
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
-
 		FlowPane valgpanel = new FlowPane();
 
-		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
-
-		statistikklinjer = new TableView();
+		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
 		
-		kinoStatistikkPanel.setCenter(statistikklinjer);
-		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
-		kinoStatistikkPanel.setBottom(valgpanel);
 		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
 		colAntallVisninger.setMinWidth(150);	
-		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<, >("visningnr"));
+		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<String ,String >(""));
 		
 		TableColumn colProsentSolgt = new TableColumn("Prosent solgt:");
 		colProsentSolgt.setMinWidth(150);	
 		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
-		statistikklinjer.getColumns().addAll(colAntallVisninger, colProsentSolgt);
+		statistikkTabell.getColumns().addAll(colAntallVisninger, colProsentSolgt);
 		//statistikklinjer.setItems(); 		
 		
 		Label lblKinosal = new Label("Kinosal: ");
@@ -317,7 +308,7 @@ public class Main extends Application {
 		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
 		btnFinnKino.setOnAction(e-> {
 			try {
-				kontroll.kinoStatistikk(kinoSok.getText());
+				kontroll.hentKinoStatistikk(kinoSok.getText());
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -326,6 +317,9 @@ public class Main extends Application {
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
+		kinoStatistikkPanel.setCenter(statistikkTabell);
+		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
+		kinoStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
 		vindu.setWidth(300);
 		vindu.setHeight(500);
