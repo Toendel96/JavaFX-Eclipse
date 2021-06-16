@@ -408,7 +408,8 @@ public class Main extends Application {
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); });
+		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 });
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);

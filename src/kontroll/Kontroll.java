@@ -162,10 +162,16 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentrader(int kinosalnr){
+		System.out.println("Kinosalnummeret er: "+kinosalnr);
 		ObservableList<Plass> ledigplass=hentledigplass(kinosalnr);
+		System.out.println("Koden kom hit");
 		ComboBox<String> cb = new ComboBox<String>();
+		if(ledigplass.isEmpty()) {
+			System.out.println("Listen er tom");
+		}
 		int erLik=0;
 		for (Plass p: ledigplass) {
+			System.out.println(p.toString());
 			if(p.getRadnr()!=erLik) {
 				cb.getItems().add(Integer.toString(p.getRadnr()));
 				erLik=p.getRadnr();
@@ -176,9 +182,9 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ObservableList<Plass> hentledigplass(int kinosalnr){
+		try {
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
 		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
-		ledigplass=plass;
 		for(Plass p: plass) {
 			if(p.getKinosalnr()==kinosalnr) {
 				ledigplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
@@ -195,6 +201,7 @@ public class Kontroll implements kontrollInterface {
 			}
 		}
 		return ledigplass;
+		}catch (Exception e){ e.printStackTrace(); return null;}
 	}
 	
 	public ComboBox<String> hentseter(String radnr){
@@ -586,10 +593,12 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean finnSpesifikkVisning(String visningsnr) {
+		System.out.println("Finn spesifikk visning kjører");
 		boolean finnes=false;
 		for(Visning v: visning) {
 			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
 				finnes=true;
+				System.out.println("Fant visningsnr");
 			}	
 		} if(!finnes) {
 			showMessageDialog(null, "Visningsnummeret finnes ikke");
