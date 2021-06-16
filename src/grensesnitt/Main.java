@@ -489,6 +489,19 @@ public class Main extends Application {
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
+	        
+	        sorterFilm.setOnAction(e -> {
+	        	try {
+	        		label1.setText("test");
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
+	        sorterTidspunkt.setOnAction(e -> {
+	        	try {
+	        		label1.setText("test2");
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
 	        //rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
