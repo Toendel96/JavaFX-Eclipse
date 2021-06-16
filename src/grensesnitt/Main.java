@@ -89,7 +89,9 @@ public class Main extends Application {
 			lagNyVisningScene();
 			lagMenyscene();
 			lagKinobetjentscene();
-			registrerBillettKBScene();
+			kontroll.lesslettingerfrafil();
+
+			//registrerBillettKBScene();
 			
 
 		} catch(Exception e) {
@@ -109,7 +111,9 @@ public class Main extends Application {
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
 		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
-		kinobetjentknapp.setOnAction(e -> vindu.setScene(kinoscene));
+		kinobetjentknapp.setOnAction((e) -> {
+			vindu.setScene(kinoscene);
+			});
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));

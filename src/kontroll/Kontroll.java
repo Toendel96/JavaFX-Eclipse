@@ -1,5 +1,6 @@
 package kontroll;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 
 import domene.Billett;
 import domene.Film;
@@ -54,7 +56,6 @@ public class Kontroll implements kontrollInterface {
 	    private Connection forbindelse;
 	    private ResultSet resultat;
 	    private PreparedStatement preparedStatement;
-	    private Statement utsagn;
 	    private final String brukernavn = "Case";
 	    private final String passord = "Esac";
 	    private ObservableList<Billett> billett = FXCollections.observableArrayList();
@@ -67,7 +68,8 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 	    private ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
 	    private ObservableList<Plass> tempreservasjon = FXCollections.observableArrayList();
-	    private final String SLETTEFIL = "slettinger.dat";
+	    private ObservableList<Billett> ubillettlisteFrafil = FXCollections.observableArrayList();
+	    private ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 
 
 	
@@ -487,7 +489,6 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ObservableList<Plass> fjernplass(int radnr, int setenr) {
-		System.out.println("du vil fjerne: " + plass);
 		int index=99999999;
 		for (Plass p:tempreservasjon) {
 			//Fjerner ï¿½nsket plass fra listen
@@ -691,14 +692,17 @@ public class Kontroll implements kontrollInterface {
 	/** Kodet av 7074, kontrollert og godkjent av 7085*/
 	public ObservableList<Billett> hentUbetalteBilletter() {
 		//Returner en liste med ubetalte billetter
-		ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
+		ubetaltBillettListe.clear();
 		for (Billett b:billett) {
 			for (Visning v: alleVisninger) {
 				if(b.getVisningsnr()==v.getVisningnr()) {
-					//Kall pï¿½ metode som sjekker mot 30 min
-					
-					if(!b.getErBetalt()) {
-						ubetaltBillettListe.add(b);
+					//Kall på metode som sjekker mot 30 min
+					if(sjekkOmDatoTidErFremtid(v.getStarttid(),v.getDato(), 30)) {
+						//Billetten er lengere enn 30min fram i tid
+					}else {	
+						if(!b.getErBetalt()) {
+							ubetaltBillettListe.add(b);
+						}
 					}
 				}
 			}
@@ -930,7 +934,7 @@ public String getStatistikkKino(String kinosalNr) {
 		if (ubetaltBillettListe.isEmpty()) {
 			showMessageDialog(null, "Finnes ingen ubetalte billetter");
 		}else {
-			lagreSlettetBillett(ubetaltBillettListe);
+			lagreSlettetBillett();
 		for (Billett u: ubetaltBillettListe) {
 			billett.remove(u);
 			}
@@ -938,15 +942,35 @@ public String getStatistikkKino(String kinosalNr) {
 		ubetaltBillettListe.clear();
 		}
 	}
+	public void lesslettingerfrafil() {
+		ubillettlisteFrafil.clear();
+		try {
+			BufferedReader innfil = Filer.lagLeseForbindelse();
+			String linje = innfil.readLine();
+			while(linje != null) {
+				StringTokenizer innhold = new StringTokenizer(linje,",");
+				//Henter ut de 3 feltene og legger dem i hver sin variabel
+				String billettkode = innhold.nextToken();
+				String visningsnr = innhold.nextToken();
+				ubillettlisteFrafil.add(new Billett(billettkode, Integer.parseInt(visningsnr),false));
+				linje = innfil.readLine();
+			} //løkke
+			for(Billett b:ubillettlisteFrafil) {
+			}
+			innfil.close();
+		}catch(Exception e) {}
+	}
 	
-	public void lagreSlettetBillett(ObservableList<Billett> ubetaltBillettListe){
+	public void lagreSlettetBillett(){
 		try{
-			PrintWriter utfil = Filer.lagSkriveForbindelse("SLETTEFIL");
-			for (Billett u: ubetaltBillettListe) {
-				System.out.println(u.toString());
+			for(Billett b:ubetaltBillettListe) {
+				ubillettlisteFrafil.add(b);	
+			}
+			PrintWriter utfil = Filer.lagSkriveForbindelse("slettinger.dat");
+			for (Billett u: ubillettlisteFrafil) {
 				for (Visning v:alleVisninger) {
 					if (v.getVisningnr()==u.getVisningsnr()) {
-						utfil.println(u.toFile()+","+v.getFilmnr());
+						utfil.println(u.toFile());
 					}
 				}
 			}
@@ -1179,8 +1203,6 @@ public String getStatistikkKino(String kinosalNr) {
 		ObservableList<Visning> visninger = getAlleVisninger();
 		ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 		//final String slutt = "slutt";
-		
-		
 		setVisningString(visningString);
 	}
 	/** Kodet av 7088, kontrollert og godkjent av 7074 */
