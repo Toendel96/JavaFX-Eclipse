@@ -402,7 +402,7 @@ public class Kontroll implements kontrollInterface {
 		System.out.println("du vil fjerne: " + plass);
 		int index=99999999;
 		for (Plass p:tempreservasjon) {
-			//Fjerner ønsket plass fra listen
+			//Fjerner ï¿½nsket plass fra listen
 			if(p.getRadnr()==radnr && p.getSetenr()==setenr) {
 				index= tempreservasjon.indexOf(p);
 			}
@@ -695,7 +695,7 @@ public String getStatistikkFilm(String filmNr) {
 						
 						Date dato = v.getDato();
 						Time tid = v.getStarttid();
-						boolean status = sjekkOmDatoTidErFremtid(tid,dato);
+						boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
 						if(!status) {
 							visningnr = v.getVisningnr();
 							for (Billett b : getBillett()) {
