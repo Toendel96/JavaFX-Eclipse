@@ -83,12 +83,6 @@ public class Main extends Application {
 			lagMenyscene();
 			lagKinobetjentscene();
 			
-			/* kontroll.hentAntallLedigePlasserSporring();
-			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
-			
-			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
-				System.out.println(i);
-			} */
 
 		} catch(Exception e) {
 			e.printStackTrace();
