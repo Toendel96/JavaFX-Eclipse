@@ -1,5 +1,5 @@
 package domene;
-
+/** Kodet av 7104 , kontrollert og godkjent av 7088 */
 public class Plassbillett {
 	private int radnr;
 	private int setenr;
