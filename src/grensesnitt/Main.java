@@ -69,14 +69,20 @@ public class Main extends Application {
 			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
-			vindu.setWidth(800);
-			vindu.setHeight(600);
+			vindu.setWidth(900);
+			vindu.setHeight(800);
 			lagKundescene();
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
 			
+			kontroll.hentAntallLedigePlasserSporring();
+			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
+			
+			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
+				System.out.println(i);
+			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -84,8 +90,6 @@ public class Main extends Application {
 	}
 	
 	public void lagMenyscene() {
-		vindu.setWidth(800);
-		vindu.setHeight(800);
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
@@ -268,8 +272,6 @@ public class Main extends Application {
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
 		valgpanel.getChildren().addAll(btnTilbake);
-		//vindu.setWidth(600);
-		//vindu.setHeight(500);
 		vindu.setScene(filmStatistikkScene);
 		vindu.show();	
 	}
@@ -319,8 +321,6 @@ public class Main extends Application {
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
 		valgpanel.getChildren().addAll(btnTilbake);
-		vindu.setWidth(300);
-		vindu.setHeight(500);
 
 		vindu.setScene(kinoStatistikkScene);
 		vindu.show();
@@ -349,8 +349,6 @@ public class Main extends Application {
 	}
 	
 	public void lagNyVisningScene(){
-		//vindu.setWidth(300);
-		//vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
@@ -418,8 +416,6 @@ public class Main extends Application {
 	}
 		
 	public void lagKinobetjentscene() {
-		vindu.setWidth(600);
-		vindu.setHeight(500);
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
@@ -449,8 +445,6 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			//vindu.setWidth(1000);
-			//vindu.setHeight(600);
 			TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
@@ -547,8 +541,7 @@ public class Main extends Application {
 			kontroll.lukk();
 			Platform.exit();
 		}catch(Exception e) {
-	}
-		
+	}	
 	}
 	
 	

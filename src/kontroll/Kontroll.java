@@ -54,6 +54,7 @@ public class Kontroll implements kontrollInterface {
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
 
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
@@ -110,6 +111,14 @@ public class Kontroll implements kontrollInterface {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 	
+	public ObservableList<Integer> getAntallLedigePlasserListe() {
+		return antallLedigePlasserListe;
+	}
+
+	public void setAntallLedigePlasserListe(int verdi) {
+		antallLedigePlasserListe.add(verdi);
+	}
+
 	public ResultSet hentPlasser() throws Exception {
         resultat = null;
         String sql = "SELECT * FROM tblplass";
@@ -147,6 +156,14 @@ public class Kontroll implements kontrollInterface {
 
 	public void setAlleVisninger(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
+	}
+
+	public ObservableList<List<String>> getVisningString() {
+		return visningString;
+	}
+
+	public void setVisningString(ObservableList<List<String>> visningString) {
+		this.visningString = visningString;
 	}
 
 	@Override
@@ -546,6 +563,41 @@ public class Kontroll implements kontrollInterface {
                System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
 		}
 		return resultat;
+	}
+	
+	public void hentAntallLedigePlasserSporring() {
+		try {
+			resultat = null;
+			String sql = "SELECT COUNT(p_setenr), p_kinosalnr AS Antall_seter from tblplass";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			
+			while(resultat.next()) {
+				int ledigePlasser = resultat.getInt(1);
+				System.out.println(ledigePlasser);
+	            //int setenr = resultat.getInt(2);
+	            int kinosalnr = resultat.getInt(2);
+	            
+	            setAntallLedigePlasserListe(ledigePlasser);
+	            //setAntallLedigePlasserListe(setenr);
+	            setAntallLedigePlasserListe(kinosalnr);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//public ObservableList<List<String>> visningMedFilmnnavnOgAntallLedigePlasser() {
+	public void visningMedFilmnnavnOgAntallLedigePlasser() {
+		ObservableList<Film> film = getFilm();
+		ObservableList<Visning> visninger = getAlleVisninger();
+		ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+		//final String slutt = "slutt";
+		
+		
+		
+		setVisningString(visningString);
 	}
 	
 	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
