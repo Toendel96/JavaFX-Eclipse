@@ -502,7 +502,10 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	//Metode for å sjekke om kinosal finnes
+	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
 	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+	            	} 
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        

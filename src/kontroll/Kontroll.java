@@ -162,19 +162,7 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentrader(int kinosalnr){
-		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
-		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
-		ledigplass=plass;
-		for (Plassbillett p: plassbillett) {
-			if(p.getKinosalnr()==kinosalnr) {
-				opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));	
-			}
-		}
-		for(Plass p: opptattplass) {
-			if(p.getKinosalnr()==kinosalnr) {
-				ledigplass.remove(p);
-			}
-		}
+		ObservableList<Plass> ledigplass=hentledigplass(kinosalnr);
 		ComboBox<String> cb = new ComboBox<String>();
 		int erLik=0;
 		for (Plass p: ledigplass) {
@@ -185,6 +173,28 @@ public class Kontroll implements kontrollInterface {
 			}
 		}
 		return cb;
+	}
+	
+	public ObservableList<Plass> hentledigplass(int kinosalnr){
+		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
+		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
+		ledigplass=plass;
+		for(Plass p: plass) {
+			if(p.getKinosalnr()==kinosalnr) {
+				ledigplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+			}
+		}
+		for (Plassbillett p: plassbillett) {
+			if(p.getKinosalnr()==kinosalnr) {
+				opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));	
+			}
+		}
+		for(Plass p: opptattplass) {
+			if(p.getKinosalnr()==kinosalnr) {
+				ledigplass.remove(p);
+			}
+		}
+		return ledigplass;
 	}
 	
 	public ComboBox<String> hentseter(String radnr){
@@ -368,10 +378,9 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet finnSpesifikkKinosal(String kinosalnr) throws Exception {
+	public boolean finnSpesifikkKinosal(int kinosalnr) {
+		return false;
 		// TODO Auto-generated method stub
-		
-		return null;
 	}
 	
 	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
@@ -576,9 +585,16 @@ public class Kontroll implements kontrollInterface {
 	  }
 
 	@Override
-	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean finnSpesifikkVisning(String visningsnr) {
+		boolean finnes=false;
+		for(Visning v: visning) {
+			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
+				finnes=true;
+			}	
+		} if(!finnes) {
+			showMessageDialog(null, "Visningsnummeret finnes ikke");
+		}
+		return finnes;
 	}
 
 	@Override
