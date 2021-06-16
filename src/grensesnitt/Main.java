@@ -34,6 +34,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 
@@ -411,27 +412,40 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
+		FlowPane bunnpanel = new FlowPane();
 		ComboBox comboBoxrad = kontroll.hentrader(visningsnr,kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		Button leggtil = new Button("Legg til");
+		Button fjern = new Button("Fjern");
+		//fjern.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		Button reserver = new Button("Reserver");
+		//reserver.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		TextField totalpris= new TextField();
+		totalpris.setEditable(false);
+		
+		ComboBox<String> comboboxsete= new ComboBox();
+		ComboBox<Plass> comboboxplass= new ComboBox();
+		comboboxsete.setPromptText("Velg sete");
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 hentseter(visningsnr, kinosalnr, radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
+		 comboboxsete.setItems(seter);
 		 });
+		leggtil.setOnAction((e) -> {
+			comboboxplass.setItems(kontroll.leggTilSete(comboboxsete.getValue().toString(),comboBoxrad.getValue().toString(),kinosalnr));
+			kontroll.regnutpris(visningsnr);
+		});
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboboxsete,leggtil);
 		comboBoxPanel.setHgap(10);
+		Region tomt= new Region();
+		bunnpanel.setHgap(30);
+		bunnpanel.getChildren().addAll(comboboxplass,fjern,tomt, reserver,totalpris);
 		ledigePlasserPanel.setTop(comboBoxPanel);
+		ledigePlasserPanel.setBottom(bunnpanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
-	}
-	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
-		System.out.println("radnummer: " + radnr);
-		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
-		comboBoxsete.setPromptText("Velg sete");
-		comboBoxPanel.getChildren().addAll(comboBoxsete);
-		
-		
-	}
+	}	
 		
 	public void lagKinobetjentscene() {
 		BorderPane kinorotpanel = new BorderPane();
