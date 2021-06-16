@@ -55,6 +55,9 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 
+	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
+
+
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -101,7 +104,7 @@ public class Kontroll implements kontrollInterface {
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
-
+	
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
@@ -110,6 +113,14 @@ public class Kontroll implements kontrollInterface {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 	
+	public ObservableList<Integer> getAntallLedigePlasserListe() {
+		return antallLedigePlasserListe;
+	}
+
+	public void setAntallLedigePlasserListe(int verdi) {
+		antallLedigePlasserListe.add(verdi);
+	}
+
 	public ResultSet hentPlasser() throws Exception {
         resultat = null;
         String sql = "SELECT * FROM tblplass";
@@ -149,6 +160,14 @@ public class Kontroll implements kontrollInterface {
 		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
+	public ObservableList<List<String>> getVisningString() {
+		return visningString;
+	}
+
+	public void setVisningString(ObservableList<List<String>> visningString) {
+		this.visningString = visningString;
+	}
+
 	@Override
 	public boolean sletteBillett(String billettKode) {
 		// TODO Auto-generated method stub
@@ -161,41 +180,65 @@ public class Kontroll implements kontrollInterface {
 		return 0;
 	}
 	
-	public ComboBox<String> hentrader(int kinosalnr){
-		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
-		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
-		ledigplass=plass;
-		for (Plassbillett p: plassbillett) {
-			if(p.getKinosalnr()==kinosalnr) {
-				opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));	
-			}
-		}
-		for(Plass p: opptattplass) {
-			if(p.getKinosalnr()==kinosalnr) {
-				ledigplass.remove(p);
-			}
-		}
+	public ComboBox<String> hentrader(String visningsnr, int kinosalnr){
+		System.out.println("Kinosalnummeret er: "+kinosalnr);
+		ObservableList<Plass> ledigplass=hentledigplass(visningsnr,kinosalnr);
 		ComboBox<String> cb = new ComboBox<String>();
-		int erLik=0;
-		for (Plass p: ledigplass) {
-			if(p.getRadnr()!=erLik) {
-				cb.getItems().add(Integer.toString(p.getRadnr()));
-				erLik=p.getRadnr();
-			}else {
+		if(ledigplass.isEmpty()) {
+			System.out.println("Finnes ingen ledige plasser");
+			cb.getItems().add("Ingen ledige rader");
+		}else {
+			int erLik=0;
+			for (Plass p: ledigplass) {
+				if(p.getRadnr()!=erLik) {
+					cb.getItems().add(Integer.toString(p.getRadnr()));
+					erLik=p.getRadnr();
+				}else {
+				}
+
 			}
 		}
 		return cb;
 	}
 	
-	public ComboBox<String> hentseter(String radnr){
-		System.out.println("Dette er radnummeret: " + radnr);
+	public ObservableList<Plass> hentledigplass(String visningsnr,int kinosalnr){
+		try {
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
-		for (Plassbillett p: plassbillett) {
-			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
+		ObservableList<Plass> faktiskledigplass = FXCollections.observableArrayList();
+		for(Plass p: plass) {
+			if(p.getKinosalnr()==kinosalnr) {
+				ledigplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+			}
 		}
-		for(Plass p: opptattplass) {
-			plass.remove(p);
+		for (Billett b: billett) {
+			if(Integer.toString(b.getVisningsnr()).equals(visningsnr)) {
+				for (Plassbillett p: plassbillett) {
+					if(p.getBillettkode().equals(b.getBillettkode())) {
+						opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+					}
+				}
+			}
 		}
+		boolean finnes= false;
+		for(Plass l: ledigplass) {
+			for(Plass o:opptattplass) {
+				if(o.getRadnr()==l.getRadnr() && o.getSetenr()==l.getSetenr()) {
+					System.out.println("Setet er opptatt");
+					finnes=true;
+					break;
+				} else {
+					finnes=false;
+				}
+			}if(!finnes) {faktiskledigplass.add(new Plass(l.getRadnr(),l.getSetenr(),l.getKinosalnr()));}	
+		}
+		System.out.println("ledigeplasse: " + faktiskledigplass.size());
+		return faktiskledigplass;
+		}catch (Exception e){ e.printStackTrace(); return null;}
+	}
+	
+	public ComboBox<String> hentseter(String visningsnr, String radnr, int kinosalnr){
+		System.out.println("Dette er radnummeret: " + radnr);
 		ComboBox<String> cb = new ComboBox<String>();
 		int erLik=0;
 		for (Plass p: plass) {
@@ -207,6 +250,80 @@ public class Kontroll implements kontrollInterface {
 		}
 		return cb;
 	}
+	
+	public int finnLedigePlasserForKinosal(String visningsnr, int kinosalnr) {
+		ObservableList<Plass> ledigplass = hentledigplass(visningsnr, kinosalnr);
+		int teller = 0;
+		
+		for (Plass p : ledigplass) {
+			//if (p.getKinosalnr() == kinosalnr) {
+				System.out.println(p.toString());
+				teller++;
+			//}
+		}
+		
+		return teller;
+	}
+	
+	public String getFormattertString(int valg) {
+		
+		String string = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
+		
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		for (Visning v : getAlleVisninger()) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			//System.out.println(antallLedigePlasser);
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+				
+		}
+		
+		String string2 = 
+				"test2";
+		
+		String string3 = 
+				"test3";
+		
+		if (valg == 1) return string;
+		else if (valg == 2) return string2;
+		else if (valg == 3) return string3;
+		else return null;
+	}
+
 
 	@Override
 	public ResultSet hentBilletter() throws Exception {
@@ -219,7 +336,6 @@ public class Kontroll implements kontrollInterface {
         	String billettKode = resultat.getString(1);
         	int visningsnr = resultat.getInt(2);
         	boolean erBetalt = resultat.getBoolean(3);
-        	//System.out.println(billettKode + " " + visningsnr + " " + erBetalt);
         	settBillett(billettKode, visningsnr, erBetalt);
         }
         return null;
@@ -243,7 +359,7 @@ public class Kontroll implements kontrollInterface {
 
 	public void slettAlleBilletter(ObservableList<Billett> ubetaltBillettListe) {
 		if (ubetaltBillettListe.isEmpty()) {
-			showMessageDialog(null, "Finnes ingen ubetalte lister");
+			showMessageDialog(null, "Finnes ingen ubetalte billetter");
 		}else {
 		for (Billett u: ubetaltBillettListe) {
 				billett.remove(u);
@@ -269,9 +385,9 @@ public class Kontroll implements kontrollInterface {
 					showMessageDialog(null, "Billetten er allerede betalt");
 
 				} else {
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				b.setErBetalt(true);
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
 				
 				billettFinnes=true;
@@ -368,15 +484,13 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	@Override
-	public ResultSet finnSpesifikkKinosal(String kinosalnr) throws Exception {
+	public boolean finnSpesifikkKinosal(int kinosalnr) {
+		return false;
 		// TODO Auto-generated method stub
-		
-		return null;
 	}
 	
-	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
+	public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
 		
-		final ObservableList<List<String>> statistikkKino = FXCollections.observableArrayList();
 		
 		int kinoSalnr = Integer.parseInt(kinosalnr);
 		int antallVisninger = 0;
@@ -384,6 +498,7 @@ public class Kontroll implements kontrollInterface {
 		int antallSalg = 0;
 		int muligePlasser = 0;
 		int salProsent = 0;
+		
 		for (Kinosal k : kinosal) {
 			if (k.getKinosalnr()==(kinoSalnr)) {
 				resultat = null;
@@ -392,6 +507,7 @@ public class Kontroll implements kontrollInterface {
 				resultat = preparedStatement.executeQuery(sql);
 				
 				while (resultat.next()) {
+					
 					antallVisninger = resultat.getInt(1);
 					
 				}
@@ -417,14 +533,75 @@ public class Kontroll implements kontrollInterface {
 				
 				muligePlasser = antallVisninger * antallPlasser;
 				salProsent = antallSalg / antallPlasser * 100;
-						
+
+				String salP = Integer.toString(salProsent);
+				String antallV = Integer.toString(antallVisninger);
+				//System.out.println(antallV + salP);
+
 			}
 		}
 		
 		return null;
 	}
-	
-
+public String getStatistikkString(String kinosalNr) {
+		
+		String string = "";
+		String kinosalnr = kinosalNr;
+		int antallVisninger = 0;
+		int antallPlasser = 0;
+		int antallSolgt = 0;
+		int visningnr = 0;
+		//String antallLedigePlasser = null;
+		
+		string = string + " " + "Antall visninger" + "         ";		
+		string = string + " " + "Prosent sal" + "\n";
+		
+		
+		
+		for (Visning v : getAlleVisninger()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				antallVisninger++;
+				
+			}
+			/*System.out.println(v.toString());
+			String visningsnr = String.valueOf(v.getVisningnr());
+			String filmnr = String.valueOf(v.getFilmnr());
+			int kinosalnr1 = v.getKinosalnr();
+			//antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(kinosalnr1));
+			
+			//String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			System.out.println(starttid);
+			String pris = String.valueOf(v.getPris());*/
+			
+		}	
+		
+		for (Plass p : getPlass()) {
+			if (String.valueOf(p.getKinosalnr()).equals(kinosalnr)) {
+				antallPlasser++;
+				
+			}
+		}
+		
+		for (Visning v : getVisning()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				
+				
+			}
+		}
+			string = string + " " + antallVisninger + "  ";	
+			string = string + " " + antallPlasser + "\n";
+			
+			
+			
+				
+		
+		System.out.println(antallVisninger);
+		System.out.println(antallPlasser);
+		return string;
+	}
+		
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
 		// TODO Auto-generated method stub
@@ -562,15 +739,61 @@ public class Kontroll implements kontrollInterface {
 		}
 		return cb;
 	}
+		
+	public void hentAntallLedigePlasserSporring() {
+		try {
+			resultat = null;
+			String sql = "SELECT COUNT(p_setenr), p_kinosalnr AS Antall_seter from tblplass";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			
+			while(resultat.next()) {
+				int ledigePlasser = resultat.getInt(1);
+				System.out.println(ledigePlasser);
+	            //int setenr = resultat.getInt(2);
+	            int kinosalnr = resultat.getInt(2);
+	            
+	            setAntallLedigePlasserListe(ledigePlasser);
+	            //setAntallLedigePlasserListe(setenr);
+	            setAntallLedigePlasserListe(kinosalnr);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//public ObservableList<List<String>> visningMedFilmnnavnOgAntallLedigePlasser() {
+	public void visningMedFilmnnavnOgAntallLedigePlasser() {
+		ObservableList<Film> film = getFilm();
+		ObservableList<Visning> visninger = getAlleVisninger();
+		ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+		//final String slutt = "slutt";
+		
+		
+		setVisningString(visningString);
+	}
 	
 	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
-		int visningsnr = Integer.parseInt(visningsnr1);
-		ObservableList<Visning> visning = getAlleVisninger();
-		
-		for (Visning v : visning) {
-			if (v.getVisningnr() == visningsnr) return v.getKinosalnr();
+		try {
+		if(visningsnr1.isEmpty())  { 
+			showMessageDialog(null, "Tomt felt");
+		} else {
+			int visningsnr = Integer.parseInt(visningsnr1);
+			ObservableList<Visning> visning = getAlleVisninger();
+			boolean finnes=false;
+			for (Visning v : visning) {
+				if (v.getVisningnr() == visningsnr) {
+					finnes=true;
+					return v.getKinosalnr();
+				} 
+			}
+			if(!finnes) {
+				showMessageDialog(null, "Visningsnummeret finnes ikke");
+			}
 		}
 		return 0;
+		}catch (NumberFormatException e) {showMessageDialog(null, "Visningsnummer skal bare inneholde tall"); return 0;}
 	}
 	
 	//Metode for aa konvertere timer fra database til LocalTime. Trenger det for aa sammenligne
@@ -584,15 +807,18 @@ public class Kontroll implements kontrollInterface {
 	  }
 
 	@Override
-	public ResultSet finnSpesifikkVisning(String kundenr1) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean finnSpesifikkVisning(String visningsnr) {
+		boolean finnes=false;
+		for(Visning v: alleVisninger) {
+			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
+				System.out.println("IFsetingi");
+				finnes=true;
+				}	
+			} 
+		if(!finnes) {
+		showMessageDialog(null, "Visningsnummeret finnes ikke");
+		}
+		return finnes;
 	}
 	
 	//------------------------------------ Sletter alt innhold i databasen (kjores n�r applikasjonen avsluttes) --------------------------------------------

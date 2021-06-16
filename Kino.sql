@@ -1224,9 +1224,9 @@ INSERT INTO tblbillett VALUES (3,2,1);
 INSERT INTO tblbillett VALUES (4,2,1);
 INSERT INTO tblbillett VALUES (5,3,0);
 
-INSERT INTO tblplassbillett VALUES (1,1,102, 1);
-INSERT INTO tblplassbillett VALUES (1,2,102, 1);
-INSERT INTO tblplassbillett VALUES (2,3,102, 1);
+INSERT INTO tblplassbillett VALUES (1,1,102, 5);
+INSERT INTO tblplassbillett VALUES (1,2,102, 5);
+INSERT INTO tblplassbillett VALUES (2,3,102, 5);
 INSERT INTO tblplassbillett VALUES (2,4,101, 1);
 INSERT INTO tblplassbillett VALUES (2,6,101, 1);
 INSERT INTO tblplassbillett VALUES (3,8,101, 1);

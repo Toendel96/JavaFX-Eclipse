@@ -29,7 +29,7 @@ public interface kontrollInterface {
 	
 	//Kinosal
 	ObservableList<Kinosal> hentKinosaler() throws Exception;
-	ResultSet finnSpesifikkKinosal(String kinosalnr) throws Exception;
+	boolean finnSpesifikkKinosal(int kinosalnr) throws Exception;
 	
 	//Plassbillett
 	boolean leggTilPlassbillett(String filmnavn);
@@ -39,8 +39,7 @@ public interface kontrollInterface {
 	//Visninger
 	boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris);
 	ResultSet leggInnVisningerIListe() throws Exception;
-	ResultSet finnSpesifikkVisning(String kundenr1) throws Exception;
-	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
+	boolean finnSpesifikkVisning(String visningsnr);
 
 
 }
