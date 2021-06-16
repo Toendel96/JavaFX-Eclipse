@@ -3,7 +3,7 @@ package domene;
 import java.sql.Date;
 import java.sql.Time;
 
-public class Visning {
+public class Visning implements Comparable<Visning> {
 	private int visningnr;
 	private int filmnr;
 	private int kinosalnr;
@@ -57,12 +57,16 @@ public class Visning {
 	public void setPris(float pris) {
 		this.pris = pris;
 	}
+	
+	@Override
+	  public int compareTo(Visning o) {
+	    return getDato().compareTo(o.getDato());
+	  }
 
 	@Override
 	public String toString() {
 		return "Visning [visningnr=" + visningnr + ", filmnr=" + filmnr + ", kinosalnr=" + kinosalnr + ", dato="
 				+ dato + ", starttid=" + starttid + ", pris=" + pris + "]";
-	}
-	
+	}	
 
 }

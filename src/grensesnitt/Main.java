@@ -84,16 +84,12 @@ public class Main extends Application {
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
 			lagPlanleggerscene();
+			lagNyFilmScene();
+			lagNyVisningScene();
 			lagMenyscene();
 			lagKinobetjentscene();
 			registrerBillettKBScene();
 			
-			kontroll.hentAntallLedigePlasserSporring();
-			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
-			
-			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
-				System.out.println(i);
-			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -189,11 +185,11 @@ public class Main extends Application {
 		rapport.setOnAction(e -> lagRapportScene());
 		
 		Button leggTilFilm = new Button("Legg til en film");
-		leggTilFilm.setOnAction(e -> lagNyFilmScene());
+		leggTilFilm.setOnAction(e -> vindu.setScene(nyFilmScene));
 		planleggerGridpane.add(leggTilFilm,2,0);
 		
 		Button leggTilVisning = new Button("Ny visning");
-		leggTilVisning.setOnAction(e -> lagNyVisningScene());
+		leggTilVisning.setOnAction(e -> vindu.setScene(nyVisningScene));
 		planleggerGridpane.add(leggTilVisning,3,0);
 		
 		Button tilbake = new Button("Logg ut");
@@ -357,7 +353,7 @@ public class Main extends Application {
 		leggTil.setOnAction(e -> kontroll.leggTilFilm(txtFilmNavn.getText()));
 		Button tilbake = new Button("Tilbake");
 		panel.add(tilbake, 0, 6);
-		tilbake.setOnAction(e -> lagPlanleggerscene());
+		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
@@ -406,7 +402,7 @@ public class Main extends Application {
 		});
 		Button tilbake = new Button("Tilbake");
 		panel.add(tilbake, 0, 6);
-		tilbake.setOnAction(e -> lagPlanleggerscene());
+		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		panel.getChildren().addAll();
 		nyVisningPanel.setCenter(panel);
 		nyVisningPanel.setBottom(tilbake);
@@ -482,8 +478,6 @@ public class Main extends Application {
 		rotpanel.add(cbxRadNr, 1, 1);
 		cbxVisningsNr.setOnAction(e -> {
 			try {
-				ObservableList<String> rader = kontroll.hentrader(Integer.parseInt(String.valueOf(cbxVisningsNr.getValue()))).getItems();
-				cbxRadNr.setItems(rader);
 			}catch(Exception except) {}
 		});
 		
@@ -529,7 +523,7 @@ public class Main extends Application {
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString(1));
+	                kontroll.getFormattertString1());
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
@@ -542,19 +536,19 @@ public class Main extends Application {
 	        
 	        standard.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(1));
+	        		label1.setText(kontroll.getFormattertString1());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterFilm.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(2));
+	        		label1.setText(kontroll.getFormattertString2());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterTidspunkt.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(3));
+	        		label1.setText(kontroll.getFormattertString3());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
