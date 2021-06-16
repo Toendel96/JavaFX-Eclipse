@@ -288,11 +288,24 @@ public class Kontroll implements kontrollInterface {
 	    String string = "";
 	    String filmnavn = null;
 	    int filmnr1 = 0;
+	    int kinosalnrtemp = 0;
 	    String totalpris = regnutpris(visningsnr);
-	    System.out.println("fffff " + totalpris);
 		
 		ObservableList<Plass> tempreservasjon = getTempreservasjon();
+		
+		for (Plass p : tempreservasjon) {
+			kinosalnrtemp = p.getKinosalnr();
+		}
+		
 		ObservableList<Billett> billett = getBillett();
+		
+		for (Billett b : billett) {
+			System.out.println(b.toString());
+		}
+		
+		int index = billett.size();
+		Billett billettVerdi = billett.get(index);
+		
 	    ObservableList<Film> film = getFilm();
 	    ObservableList<Plass> plass = getPlass();
 	    ObservableList<Plassbillett> plassbillett = getPlassbillett();
@@ -336,15 +349,14 @@ public class Kontroll implements kontrollInterface {
 			string = string + " " + dato + "        ";
 			string = string + " " + starttid + "        ";
 			string = string + " " + totalpris + "                    \n";
+			break;
 		}
-	    
-	    System.out.println(string);
 		
 		
 		Alert avbrytEllerBekreft = new Alert(AlertType.CONFIRMATION);
 		Alert ok = new Alert(AlertType.INFORMATION);
 		Alert avbrutt = new Alert(AlertType.INFORMATION);
-		avbrytEllerBekreft.getDialogPane().setMinHeight(800);
+		avbrytEllerBekreft.getDialogPane().setMinHeight(400);
 		avbrytEllerBekreft.getDialogPane().setMinWidth(800);
 		
 		avbrytEllerBekreft.setContentText(string);
@@ -705,7 +717,7 @@ public String getStatistikkKino(String kinosalNr) {
 				//Finner visninger som har vært
 				Date dato = v.getDato();
 				Time tid = v.getStarttid();
-				boolean status = sjekkOmDatoTidErFremtid(tid,dato);
+				boolean status = sjekkOmDatoTidErFremtid(tid,dato, 0);
 				if (!status) {
 					antallVisninger++;
 				}
@@ -723,7 +735,7 @@ public String getStatistikkKino(String kinosalNr) {
 				visningnr = v.getVisningnr();
 				Date dato = v.getDato();
 				Time tid = v.getStarttid();
-				boolean status = sjekkOmDatoTidErFremtid(tid,dato);
+				boolean status = sjekkOmDatoTidErFremtid(tid,dato, 0);
 				if(!status) {
 					visningnr = v.getVisningnr();
 					
@@ -990,7 +1002,7 @@ public String getStatistikkKino(String kinosalNr) {
 		return resultat;
 	}
 	
-	public boolean sjekkOmDatoTidErFremtid(Time starttid, Date dato) {
+	public boolean sjekkOmDatoTidErFremtid(Time starttid, Date dato, int minutter) {
 		LocalDate date = LocalDate.now(); 
 		LocalDate datoFormat = toLocalDate(dato);
 		
@@ -1023,7 +1035,7 @@ public String getStatistikkKino(String kinosalNr) {
         if (erDatoFremITid) {
      	   //Dato frem i tid
      	   if (erDatoSammeDag) {
-     		   if(differanseITid >= 0) {
+     		   if(differanseITid >= minutter) {
          		   return true;
              	   //Visning har ikke begynt enda
          	   } else {
