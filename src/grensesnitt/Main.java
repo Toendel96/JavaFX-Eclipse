@@ -55,6 +55,7 @@ public class Main extends Application {
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
+	private String radnr;
 
 	public void start(Stage primaryStage) {
 		try {
@@ -76,7 +77,6 @@ public class Main extends Application {
 			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
-			
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -402,19 +402,25 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
-		ComboBox comboBoxrad = kontroll.hentrader();
-		Label radnr= new Label();
-		comboBoxrad.setOnAction((e) -> {radnr.setText(comboBoxrad.getValue().toString()); });
+		ComboBox comboBoxrad = kontroll.hentrader(kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
-		ComboBox comboBoxsete = kontroll.hentseter(radnr.getText());
-		comboBoxsete.setPromptText("Velg sete");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboBoxsete);
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
+		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); });
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
+	}
+	public void hentseter(String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+		System.out.println("radnummer: " + radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(radnr);
+		comboBoxsete.setPromptText("Velg sete");
+		comboBoxPanel.getChildren().addAll(comboBoxsete);
+		
+		
 	}
 		
 	public void lagKinobetjentscene() {

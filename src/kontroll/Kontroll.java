@@ -161,17 +161,23 @@ public class Kontroll implements kontrollInterface {
 		return 0;
 	}
 	
-	public ComboBox<String> hentrader(){
+	public ComboBox<String> hentrader(int kinosalnr){
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
+		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
+		ledigplass=plass;
 		for (Plassbillett p: plassbillett) {
-			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
+			if(p.getKinosalnr()==kinosalnr) {
+				opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));	
+			}
 		}
 		for(Plass p: opptattplass) {
-			plass.remove(p);
+			if(p.getKinosalnr()==kinosalnr) {
+				ledigplass.remove(p);
+			}
 		}
 		ComboBox<String> cb = new ComboBox<String>();
 		int erLik=0;
-		for (Plass p: plass) {
+		for (Plass p: ledigplass) {
 			if(p.getRadnr()!=erLik) {
 				cb.getItems().add(Integer.toString(p.getRadnr()));
 				erLik=p.getRadnr();
@@ -182,6 +188,7 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentseter(String radnr){
+		System.out.println("Dette er radnummeret: " + radnr);
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
 		for (Plassbillett p: plassbillett) {
 			opptattplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
@@ -760,6 +767,7 @@ public class Kontroll implements kontrollInterface {
             //}catch(Exception e) {throw new Exception("Kan ikke lagre data");}
         }catch(Exception e) {throw new Exception(e);}
 	}
+
 
 
 	
