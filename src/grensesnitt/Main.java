@@ -84,12 +84,6 @@ public class Main extends Application {
 			lagMenyscene();
 			lagKinobetjentscene();
 			
-			kontroll.hentAntallLedigePlasserSporring();
-			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
-			
-			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
-				System.out.println(i);
-			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -439,13 +433,15 @@ public class Main extends Application {
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboboxsete,leggtil);
 		comboBoxPanel.setHgap(10);
 		Region tomt= new Region();
-		bunnpanel.setHgap(30);
+		tomt.setMinWidth(100);
+		bunnpanel.setHgap(5);
 		bunnpanel.getChildren().addAll(comboboxplass,fjern,tomt, reserver,totalpris);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		ledigePlasserPanel.setBottom(bunnpanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
 	}	
+
 		
 	public void lagKinobetjentscene() {
 		BorderPane kinorotpanel = new BorderPane();
@@ -477,38 +473,11 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			
-			/* TableColumn visningnr = new TableColumn("Visningnr");
-	        visningnr.setMinWidth(50);
-	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
-	        TableColumn pris = new TableColumn("Pris");
-	        pris.setMinWidth(100);
-	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-	        TableColumn dato = new TableColumn("Dato");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        TableColumn starttid = new TableColumn("Startid");
-	        starttid.setMinWidth(100);
-	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-	        TableColumn filmnr = new TableColumn("Filmnrn");
-	        filmnr.setMinWidth(50);
-	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
-	        TableColumn filmnavn = new TableColumn("Filmnavn");
-	        filmnavn.setMinWidth(150);
-	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
-	        TableColumn kinosal = new TableColumn("Kinosal");
-	        kinosal.setMinWidth(150);
-	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
-
-	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
-	        
-	        tabellVisning.setItems(kontroll.getVisning());
-	        
-	        rotpanel.setCenter(tabellVisning); */
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString(1));
+	                kontroll.getFormattertString1()
+	        		);
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
@@ -521,19 +490,19 @@ public class Main extends Application {
 	        
 	        standard.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(1));
+	        		label1.setText(kontroll.getFormattertString1());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterFilm.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(2));
+	        		label1.setText(kontroll.getFormattertString2());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
 	        sorterTidspunkt.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString(3));
+	        		label1.setText(kontroll.getFormattertString3());
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 	        
