@@ -669,12 +669,9 @@ public String getStatistikkFilm(String filmNr) {
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
-		int antall = 0;
-		int antallSett = 0;
-		//int antallSett = 0;
-		//int prosentKino = 0;
-		//int bestillingSlettet = 0;
-		//System.out.println(filmnr);
+		String antallSett;
+		String billettKode;
+		
 		
 		string = string + " " + "Visningnr" + "         ";
 		string = string + " " + "Antall sett" + "         ";	
@@ -700,15 +697,20 @@ public String getStatistikkFilm(String filmNr) {
 							visningnr = v.getVisningnr();
 							for (Billett b : getBillett()) {
 								if (b.getVisningsnr()==(visningnr)) {
-								if (!b.getErBetalt()) {
-									
-									string = string + " " + antallSett + "\n";
+								if (b.getErBetalt()) {
+									billettKode = b.getBillettkode();
+									System.out.println(billettKode);
+									for (Plassbillett pb : getPlassbillett()) {
+										if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
+											antallSett = String.valueOf(pb.getBillettkode());
+											System.out.print(antallSett);
+										} 
+									}			
+									//string = string + " " + antallSett + "\n";
 								}
 							} 
-						}
-						
-					}
-					
+						}	
+					}	
 				}
 						
 					
