@@ -54,6 +54,8 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
+	    private ObservableList<Visning> alleVisningerEkstra = FXCollections.observableArrayList();
+	    
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 
 	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
@@ -161,6 +163,14 @@ public class Kontroll implements kontrollInterface {
 		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
+	public ObservableList<Visning> getAlleVisningerEkstra() {
+		return alleVisningerEkstra;
+	}
+
+	public void setAlleVisningerEkstra() {
+		this.alleVisningerEkstra = getAlleVisninger();
+	}
+
 	public ObservableList<List<String>> getVisningString() {
 		return visningString;
 	}
@@ -262,6 +272,9 @@ public class Kontroll implements kontrollInterface {
 	
 	public String getFormattertString1() {
 		
+		ObservableList<Visning> visningOrdinar = getAlleVisninger();
+		visningOrdinar.sort(Comparator.comparingInt(Visning::getVisningnr));
+		
 		String string = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
@@ -275,7 +288,7 @@ public class Kontroll implements kontrollInterface {
 		string = string + " " + "pris" + "         ";
 		string = string + " " + "antallLedigePlasser" + "\n";
 		
-		for (Visning v : getAlleVisninger()) {
+		for (Visning v : visningOrdinar) {
 			String visningsnr = String.valueOf(v.getVisningnr());
 			int filmnr1 = v.getFilmnr();
 			
@@ -315,8 +328,6 @@ public class Kontroll implements kontrollInterface {
 	visningOrdinar.sort(Comparator.comparingInt(Visning::getFilmnr).reversed());
 		
 		String string = "";
-		String string2 = "";
-		String string3 = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
 		
@@ -367,8 +378,6 @@ public class Kontroll implements kontrollInterface {
 	public String getFormattertString3() {
 		
 		String string = "";
-		String string2 = "";
-		String string3 = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
 		
@@ -689,8 +698,8 @@ public String getStatistikkString(String kinosalNr) {
 			
 				
 		
-		System.out.println(antallVisninger);
-		System.out.println(antallPlasser);
+		//System.out.println(antallVisninger);
+		//System.out.println(antallPlasser);
 		return string;
 	}
 		

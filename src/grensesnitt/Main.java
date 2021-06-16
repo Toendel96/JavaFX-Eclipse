@@ -419,7 +419,7 @@ public class Main extends Application {
 		vindu.show();
 	}
 	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
-		System.out.println("radnummer: " + radnr);
+		//System.out.println("radnummer: " + radnr);
 		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
 		comboBoxsete.setPromptText("Velg sete");
 		comboBoxPanel.getChildren().addAll(comboBoxsete);
@@ -488,7 +488,8 @@ public class Main extends Application {
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString1());
+	                kontroll.getFormattertString1()
+	        		);
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
@@ -498,6 +499,8 @@ public class Main extends Application {
 	        Button standard = new Button("Standard");
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
+	        
+	        kontroll.setAlleVisningerEkstra();
 	        
 	        standard.setOnAction(e -> {
 	        	try {
