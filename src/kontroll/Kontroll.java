@@ -482,68 +482,18 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 	}
 	
-	/*public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
-		
-		
-		int kinoSalnr = Integer.parseInt(kinosalnr);
-		int antallVisninger = 0;
-		int antallPlasser = 0;
-		int antallSalg = 0;
-		int muligePlasser = 0;
-		int salProsent = 0;
-		
-		for (Kinosal k : kinosal) {
-			if (k.getKinosalnr()==(kinoSalnr)) {
-				resultat = null;
-				String sql = "SELECT COUNT(v_visningnr) FROM tblvisning WHERE v_kinosalnr ="+kinoSalnr+" AND v_dato < SYSDATE();";
-				preparedStatement = forbindelse.prepareStatement(sql);
-				resultat = preparedStatement.executeQuery(sql);
-				
-				while (resultat.next()) {
-					
-					antallVisninger = resultat.getInt(1);
-					
-				}
-				String sql1 = "SELECT COUNT(p_setenr) AS Antall_seter from tblplass where p_kinosalnr ="+kinoSalnr+" ;";
-				preparedStatement = forbindelse.prepareStatement(sql1);
-				resultat = preparedStatement.executeQuery(sql1);
-				
-				while (resultat.next() ) {
-					antallPlasser = resultat.getInt(1);
-					
-				}
-				String sql2 = "SELECT COUNT(b_billettkode) AS Antall_billetter\n"
-						+ "From tblbillett\n"
-						+ "INNER JOIN tblvisning ON tblbillett.b_visningsnr=tblvisning.v_visningnr\n"
-						+ "WHERE b_erBetalt = '1' AND v_kinosalnr ="+kinoSalnr+" AND v_dato < SYSDATE();";
-				preparedStatement = forbindelse.prepareStatement(sql2);
-				resultat = preparedStatement.executeQuery(sql2);
-				
-				while(resultat.next()) {
-					antallSalg = resultat.getInt(1);
-					
-				}
-				
-				muligePlasser = antallVisninger * antallPlasser;
-				salProsent = antallSalg / antallPlasser * 100;
-
-				String salP = Integer.toString(salProsent);
-				String antallV = Integer.toString(antallVisninger);
-
-			}
-		}
-		
-		return null;
-	}*/
+	
 	
 public String getStatistikkFilm(String filmNr) {
 		
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
+		int antall = 0;
 		//int antallSett = 0;
 		//int prosentKino = 0;
 		//int bestillingSlettet = 0;
+		//System.out.println(filmnr);
 		
 		
 		
@@ -552,15 +502,20 @@ public String getStatistikkFilm(String filmNr) {
 		string = string + " " + "Prosent kinosal" + "         ";	
 		string = string + " " + "Bestilling slettet" + "\n";
 		
-		for (Visning v : getVisning()) {
-			if (String.valueOf(v.getFilmnr()).equals(filmNr));
+		for (Visning v : getAlleVisninger()) {
+			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
+			
+			
+			}
+			
 		}
-		
-		
+		string = string + "   " + visningnr+"      ";	
+		//string = string + " " + antallPlasser + "\n";
 		
 		return string;
 	}	
+
 	
 //Lager statistikk for kinosal
 public String getStatistikkKino(String kinosalNr) {
@@ -584,7 +539,7 @@ public String getStatistikkKino(String kinosalNr) {
 				Date dato = v.getDato();
 				Time tid = v.getStarttid();
 				boolean status = sjekkOmDatoTidErFremtid(tid,dato);
-				if (status) {
+				if (!status) {
 					antallVisninger++;
 				}
 			}			
@@ -596,10 +551,26 @@ public String getStatistikkKino(String kinosalNr) {
 			}
 		}
 		//Henter alle billetter solgt til en 
-		for (Visning v : getVisning()) {
+		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
-				for (Billett b : getBillett()) {
+				visningnr = v.getVisningnr();
+				Date dato = v.getDato();
+				Time tid = v.getStarttid();
+				boolean status = sjekkOmDatoTidErFremtid(tid,dato);
+				if(!status) {
+					visningnr = v.getVisningnr();
 					
+					
+					for (Billett b : getBillett()) {
+						if (b.getVisningsnr()==(visningnr));
+						if (b.getErBetalt()) {
+							antallSolgt++;
+							System.out.println(antallSolgt);
+							
+							
+						} break;
+				
+					}
 				}
 				
 			}
@@ -607,8 +578,7 @@ public String getStatistikkKino(String kinosalNr) {
 			string = string + "             " + antallVisninger + "                          ";	
 			string = string + " " + antallPlasser + "\n";
 			
-		System.out.println(antallVisninger);
-		System.out.println(antallPlasser);
+		
 		return string;
 	}
 		
