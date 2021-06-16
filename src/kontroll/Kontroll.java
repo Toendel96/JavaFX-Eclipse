@@ -195,6 +195,7 @@ public class Kontroll implements kontrollInterface {
 					erLik=p.getRadnr();
 				}else {
 				}
+
 			}
 		}
 		return cb;
@@ -237,13 +238,7 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentseter(String visningsnr, String radnr, int kinosalnr){
-		ObservableList<Plass> ledigplass=hentledigplass(visningsnr,kinosalnr);
 		System.out.println("Dette er radnummeret: " + radnr);
-		for (Plass p:ledigplass) {
-			//if(Integer.toString(p.getRadnr().equals(radnr))) {
-				
-			//}
-		}
 		ComboBox<String> cb = new ComboBox<String>();
 		int erLik=0;
 		for (Plass p: plass) {
@@ -318,20 +313,14 @@ public class Kontroll implements kontrollInterface {
 		}
 		
 		String string2 = 
-				"Oppgave: Oblig 1\n\n" +
-			    "Laget av: Petter T�ndel\n" +
-			    "Studentnummer: 233211\n" +
-			    "Fagkode: OBJ2100\n" +
-			    "Fagnavn: Objektorientert programmering 2\n" +
-			    "Tidspunkt: 2021 V�r\n" +
-			    "Forutsetning: M� importere mysq-connector-java inn i prosjektet, opprette/sette inn data i database (to SQL-script) og endre til dine databaseinnstillinger\n\n" +
-			    "Teknologi: \n" +
-			    "                 Java  - bibliotek: JavaFX, mysql-connector-java, Lombok - Compiler: Java8 - IntelliJ\n" +
-			    "                 MySQL - form�l: CRUD - MySQL Workbench\n" +
-			    "                 Git   - form�l: Versjonskontrollering - Github\n";
+				"test2";
+		
+		String string3 = 
+				"test3";
 		
 		if (valg == 1) return string;
 		else if (valg == 2) return string2;
+		else if (valg == 3) return string3;
 		else return null;
 	}
 
@@ -396,9 +385,9 @@ public class Kontroll implements kontrollInterface {
 					showMessageDialog(null, "Billetten er allerede betalt");
 
 				} else {
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				b.setErBetalt(true);
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
 				
 				billettFinnes=true;
@@ -547,12 +536,70 @@ public class Kontroll implements kontrollInterface {
 
 				String salP = Integer.toString(salProsent);
 				String antallV = Integer.toString(antallVisninger);
-				System.out.println(antallV + salP);
+				//System.out.println(antallV + salP);
 
 			}
 		}
 		
 		return null;
+	}
+public String getStatistikkString(String kinosalNr) {
+		
+		String string = "";
+		String kinosalnr = kinosalNr;
+		int antallVisninger = 0;
+		int antallPlasser = 0;
+		int antallSolgt = 0;
+		int visningnr = 0;
+		//String antallLedigePlasser = null;
+		
+		string = string + " " + "Antall visninger" + "         ";		
+		string = string + " " + "Prosent sal" + "\n";
+		
+		
+		
+		for (Visning v : getAlleVisninger()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				antallVisninger++;
+				
+			}
+			/*System.out.println(v.toString());
+			String visningsnr = String.valueOf(v.getVisningnr());
+			String filmnr = String.valueOf(v.getFilmnr());
+			int kinosalnr1 = v.getKinosalnr();
+			//antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(kinosalnr1));
+			
+			//String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			System.out.println(starttid);
+			String pris = String.valueOf(v.getPris());*/
+			
+		}	
+		
+		for (Plass p : getPlass()) {
+			if (String.valueOf(p.getKinosalnr()).equals(kinosalnr)) {
+				antallPlasser++;
+				
+			}
+		}
+		
+		for (Visning v : getVisning()) {
+			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
+				
+				
+			}
+		}
+			string = string + " " + antallVisninger + "  ";	
+			string = string + " " + antallPlasser + "\n";
+			
+			
+			
+				
+		
+		System.out.println(antallVisninger);
+		System.out.println(antallPlasser);
+		return string;
 	}
 		
 	@Override
