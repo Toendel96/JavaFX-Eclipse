@@ -54,7 +54,9 @@ public class Kontroll implements kontrollInterface {
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+
 	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
+
 
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
@@ -102,7 +104,7 @@ public class Kontroll implements kontrollInterface {
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
-
+	
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
@@ -305,16 +307,16 @@ public class Kontroll implements kontrollInterface {
 		
 		String string2 = 
 				"Oppgave: Oblig 1\n\n" +
-			    "Laget av: Petter Tøndel\n" +
+			    "Laget av: Petter Tï¿½ndel\n" +
 			    "Studentnummer: 233211\n" +
 			    "Fagkode: OBJ2100\n" +
 			    "Fagnavn: Objektorientert programmering 2\n" +
-			    "Tidspunkt: 2021 Vår\n" +
-			    "Forutsetning: Må importere mysq-connector-java inn i prosjektet, opprette/sette inn data i database (to SQL-script) og endre til dine databaseinnstillinger\n\n" +
+			    "Tidspunkt: 2021 Vï¿½r\n" +
+			    "Forutsetning: Mï¿½ importere mysq-connector-java inn i prosjektet, opprette/sette inn data i database (to SQL-script) og endre til dine databaseinnstillinger\n\n" +
 			    "Teknologi: \n" +
 			    "                 Java  - bibliotek: JavaFX, mysql-connector-java, Lombok - Compiler: Java8 - IntelliJ\n" +
-			    "                 MySQL - formål: CRUD - MySQL Workbench\n" +
-			    "                 Git   - formål: Versjonskontrollering - Github\n";
+			    "                 MySQL - formï¿½l: CRUD - MySQL Workbench\n" +
+			    "                 Git   - formï¿½l: Versjonskontrollering - Github\n";
 		
 		if (valg == 1) return string;
 		else if (valg == 2) return string2;
@@ -487,9 +489,8 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 	}
 	
-	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
+	public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
 		
-		final ObservableList<List<String>> statistikkKino = FXCollections.observableArrayList();
 		
 		int kinoSalnr = Integer.parseInt(kinosalnr);
 		int antallVisninger = 0;
@@ -497,6 +498,7 @@ public class Kontroll implements kontrollInterface {
 		int antallSalg = 0;
 		int muligePlasser = 0;
 		int salProsent = 0;
+		
 		for (Kinosal k : kinosal) {
 			if (k.getKinosalnr()==(kinoSalnr)) {
 				resultat = null;
@@ -505,6 +507,7 @@ public class Kontroll implements kontrollInterface {
 				resultat = preparedStatement.executeQuery(sql);
 				
 				while (resultat.next()) {
+					
 					antallVisninger = resultat.getInt(1);
 					
 				}
@@ -530,14 +533,17 @@ public class Kontroll implements kontrollInterface {
 				
 				muligePlasser = antallVisninger * antallPlasser;
 				salProsent = antallSalg / antallPlasser * 100;
-						
+
+				String salP = Integer.toString(salProsent);
+				String antallV = Integer.toString(antallVisninger);
+				System.out.println(antallV + salP);
+
 			}
 		}
 		
 		return null;
 	}
-	
-
+		
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
 		// TODO Auto-generated method stub
@@ -725,7 +731,7 @@ public class Kontroll implements kontrollInterface {
 
 	@Override
 	public boolean finnSpesifikkVisning(String visningsnr) {
-		System.out.println("Finn spesifikk visning kjører");
+		System.out.println("Finn spesifikk visning kjï¿½rer");
 		boolean finnes=false;
 		for(Visning v: visning) {
 			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
