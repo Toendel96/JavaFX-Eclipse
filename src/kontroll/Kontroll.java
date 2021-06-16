@@ -63,7 +63,7 @@ public class Kontroll implements kontrollInterface {
     public void lagForbindelse() throws Exception {
         try {
             forbindelse = DriverManager.getConnection(databasenavn, brukernavn, passord);
-            //System.out.println("Tilkobling til database fungerte");
+            //Tilkobling til database fungerte
         } catch (Exception e) {
             throw new Exception("Kan ikke oppnaa kontakt med databasen");
         }
@@ -181,11 +181,10 @@ public class Kontroll implements kontrollInterface {
 	}
 	
 	public ComboBox<String> hentrader(String visningsnr, int kinosalnr){
-		System.out.println("Kinosalnummeret er: "+kinosalnr);
 		ObservableList<Plass> ledigplass=hentledigplass(visningsnr,kinosalnr);
 		ComboBox<String> cb = new ComboBox<String>();
 		if(ledigplass.isEmpty()) {
-			System.out.println("Finnes ingen ledige plasser");
+			//Finnes ingen ledige plasser");
 			cb.getItems().add("Ingen ledige rader");
 		}else {
 			int erLik=0;
@@ -224,7 +223,7 @@ public class Kontroll implements kontrollInterface {
 		for(Plass l: ledigplass) {
 			for(Plass o:opptattplass) {
 				if(o.getRadnr()==l.getRadnr() && o.getSetenr()==l.getSetenr()) {
-					System.out.println("Setet er opptatt");
+					//Setet er opptatt"
 					finnes=true;
 					break;
 				} else {
@@ -232,13 +231,11 @@ public class Kontroll implements kontrollInterface {
 				}
 			}if(!finnes) {faktiskledigplass.add(new Plass(l.getRadnr(),l.getSetenr(),l.getKinosalnr()));}	
 		}
-		System.out.println("ledigeplasse: " + faktiskledigplass.size());
 		return faktiskledigplass;
 		}catch (Exception e){ e.printStackTrace(); return null;}
 	}
 	
 	public ComboBox<String> hentseter(String visningsnr, String radnr, int kinosalnr){
-		System.out.println("Dette er radnummeret: " + radnr);
 		ComboBox<String> cb = new ComboBox<String>();
 		int erLik=0;
 		for (Plass p: plass) {
@@ -256,10 +253,7 @@ public class Kontroll implements kontrollInterface {
 		int teller = 0;
 		
 		for (Plass p : ledigplass) {
-			//if (p.getKinosalnr() == kinosalnr) {
-				System.out.println(p.toString());
 				teller++;
-			//}
 		}
 		
 		return teller;
@@ -293,7 +287,6 @@ public class Kontroll implements kontrollInterface {
 			String filmnr = String.valueOf(filmnr1);
 			int kinosalnr1 = v.getKinosalnr();
 			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
-			//System.out.println(antallLedigePlasser);
 			
 			String kinosalnr = String.valueOf(kinosalnr1);
 			String dato = String.valueOf(v.getDato());
@@ -385,9 +378,7 @@ public class Kontroll implements kontrollInterface {
 					showMessageDialog(null, "Billetten er allerede betalt");
 
 				} else {
-				//System.out.println(b.toString());
 				b.setErBetalt(true);
-				//System.out.println(b.toString());
 				showMessageDialog(null, b.toString() + "\n"  + "Billetten er n� satt til betalt");
 				
 				billettFinnes=true;
@@ -536,7 +527,6 @@ public class Kontroll implements kontrollInterface {
 
 				String salP = Integer.toString(salProsent);
 				String antallV = Integer.toString(antallVisninger);
-				//System.out.println(antallV + salP);
 
 			}
 		}
@@ -709,25 +699,21 @@ public String getStatistikkString(String kinosalNr) {
                }
                
                if (erDatoFremITid) {
-            	   //System.out.println("Dato frem i tid");
+            	   //Dato frem i tid
             	   if (erDatoSammeDag) {
             		   if(differanseITid >= 30) {
                 		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
-                    	   //System.out.println("Mer enn tretti min");
-                    	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+                    	   //Mer enn tretti min
                 	   } else {
-                		   //System.out.println("Ikke mer enn tretti min");
+                		   //kke mer enn tretti min
                 	   }
             	   } else {
             		   setVisning(visningnr, filmnr, kinosalnr, dato, starttid, pris);
             	   }
                } else {
-            	   //System.out.println("Under tretti eller tidligere dato");
-            	   //System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris);
+            	   //Under tretti eller tidligere dato
                }
-               //System.out.println();
-               /* System.out.println("Alle");
-               System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
+               //Alle
 		}
 		return resultat;
 	}
@@ -741,7 +727,6 @@ public String getStatistikkString(String kinosalNr) {
 			
 			while(resultat.next()) {
 				int ledigePlasser = resultat.getInt(1);
-				System.out.println(ledigePlasser);
 	            //int setenr = resultat.getInt(2);
 	            int kinosalnr = resultat.getInt(2);
 	            
@@ -804,7 +789,6 @@ public String getStatistikkString(String kinosalNr) {
 		boolean finnes=false;
 		for(Visning v: alleVisninger) {
 			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
-				System.out.println("IFsetingi");
 				finnes=true;
 				}	
 			} 
@@ -869,8 +853,6 @@ public String getStatistikkString(String kinosalNr) {
 			else {feil += 1;
 			}
 		}
-		//System.out.print("Suksess film: " + success + "\n");
-		//System.out.print("Feil film: " + feil +"\n");
 	}
 	
 	public void lagreKinosalDB() throws Exception {
@@ -891,8 +873,6 @@ public String getStatistikkString(String kinosalNr) {
 				feil1 += 1;
 			}
 		}
-		//System.out.print("Suksess kinosal: " + success1 + "\n");
-		//System.out.print("Feil kinosal: " + feil1 + "\n");
 	}
 	
 	public void lagrePlassDB() throws Exception {
@@ -913,8 +893,6 @@ public String getStatistikkString(String kinosalNr) {
 				feil2 += 1;
 			}
 		}
-		//System.out.print("Suksess plass: " + success2 + "\n");
-		//System.out.print("Feil plass: " + feil2 + "\n");
 	}
 	
 	public void lagreVisningDB() throws Exception {
@@ -938,8 +916,6 @@ public String getStatistikkString(String kinosalNr) {
 				feil3 += 1;
 			}
 		}
-		//System.out.print("Suksess visning: " + success3 + "\n");
-		//System.out.print("Feil visning: " + feil3 + "\n");
 	}
 	
 	public void lagreBillettDB() throws Exception {
@@ -960,8 +936,6 @@ public String getStatistikkString(String kinosalNr) {
 				feil4 += 1;
 			}
 		}
-		//System.out.print("Suksess billett: " + success4 + "\n");
-		//System.out.print("Feil billett: " + feil4 + "\n");
 	}
 	
 	public void lagrePlassBillett() throws Exception {
@@ -983,8 +957,6 @@ public String getStatistikkString(String kinosalNr) {
 				feil5 += 1;
 			}
 		}
-		//System.out.print("Suksess plassbillett: " + success5 + "\n");
-		//System.out.print("Feil plassbillett: " + feil5 + "\n");
 	}
 	
 	
