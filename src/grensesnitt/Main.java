@@ -24,6 +24,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -55,6 +58,7 @@ public class Main extends Application {
 	private Scene nyFilmScene;
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
+	private Scene registrerBillettKBScene;
 	private String radnr;
 
 	public void start(Stage primaryStage) {
@@ -77,6 +81,7 @@ public class Main extends Application {
 			lagStatistikkFilm();
 			lagMenyscene();
 			lagKinobetjentscene();
+			registrerBillettKBScene();
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -420,7 +425,6 @@ public class Main extends Application {
 		comboBoxsete.setPromptText("Velg sete");
 		comboBoxPanel.getChildren().addAll(comboBoxsete);
 		
-		
 	}
 		
 	public void lagKinobetjentscene() {
@@ -429,6 +433,10 @@ public class Main extends Application {
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
+		
+		Button registrerBilletter = new Button("Registrer billetter");
+		registrerBilletter.setOnAction(e -> vindu.setScene(registrerBillettKBScene));
+		
 		TableColumn colBillettkode = new TableColumn("Billettkode:");
 		colBillettkode.setMinWidth(100);
 		colBillettkode.setCellValueFactory(new PropertyValueFactory<Billett, String>("billettkode"));
@@ -447,8 +455,35 @@ public class Main extends Application {
 		sletttabell.setItems(kontroll.hentUbetalteBilletter());
 		knappePanel.getChildren().addAll(tilbake,billettkode,oppdater,avbestill);
 		knappePanel.setHgap(10);
+		kinorotpanel.setTop(registrerBilletter);
 		kinorotpanel.setCenter(sletttabell);
 		kinorotpanel.setBottom(knappePanel);
+	}
+	
+	public void registrerBillettKBScene() {
+		//Kopi av lagKundeScene;
+		GridPane rotpanel = new GridPane();
+		registrerBillettKBScene = new Scene(rotpanel,600,600);
+		Label lblVisningsNr = new Label("Visningsnr: ");
+		rotpanel.add(lblVisningsNr,0,0);
+		ChoiceBox<String> cbxVisningsNr = kontroll.visVisningerChoice();
+		rotpanel.add(cbxVisningsNr, 1, 0);
+		Label lblRadNr = new Label("Rad nummer: ");
+		rotpanel.add(lblRadNr, 0, 1);
+		ComboBox<String> cbxRadNr = new ComboBox<>();
+		rotpanel.add(cbxRadNr, 1, 1);
+		cbxVisningsNr.setOnAction(e -> {
+			try {
+				ObservableList<String> rader = kontroll.hentrader(Integer.parseInt(String.valueOf(cbxVisningsNr.getValue()))).getItems();
+				cbxRadNr.setItems(rader);
+			}catch(Exception except) {}
+		});
+		
+		
+		
+        
+        Button tilbake = new Button("Tilbake");
+        tilbake.setOnAction(e -> behandleTilbake(menyscene));
 	}
 	
 	public void lagKundescene() {

@@ -92,7 +92,7 @@ public class Kontroll implements kontrollInterface {
 	}
 
 	public void setFilm(int filmnr, String filmnavn) {
-		film.add(new Film(filmnr, brukernavn));
+		film.add(new Film(filmnr, filmnavn));
 	}
 
 	public ObservableList<Kinosal> getKinosal() {
@@ -552,6 +552,15 @@ public class Kontroll implements kontrollInterface {
                System.out.println(visningnr + " " + filmnr + " " + kinosalnr + " " + dato + " " + starttid + " " + pris); */
 		}
 		return resultat;
+	}
+	
+	public ChoiceBox<String> visVisningerChoice() {
+		//Returnerer en choicebox med alle visningsnre
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		for (Visning v: visning) {
+			cb.getItems().add(String.valueOf(v.getVisningnr()));
+		}
+		return cb;
 	}
 	
 	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
