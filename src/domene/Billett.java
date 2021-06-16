@@ -31,6 +31,10 @@ public class Billett {
 		this.erBetalt = erBetalt;
 	}
 	
+	public String toFile() {
+		return(billettkode+ "," + visningsnr);
+	}
+	
 	@Override
 	public String toString() {
 		return "Billett [billettkode=" + billettkode + ", visningsnr=" + visningsnr + ", erBetalt=" + erBetalt + "]";

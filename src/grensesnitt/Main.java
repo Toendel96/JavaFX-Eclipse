@@ -76,7 +76,7 @@ public class Main extends Application {
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
-			vindu.setHeight(800);
+			vindu.setHeight(600);
 			lagKundescene();
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
@@ -352,29 +352,44 @@ public class Main extends Application {
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
 		Button leggtil = new Button("Legg til");
 		Button fjern = new Button("Fjern");
-		//fjern.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
 		Button reserver = new Button("Reserver");
 		//reserver.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		Label tekstpris= new Label("Totalpris:");
 		TextField totalpris= new TextField();
+		totalpris.setMaxWidth(100);
 		totalpris.setEditable(false);
-		
 		ComboBox<String> comboboxsete= new ComboBox();
 		ComboBox<Plass> comboboxplass= new ComboBox();
 		comboboxsete.setPromptText("Velg sete");
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
+		ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
 		 comboboxsete.setItems(seter);
 		 });
 		leggtil.setOnAction((e) -> {
 			comboboxplass.setItems(kontroll.leggTilSete(comboboxsete.getValue().toString(),comboBoxrad.getValue().toString(),kinosalnr));
-			kontroll.regnutpris(visningsnr);
+			String totalAaBetale=kontroll.regnutpris(visningsnr);
+			totalpris.setText(totalAaBetale);
 		});
+		fjern.setOnAction((e) -> {
+			comboboxplass.setItems(kontroll.fjernplass(comboboxplass.getValue().getRadnr(),comboboxplass.getValue().getSetenr()));
+		String totalAaBetale=kontroll.regnutpris(visningsnr);
+		totalpris.setText(totalAaBetale);
+		});
+		
+		
+		reserver.setOnAction(e -> {
+        	try {
+        		boolean status = kontroll.giBestillingBekreftelse(visningsnr);
+        		if (status) behandleTilbake(menyscene);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+		
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboboxsete,leggtil);
 		comboBoxPanel.setHgap(10);
 		Region tomt= new Region();
 		tomt.setMinWidth(100);
 		bunnpanel.setHgap(5);
-		bunnpanel.getChildren().addAll(comboboxplass,fjern,tomt, reserver,totalpris);
+		bunnpanel.getChildren().addAll(comboboxplass,fjern,tomt, reserver,tekstpris,totalpris);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		ledigePlasserPanel.setBottom(bunnpanel);
 		vindu.setScene(ledigePlasserScene);
@@ -466,6 +481,7 @@ public class Main extends Application {
 	            	if (hentetKinosalnr!=0) {
 		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
 		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            		sokVisninger.clear();
 		            	}
 	            	}
 	            } catch (Exception exception) { exception.printStackTrace(); }
