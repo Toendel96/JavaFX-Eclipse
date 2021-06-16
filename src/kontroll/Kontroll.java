@@ -55,6 +55,9 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 
+	    ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
+
+
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
     public void lagForbindelse() throws Exception {
@@ -101,7 +104,7 @@ public class Kontroll implements kontrollInterface {
 	public void setKinosal(int kinosalnr, String kinonavn, String kinosalnavn) {
 		kinosal.add(new Kinosal(kinosalnr, kinonavn, kinosalnavn)); 
 	}
-
+	
 	public ObservableList<Plass> getPlass() {
 		return plass;
 	}
@@ -110,6 +113,14 @@ public class Kontroll implements kontrollInterface {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
 	
+	public ObservableList<Integer> getAntallLedigePlasserListe() {
+		return antallLedigePlasserListe;
+	}
+
+	public void setAntallLedigePlasserListe(int verdi) {
+		antallLedigePlasserListe.add(verdi);
+	}
+
 	public ResultSet hentPlasser() throws Exception {
         resultat = null;
         String sql = "SELECT * FROM tblplass";
@@ -149,6 +160,14 @@ public class Kontroll implements kontrollInterface {
 		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
 	}
 
+	public ObservableList<List<String>> getVisningString() {
+		return visningString;
+	}
+
+	public void setVisningString(ObservableList<List<String>> visningString) {
+		this.visningString = visningString;
+	}
+
 	@Override
 	public boolean sletteBillett(String billettKode) {
 		// TODO Auto-generated method stub
@@ -185,6 +204,7 @@ public class Kontroll implements kontrollInterface {
 		try {
 		ObservableList<Plass> opptattplass = FXCollections.observableArrayList();
 		ObservableList<Plass> ledigplass = FXCollections.observableArrayList();
+		ObservableList<Plass> faktiskledigplass = FXCollections.observableArrayList();
 		for(Plass p: plass) {
 			if(p.getKinosalnr()==kinosalnr) {
 				ledigplass.add(new Plass(p.getRadnr(),p.getSetenr(),p.getKinosalnr()));
@@ -199,12 +219,20 @@ public class Kontroll implements kontrollInterface {
 				}
 			}
 		}
-		for(Plass p: opptattplass) {
-			if(p.getKinosalnr()==kinosalnr) {
-				ledigplass.remove(p);
-			}
+		boolean finnes= false;
+		for(Plass l: ledigplass) {
+			for(Plass o:opptattplass) {
+				if(o.getRadnr()==l.getRadnr() && o.getSetenr()==l.getSetenr()) {
+					System.out.println("Setet er opptatt");
+					finnes=true;
+					break;
+				} else {
+					finnes=false;
+				}
+			}if(!finnes) {faktiskledigplass.add(new Plass(l.getRadnr(),l.getSetenr(),l.getKinosalnr()));}	
 		}
-		return ledigplass;
+		System.out.println("ledigeplasse: " + faktiskledigplass.size());
+		return faktiskledigplass;
 		}catch (Exception e){ e.printStackTrace(); return null;}
 	}
 	
@@ -227,6 +255,86 @@ public class Kontroll implements kontrollInterface {
 		}
 		return cb;
 	}
+	
+	public int finnLedigePlasserForKinosal(String visningsnr, int kinosalnr) {
+		ObservableList<Plass> ledigplass = hentledigplass(visningsnr, kinosalnr);
+		int teller = 0;
+		
+		for (Plass p : ledigplass) {
+			//if (p.getKinosalnr() == kinosalnr) {
+				System.out.println(p.toString());
+				teller++;
+			//}
+		}
+		
+		return teller;
+	}
+	
+	public String getFormattertString(int valg) {
+		
+		String string = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
+		
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		for (Visning v : getAlleVisninger()) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			//System.out.println(antallLedigePlasser);
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
+
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+				
+		}
+		
+		String string2 = 
+				"Oppgave: Oblig 1\n\n" +
+			    "Laget av: Petter T�ndel\n" +
+			    "Studentnummer: 233211\n" +
+			    "Fagkode: OBJ2100\n" +
+			    "Fagnavn: Objektorientert programmering 2\n" +
+			    "Tidspunkt: 2021 V�r\n" +
+			    "Forutsetning: M� importere mysq-connector-java inn i prosjektet, opprette/sette inn data i database (to SQL-script) og endre til dine databaseinnstillinger\n\n" +
+			    "Teknologi: \n" +
+			    "                 Java  - bibliotek: JavaFX, mysql-connector-java, Lombok - Compiler: Java8 - IntelliJ\n" +
+			    "                 MySQL - form�l: CRUD - MySQL Workbench\n" +
+			    "                 Git   - form�l: Versjonskontrollering - Github\n";
+		
+		if (valg == 1) return string;
+		else if (valg == 2) return string2;
+		else return null;
+	}
+
 
 	@Override
 	public ResultSet hentBilletter() throws Exception {
@@ -392,9 +500,8 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 	}
 	
-	public ObservableList<List<String>> kinoStatistikk(String kinosalnr) throws Exception {
+	public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
 		
-		final ObservableList<List<String>> statistikkKino = FXCollections.observableArrayList();
 		
 		int kinoSalnr = Integer.parseInt(kinosalnr);
 		int antallVisninger = 0;
@@ -402,6 +509,7 @@ public class Kontroll implements kontrollInterface {
 		int antallSalg = 0;
 		int muligePlasser = 0;
 		int salProsent = 0;
+		
 		for (Kinosal k : kinosal) {
 			if (k.getKinosalnr()==(kinoSalnr)) {
 				resultat = null;
@@ -410,6 +518,7 @@ public class Kontroll implements kontrollInterface {
 				resultat = preparedStatement.executeQuery(sql);
 				
 				while (resultat.next()) {
+					
 					antallVisninger = resultat.getInt(1);
 					
 				}
@@ -435,14 +544,17 @@ public class Kontroll implements kontrollInterface {
 				
 				muligePlasser = antallVisninger * antallPlasser;
 				salProsent = antallSalg / antallPlasser * 100;
-						
+
+				String salP = Integer.toString(salProsent);
+				String antallV = Integer.toString(antallVisninger);
+				System.out.println(antallV + salP);
+
 			}
 		}
 		
 		return null;
 	}
-	
-
+		
 	@Override
 	public boolean leggTilPlassbillett(String filmnavn) {
 		// TODO Auto-generated method stub
@@ -573,6 +685,41 @@ public class Kontroll implements kontrollInterface {
 		return resultat;
 	}
 	
+	public void hentAntallLedigePlasserSporring() {
+		try {
+			resultat = null;
+			String sql = "SELECT COUNT(p_setenr), p_kinosalnr AS Antall_seter from tblplass";
+			preparedStatement = forbindelse.prepareStatement(sql);
+			resultat = preparedStatement.executeQuery(sql);
+			
+			while(resultat.next()) {
+				int ledigePlasser = resultat.getInt(1);
+				System.out.println(ledigePlasser);
+	            //int setenr = resultat.getInt(2);
+	            int kinosalnr = resultat.getInt(2);
+	            
+	            setAntallLedigePlasserListe(ledigePlasser);
+	            //setAntallLedigePlasserListe(setenr);
+	            setAntallLedigePlasserListe(kinosalnr);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//public ObservableList<List<String>> visningMedFilmnnavnOgAntallLedigePlasser() {
+	public void visningMedFilmnnavnOgAntallLedigePlasser() {
+		ObservableList<Film> film = getFilm();
+		ObservableList<Visning> visninger = getAlleVisninger();
+		ObservableList<List<String>> visningString = FXCollections.observableArrayList();
+		//final String slutt = "slutt";
+		
+		
+		
+		setVisningString(visningString);
+	}
+	
 	public int finnKinosalnrBasertPaaVisningsnr(String visningsnr1) {
 		try {
 		if(visningsnr1.isEmpty())  { 
@@ -608,8 +755,9 @@ public class Kontroll implements kontrollInterface {
 	@Override
 	public boolean finnSpesifikkVisning(String visningsnr) {
 		boolean finnes=false;
-		for(Visning v: visning) {
+		for(Visning v: alleVisninger) {
 			if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
+				System.out.println("IFsetingi");
 				finnes=true;
 				}	
 			} 

@@ -5,6 +5,9 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mysql.cj.conf.StringProperty;
+
 import domene.Billett;
 import domene.Film;
 import domene.Plassbillett;
@@ -40,8 +43,9 @@ public class Main extends Application {
 	private Stage vindu;
 	private TableView tabellVisning = new TableView<>();
 
-	private TableView<List<String>> statistikklinjer = new TableView();
-
+	private TableView statistikkTabell = new TableView();
+	
+	
 	private TableView sletttabell = new TableView<>();
 	
 	private Scene menyscene;
@@ -71,12 +75,20 @@ public class Main extends Application {
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
 			vindu.setWidth(800);
-			vindu.setHeight(600);
+			vindu.setHeight(800);
 			lagKundescene();
 			lagStatistikkKinosal();
 			lagStatistikkFilm();
+			lagPlanleggerscene();
 			lagMenyscene();
 			lagKinobetjentscene();
+			
+			kontroll.hentAntallLedigePlasserSporring();
+			ObservableList<Integer> antallLedigePlasserListe = kontroll.getAntallLedigePlasserListe();
+			
+			for (int i = 0; i < antallLedigePlasserListe.size()-1; i++) {
+				System.out.println(i);
+			}
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -84,8 +96,6 @@ public class Main extends Application {
 	}
 	
 	public void lagMenyscene() {
-		vindu.setWidth(800);
-		vindu.setHeight(800);
 		String planleggeren="planlegger";
 		String kinobetjent="kinobetjent";
 		BorderPane menyrotpanel = new BorderPane();
@@ -140,7 +150,7 @@ public class Main extends Application {
 		if (bruker.equals("planlegger")) {
 			if (brukernavn.equals("tunk")) {
 				if (passord.equals("4321")) {
-					lagPlanleggerscene();
+					vindu.setScene(planleggerScene);
 				}else {loggInnFeilet.setContentText("Feil passord");
 						loggInnFeilet.show();}
 			}else {loggInnFeilet.setContentText("Feil brukernavn");
@@ -226,16 +236,9 @@ public class Main extends Application {
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
 		GridPane filmStatistikkGrid = new GridPane();
-
 		FlowPane valgpanel = new FlowPane();
 
 		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
-
-		statistikklinjer = new TableView();
-		
-		filmStatistikkPanel.setCenter(statistikklinjer); 
-		filmStatistikkPanel.setTop(filmStatistikkGrid);
-		filmStatistikkPanel.setBottom(valgpanel);
 		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colVisningnr = new TableColumn("Visningnr:");
@@ -254,8 +257,8 @@ public class Main extends Application {
 		colSlettet.setMinWidth(150);	
 		//colSlettet.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
-		statistikklinjer.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
-		//statistikklinjer.setItems();		
+		statistikkTabell.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
+				
 		
 		Label lblFilmnr = new Label("Filmnummer: ");
 		filmStatistikkGrid.add(lblFilmnr, 2, 1);
@@ -267,38 +270,32 @@ public class Main extends Application {
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
+		filmStatistikkPanel.setCenter(statistikkTabell); 
+		filmStatistikkPanel.setTop(filmStatistikkGrid);
+		filmStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
-		//vindu.setWidth(600);
-		//vindu.setHeight(500);
-		vindu.setScene(filmStatistikkScene);
-		vindu.show();	
+
 	}
 	
 	
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
 		GridPane kinoStatistikkGrid = new GridPane();
-
 		FlowPane valgpanel = new FlowPane();
 
-		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);		
-
-		statistikklinjer = new TableView();
+		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
 		
-		kinoStatistikkPanel.setCenter(statistikklinjer);
-		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
-		kinoStatistikkPanel.setBottom(valgpanel);
 		
 		//Bygger opp innholdet i tabellen:
 		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
 		colAntallVisninger.setMinWidth(150);	
-		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<, >("visningnr"));
+		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<String ,String >(""));
 		
 		TableColumn colProsentSolgt = new TableColumn("Prosent solgt:");
 		colProsentSolgt.setMinWidth(150);	
 		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
 		
-		statistikklinjer.getColumns().addAll(colAntallVisninger, colProsentSolgt);
+		statistikkTabell.getColumns().addAll(colAntallVisninger, colProsentSolgt);
 		//statistikklinjer.setItems(); 		
 		
 		Label lblKinosal = new Label("Kinosal: ");
@@ -309,7 +306,7 @@ public class Main extends Application {
 		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
 		btnFinnKino.setOnAction(e-> {
 			try {
-				kontroll.kinoStatistikk(kinoSok.getText());
+				kontroll.hentKinoStatistikk(kinoSok.getText());
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -318,12 +315,12 @@ public class Main extends Application {
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
 		
+		kinoStatistikkPanel.setCenter(statistikkTabell);
+		kinoStatistikkPanel.setTop(kinoStatistikkGrid);
+		kinoStatistikkPanel.setBottom(valgpanel);
 		valgpanel.getChildren().addAll(btnTilbake);
-		vindu.setWidth(300);
-		vindu.setHeight(500);
 
-		vindu.setScene(kinoStatistikkScene);
-		vindu.show();
+		
 	}
 	
 	public void lagNyFilmScene() {
@@ -349,8 +346,6 @@ public class Main extends Application {
 	}
 	
 	public void lagNyVisningScene(){
-		//vindu.setWidth(300);
-		//vindu.setHeight(250);
 		BorderPane nyVisningPanel = new BorderPane();
 		nyVisningScene = new Scene(nyVisningPanel,400,400);
 		GridPane panel = new GridPane();
@@ -425,8 +420,6 @@ public class Main extends Application {
 	}
 		
 	public void lagKinobetjentscene() {
-		vindu.setWidth(600);
-		vindu.setHeight(500);
 		BorderPane kinorotpanel = new BorderPane();
 		kinoscene = new Scene(kinorotpanel,400,400);
 		FlowPane knappePanel = new FlowPane();
@@ -456,9 +449,8 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			//vindu.setWidth(1000);
-			//vindu.setHeight(600);
-			TableColumn visningnr = new TableColumn("Visningnr");
+			
+			/* TableColumn visningnr = new TableColumn("Visningnr");
 	        visningnr.setMinWidth(50);
 	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
 	        TableColumn pris = new TableColumn("Pris");
@@ -483,10 +475,20 @@ public class Main extends Application {
 	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
 	        
 	        tabellVisning.setItems(kontroll.getVisning());
-	        rotpanel.setCenter(tabellVisning);
+	        
+	        rotpanel.setCenter(tabellVisning); */
+	        
+	        //Tekst - startside
+	        Label label1= new Label(
+	                kontroll.getFormattertString(1));
+	        VBox layout1 = new VBox(20);
+	        layout1.getChildren().addAll(label1);
+	        rotpanel.setCenter(layout1);
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
+	        Button sorterFilm = new Button("Sorter: film");
+	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
 	        //rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
@@ -513,7 +515,7 @@ public class Main extends Application {
 	        });	
 	        
 	        rotpanel.setTop(sokpanel);
-	        sokpanel.getChildren().addAll(sokVisninger, sokKnapp, tilbake);
+	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt);
 	        sokpanel.setHgap(10);
 	        
 			
@@ -559,8 +561,7 @@ public class Main extends Application {
 			kontroll.lukk();
 			Platform.exit();
 		}catch(Exception e) {
-	}
-		
+	}	
 	}
 	
 	
