@@ -349,7 +349,14 @@ public class Main extends Application {
 		ComboBox comboBoxrad = kontroll.hentrader(visningsnr,kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
 		Button tilbake = new Button("Tilbake");
-		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		
+		tilbake.setOnAction(e -> {
+        	try {
+        		kontroll.setTempreservasjonNull();
+        		behandleTilbake(scene_kundeBestilling);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+		
 		Button leggtil = new Button("Legg til");
 		Button fjern = new Button("Fjern");
 		Button reserver = new Button("Reserver");
@@ -411,7 +418,13 @@ public class Main extends Application {
 		Button avbestill = new Button("Slett alle bestillinger");
 		avbestill.setOnAction(e -> knappBehandleAvbestill());
 		Button tilbake = new Button("Tilbake");
-		tilbake.setOnAction(e -> behandleTilbake(menyscene));
+		
+		tilbake.setOnAction(e -> {
+        	try {
+        		behandleTilbake(menyscene);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+		
 		TextField billettkode = new TextField();
 		billettkode.setPromptText("Skriv inn billettnr:");
 		Button oppdater = new Button("Sett som betalt");
@@ -438,7 +451,14 @@ public class Main extends Application {
 	        rotpanel.setCenter(layout1);
 	        
 	        Button tilbake = new Button("Tilbake");
-	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
+	        
+	        tilbake.setOnAction(e -> {
+	        	try {
+	        		kontroll.setTempreservasjonNull();
+	        		behandleTilbake(menyscene);
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
 	        Button standard = new Button("Standard");
 	        Button sorterFilm = new Button("Sorter: film");
 	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
