@@ -54,7 +54,6 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Visning> visning = FXCollections.observableArrayList();
 
 	    private ObservableList<Visning> alleVisninger = FXCollections.observableArrayList();
-	    private ObservableList<Visning> alleVisningerEkstra = FXCollections.observableArrayList();
 	    
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 
@@ -161,14 +160,6 @@ public class Kontroll implements kontrollInterface {
 
 	public void setAlleVisninger(int visningnr, int filmnr, int kinosalnr, Date dato, Time starttid, float pris) {
 		alleVisninger.add(new Visning(visningnr, filmnr, kinosalnr, dato, starttid, pris));
-	}
-
-	public ObservableList<Visning> getAlleVisningerEkstra() {
-		return alleVisningerEkstra;
-	}
-
-	public void setAlleVisningerEkstra() {
-		this.alleVisningerEkstra = getAlleVisninger();
 	}
 
 	public ObservableList<List<String>> getVisningString() {
