@@ -294,6 +294,9 @@ public class Main extends Application {
 		panel.add(tilbake, 0, 6);
 		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		
+		panel.setHgap(5);
+		panel.setVgap(5);
+		
 		panel.getChildren().addAll();
 		nyFilmPanel.setCenter(panel);
 		nyFilmPanel.setBottom(tilbake);
@@ -331,6 +334,10 @@ public class Main extends Application {
 		panel.add(lblKr, 2, 4);
 		Button leggTil = new Button("Legg til");
 		panel.add(leggTil, 1, 5);
+		
+		panel.setHgap(5);
+		panel.setVgap(5);
+		
 		leggTil.setOnAction(e -> {
 			int filmNr = kontroll.hentFilmnrFraNavn(cbxFilmNavn.getValue());
 			String kinosalNr = cbxKinosal.getValue();
