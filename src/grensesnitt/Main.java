@@ -457,34 +457,6 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			
-			/* TableColumn visningnr = new TableColumn("Visningnr");
-	        visningnr.setMinWidth(50);
-	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
-	        TableColumn pris = new TableColumn("Pris");
-	        pris.setMinWidth(100);
-	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-	        TableColumn dato = new TableColumn("Dato");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        TableColumn starttid = new TableColumn("Startid");
-	        starttid.setMinWidth(100);
-	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-	        TableColumn filmnr = new TableColumn("Filmnrn");
-	        filmnr.setMinWidth(50);
-	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
-	        TableColumn filmnavn = new TableColumn("Filmnavn");
-	        filmnavn.setMinWidth(150);
-	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
-	        TableColumn kinosal = new TableColumn("Kinosal");
-	        kinosal.setMinWidth(150);
-	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
-
-	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
-	        
-	        tabellVisning.setItems(kontroll.getVisning());
-	        
-	        rotpanel.setCenter(tabellVisning); */
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
