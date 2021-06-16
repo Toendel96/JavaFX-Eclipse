@@ -402,22 +402,22 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
-		ComboBox comboBoxrad = kontroll.hentrader(kinosalnr);
+		ComboBox comboBoxrad = kontroll.hentrader(visningsnr,kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
 		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 hentseter(radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 hentseter(visningsnr, kinosalnr, radnr, tilbake, comboBoxrad, comboBoxPanel); 
 		 });
 		comboBoxPanel.setHgap(10);
 		ledigePlasserPanel.setTop(comboBoxPanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
 	}
-	public void hentseter(String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
+	public void hentseter(String visningsnr,int kinosalnr, String radnr, Button tilbake, ComboBox comboBoxrad, FlowPane comboBoxPanel) {
 		System.out.println("radnummer: " + radnr);
-		ComboBox comboBoxsete = kontroll.hentseter(radnr);
+		ComboBox comboBoxsete = kontroll.hentseter(visningsnr,radnr, kinosalnr);
 		comboBoxsete.setPromptText("Velg sete");
 		comboBoxPanel.getChildren().addAll(comboBoxsete);
 		
@@ -503,10 +503,12 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
-	            	//Metode for å sjekke om kinosal finnes
-	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
-	            	lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
-	            	} 
+	            	//Metode for å sjekke om Visning finnes
+	            	if (hentetKinosalnr!=0) {
+		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
+		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            	}
+	            	}
 	            } catch (Exception exception) { exception.printStackTrace(); }
 	        });	
 	        

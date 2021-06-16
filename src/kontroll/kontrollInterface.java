@@ -40,7 +40,6 @@ public interface kontrollInterface {
 	boolean leggTilVisning(String filmnr, String kinosalnr, LocalDate dato, String starttid, String pris);
 	ResultSet leggInnVisningerIListe() throws Exception;
 	boolean finnSpesifikkVisning(String visningsnr);
-	boolean leggTilVisning(String filmnr, String kinosalnr, String dato, String starttid, String pris);
 
 
 }
