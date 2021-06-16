@@ -37,6 +37,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 
@@ -412,16 +413,38 @@ public class Main extends Application {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
+		FlowPane bunnpanel = new FlowPane();
 		ComboBox comboBoxrad = kontroll.hentrader(visningsnr,kinosalnr);
 		comboBoxrad.setPromptText("Velg rad");
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
-		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad);
+		Button leggtil = new Button("Legg til");
+		Button fjern = new Button("Fjern");
+		//fjern.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		Button reserver = new Button("Reserver");
+		//reserver.setOnAction(e -> behandleTilbake(scene_kundeBestilling));
+		TextField totalpris= new TextField();
+		totalpris.setEditable(false);
+		
+		ComboBox<String> comboboxsete= new ComboBox();
+		ComboBox<Plass> comboboxplass= new ComboBox();
+		comboboxsete.setPromptText("Velg sete");
 		comboBoxrad.setOnAction((e) -> { radnr= comboBoxrad.getValue().toString();
-		 hentseter(visningsnr, kinosalnr, radnr, tilbake, comboBoxrad, comboBoxPanel); 
+		 ObservableList<String> seter=kontroll.hentseter(visningsnr,radnr, kinosalnr).getItems();
+		 comboboxsete.setItems(seter);
 		 });
+		leggtil.setOnAction((e) -> {
+			comboboxplass.setItems(kontroll.leggTilSete(comboboxsete.getValue().toString(),comboBoxrad.getValue().toString(),kinosalnr));
+			kontroll.regnutpris(visningsnr);
+		});
+		comboBoxPanel.getChildren().addAll(tilbake, comboBoxrad,comboboxsete,leggtil);
 		comboBoxPanel.setHgap(10);
+		Region tomt= new Region();
+		tomt.setMinWidth(100);
+		bunnpanel.setHgap(5);
+		bunnpanel.getChildren().addAll(comboboxplass,fjern,tomt, reserver,totalpris);
 		ledigePlasserPanel.setTop(comboBoxPanel);
+		ledigePlasserPanel.setBottom(bunnpanel);
 		vindu.setScene(ledigePlasserScene);
 		vindu.show();
 	}
@@ -480,10 +503,6 @@ public class Main extends Application {
 			try {
 			}catch(Exception except) {}
 		});
-		
-		
-		
-        
         Button tilbake = new Button("Tilbake");
         tilbake.setOnAction(e -> behandleTilbake(menyscene));
 	}
@@ -492,38 +511,11 @@ public class Main extends Application {
 		try {
 			BorderPane rotpanel = new BorderPane();
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
-			
-			/* TableColumn visningnr = new TableColumn("Visningnr");
-	        visningnr.setMinWidth(50);
-	        visningnr.setCellValueFactory(new PropertyValueFactory<Visning, Integer>("visningnr"));
-	        TableColumn pris = new TableColumn("Pris");
-	        pris.setMinWidth(100);
-	        pris.setCellValueFactory(new PropertyValueFactory<Visning, Double>("pris"));
-	        TableColumn dato = new TableColumn("Dato");
-	        dato.setMinWidth(100);
-	        dato.setCellValueFactory(new PropertyValueFactory<Visning, Date>("dato"));
-	        TableColumn starttid = new TableColumn("Startid");
-	        starttid.setMinWidth(100);
-	        starttid.setCellValueFactory(new PropertyValueFactory<Visning, Time>("starttid")); 
-	        TableColumn filmnr = new TableColumn("Filmnrn");
-	        filmnr.setMinWidth(50);
-	        filmnr.setCellValueFactory(new PropertyValueFactory<Visning, String>("filmnr"));
-	        TableColumn filmnavn = new TableColumn("Filmnavn");
-	        filmnavn.setMinWidth(150);
-	        filmnavn.setCellValueFactory(new PropertyValueFactory<Film, String>("filmnavn"));
-	        TableColumn kinosal = new TableColumn("Kinosal");
-	        kinosal.setMinWidth(150);
-	        kinosal.setCellValueFactory(new PropertyValueFactory<Object, String>("kinosalnr"));
-
-	        tabellVisning.getColumns().addAll(visningnr, pris, dato, starttid, filmnr, filmnavn, kinosal);
-	        
-	        tabellVisning.setItems(kontroll.getVisning());
-	        
-	        rotpanel.setCenter(tabellVisning); */
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString1());
+	                kontroll.getFormattertString1()
+	        		);
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
