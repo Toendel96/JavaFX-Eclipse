@@ -489,7 +489,7 @@ public class Kontroll implements kontrollInterface {
 		// TODO Auto-generated method stub
 	}
 	
-	public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
+	/*public ResultSet hentKinoStatistikk(String kinosalnr) throws Exception {
 		
 		
 		int kinoSalnr = Integer.parseInt(kinosalnr);
@@ -542,8 +542,36 @@ public class Kontroll implements kontrollInterface {
 		}
 		
 		return null;
-	}
-public String getStatistikkString(String kinosalNr) {
+	}*/
+	
+public String getStatistikkFilm(String filmNr) {
+		
+		String string = "";
+		String filmnr = filmNr;
+		int visningnr = 0;
+		//int antallSett = 0;
+		//int prosentKino = 0;
+		//int bestillingSlettet = 0;
+		
+		
+		
+		string = string + " " + "Visningnr" + "         ";
+		string = string + " " + "Antall sett" + "         ";	
+		string = string + " " + "Prosent kinosal" + "         ";	
+		string = string + " " + "Bestilling slettet" + "\n";
+		
+		for (Visning v : getVisning()) {
+			if (String.valueOf(v.getFilmnr()).equals(filmNr));
+			visningnr = v.getVisningnr();
+		}
+		
+		
+		
+		return string;
+	}	
+	
+//Lager statistikk for kinosal
+public String getStatistikkKino(String kinosalNr) {
 		
 		String string = "";
 		String kinosalnr = kinosalNr;
@@ -557,46 +585,36 @@ public String getStatistikkString(String kinosalNr) {
 		string = string + " " + "Prosent sal" + "\n";
 		
 		
-		
+		//Henter alle visninger for spesifikk kinosal
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
-				antallVisninger++;
-				
-			}
-			/*System.out.println(v.toString());
-			String visningsnr = String.valueOf(v.getVisningnr());
-			String filmnr = String.valueOf(v.getFilmnr());
-			int kinosalnr1 = v.getKinosalnr();
-			//antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(kinosalnr1));
-			
-			//String kinosalnr = String.valueOf(kinosalnr1);
-			String dato = String.valueOf(v.getDato());
-			String starttid = String.valueOf(v.getStarttid());
-			System.out.println(starttid);
-			String pris = String.valueOf(v.getPris());*/
-			
-		}	
-		
+				//Finner visninger som har vært
+				Date dato = v.getDato();
+				Time tid = v.getStarttid();
+				boolean status = sjekkOmDatoTidErFremtid(tid,dato);
+				if (status) {
+					antallVisninger++;
+				}
+			}			
+		}
+		//Henter alle plasser som finnes i spesifikk kinosal
 		for (Plass p : getPlass()) {
 			if (String.valueOf(p.getKinosalnr()).equals(kinosalnr)) {
-				antallPlasser++;
-				
+				antallPlasser++;	
 			}
 		}
-		
+		//Henter alle billetter solgt til en 
 		for (Visning v : getVisning()) {
 			if (String.valueOf(v.getKinosalnr()).equals(kinosalnr)) {
-				
+				for (Billett b : getBillett()) {
+					
+				}
 				
 			}
 		}
-			string = string + " " + antallVisninger + "  ";	
+			string = string + "             " + antallVisninger + "                          ";	
 			string = string + " " + antallPlasser + "\n";
 			
-			
-			
-				
-		
 		System.out.println(antallVisninger);
 		System.out.println(antallPlasser);
 		return string;
