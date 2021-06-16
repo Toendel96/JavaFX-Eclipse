@@ -230,105 +230,44 @@ public class Main extends Application {
 	
 	public void lagStatistikkFilm() {
 		BorderPane filmStatistikkPanel = new BorderPane();
-		GridPane filmStatistikkGrid = new GridPane();
+		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);						
 		FlowPane valgpanel = new FlowPane();
-
-		filmStatistikkScene = new Scene(filmStatistikkPanel, 800, 400);		
-		
-		//Bygger opp innholdet i tabellen:
-		TableColumn colVisningnr = new TableColumn("Visningnr:");
-		colVisningnr.setMinWidth(150);	
-		//colVisningnr.setCellValueFactory(new PropertyValueFactory< , >("visningnr"));
-		
-		TableColumn colAntallSett = new TableColumn("Antall sett:");
-		colAntallSett.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
-		
-		TableColumn colSalprosent = new TableColumn("Prosent kinosal:");
-		colSalprosent.setMinWidth(150);	
-		//colSalprosent.setCellValueFactory(new PropertyValueFactory< , >(""));
-		
-		TableColumn colSlettet = new TableColumn("Bestilling slettet:");
-		colSlettet.setMinWidth(150);	
-		//colSlettet.setCellValueFactory(new PropertyValueFactory< , >(""));
-		
-		statistikkTabell.getColumns().addAll(colVisningnr, colAntallSett, colSalprosent, colSlettet);
-				
-		
-		Label lblFilmnr = new Label("Filmnummer: ");
-		filmStatistikkGrid.add(lblFilmnr, 2, 1);
 		TextField filmSok = new TextField();
-		filmStatistikkGrid.add(filmSok, 3, 1);
-		Button btnFinnFilm = new Button("Finn film");
-		filmStatistikkGrid.add(btnFinnFilm, 2, 2);
-		//btnFinnFilm.setOnAction(e-> kontroll.behandleFinnFilm(filmSok.getText()));
+		Label lblFilmStatistikk = new Label(kontroll.getStatistikkFilm(filmSok.getText()));
+		VBox layout1 = new VBox(20);
+		layout1.getChildren().addAll(lblFilmStatistikk);
+		filmStatistikkPanel.setCenter(layout1);
+		filmSok.setPromptText("Filmnr");
+		filmSok.setMinWidth(100);
+		Button sokKnapp = new Button ("Hent statistikk");
+		sokKnapp.setOnAction(e-> lblFilmStatistikk.setText(kontroll.getStatistikkFilm(filmSok.getText())));
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
+		valgpanel.getChildren().addAll(filmSok,sokKnapp,btnTilbake);
+		filmStatistikkPanel.setTop(valgpanel);
 		
-		filmStatistikkPanel.setCenter(statistikkTabell); 
-		filmStatistikkPanel.setTop(filmStatistikkGrid);
-		filmStatistikkPanel.setBottom(valgpanel);
-		valgpanel.getChildren().addAll(btnTilbake);
+		
 
 	}
 	
 	
 	public void lagStatistikkKinosal() {
 		BorderPane kinoStatistikkPanel = new BorderPane();
-		//GridPane kinoStatistikkGrid = new GridPane();
-		
-
 		kinoStatistikkScene = new Scene(kinoStatistikkPanel, 800, 400);	
-		
-		/*
-		//Bygger opp innholdet i tabellen:
-		TableColumn colAntallVisninger = new TableColumn("Antall visninger:");
-		colAntallVisninger.setMinWidth(150);	
-		//colAntallVisninger.setCellValueFactory(new PropertyValueFactory<String ,String >(""));
-		
-		TableColumn colProsentSolgt = new TableColumn("Prosent solgt:");
-		colProsentSolgt.setMinWidth(150);	
-		//colAntallSett.setCellValueFactory(new PropertyValueFactory< , >(""));
-		
-		statistikkTabell.getColumns().addAll(colAntallVisninger, colProsentSolgt);
-		//statistikklinjer.setItems(); 		
-		
-		Label lblKinosal = new Label("Kinosal: ");
-		kinoStatistikkGrid.add(lblKinosal, 2, 1);
 		TextField kinoSok = new TextField();
-		kinoStatistikkGrid.add(kinoSok, 3, 1);
-		Button btnFinnKino = new Button("Finn kino");
-		kinoStatistikkGrid.add(btnFinnKino, 2, 2);
-		btnFinnKino.setOnAction(e-> {
-			try {
-				kontroll.hentKinoStatistikk(kinoSok.getText());
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}); */
-		
-		TextField kinoSok = new TextField();
-		Label label1 = new Label(kontroll.getStatistikkString(kinoSok.getText()));
+		Label lblKinoStatistikk = new Label(kontroll.getStatistikkKino(kinoSok.getText()));
 		VBox layout1 = new VBox(20);
-		layout1.getChildren().addAll(label1);
+		layout1.getChildren().addAll(lblKinoStatistikk);
 		kinoStatistikkPanel.setCenter(layout1);
-		
 		FlowPane valgpanel = new FlowPane();
-		//TextField kinoSok = new TextField();
 		kinoSok.setPromptText("Kinosalnr");
 		kinoSok.setMinWidth(100);
 		Button sokKnapp = new Button ("Hent statistikk");
-		sokKnapp.setOnAction(e-> kontroll.getStatistikkString(kinoSok.getText()));
+		sokKnapp.setOnAction(e-> lblKinoStatistikk.setText(kontroll.getStatistikkKino(kinoSok.getText())));
 		Button btnTilbake = new Button("Tilbake");
 		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
-		
-		//kinoStatistikkPanel.setCenter(statistikkTabell);
-		//kinoStatistikkPanel.setTop(kinoStatistikkGrid);
 		valgpanel.getChildren().addAll(kinoSok,sokKnapp,btnTilbake);
 		kinoStatistikkPanel.setTop(valgpanel);
-		
-
 		
 	}
 	
@@ -480,6 +419,7 @@ public class Main extends Application {
 			scene_kundeBestilling = new Scene(rotpanel,600,600);
 	        
 	        //Tekst - startside
+			
 	        Label label1= new Label(
 	                kontroll.getFormattertString1()
 	        		);
