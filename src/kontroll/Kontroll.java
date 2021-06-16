@@ -250,6 +250,7 @@ public class Kontroll implements kontrollInterface {
 		
 		for (Plass p : ledigplass) {
 			if (p.getKinosalnr() == kinosalnr) {
+				System.out.println(p.toString());
 				teller++;
 			}
 		}
@@ -257,40 +258,49 @@ public class Kontroll implements kontrollInterface {
 		return teller;
 	}
 	
-	public String getFormattertString() {
+	public String getFormattertString(int valg) {
 		
 		String string = "";
 		String antallLedigePlasser = null;
+		String filmnavn = null;
 		
-		string = string + " " + "visningsnr" + "         ";
-		string = string + " " + "filmnr "+ "             ";
-		string = string + " " + "kinosalnr" + "          ";
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
 		string = string + " " + "dato" + "               ";
 		string = string + " " + "starttid" + "           ";
-		string = string + " " + "pris" + "               ";
+		string = string + " " + "pris" + "         ";
 		string = string + " " + "antallLedigePlasser" + "\n";
 		
 		for (Visning v : getAlleVisninger()) {
-			System.out.println(v.toString());
 			String visningsnr = String.valueOf(v.getVisningnr());
-			String filmnr = String.valueOf(v.getFilmnr());
+			int filmnr1 = v.getFilmnr();
+			
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
+				}
+			}
+			
+			String filmnr = String.valueOf(filmnr1);
 			int kinosalnr1 = v.getKinosalnr();
 			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(kinosalnr1));
+			//System.out.println(antallLedigePlasser);
 			
 			String kinosalnr = String.valueOf(kinosalnr1);
 			String dato = String.valueOf(v.getDato());
 			String starttid = String.valueOf(v.getStarttid());
-			System.out.println(starttid);
 			String pris = String.valueOf(v.getPris());
-			
 			
 
 			string = string + " " + visningsnr + "                    ";
-			string = string + " " + filmnr + "                        ";
-			string = string + " " + kinosalnr + "                     ";
-			string = string + " " + dato + "                          ";
-			string = string + " " + starttid + "                      ";
-			string = string + " " + pris + "                          ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
 			string = string + " " + antallLedigePlasser + "\n";
 				
 		}
@@ -308,7 +318,9 @@ public class Kontroll implements kontrollInterface {
 			    "                 MySQL - form�l: CRUD - MySQL Workbench\n" +
 			    "                 Git   - form�l: Versjonskontrollering - Github\n";
 		
-		return string;
+		if (valg == 1) return string;
+		else if (valg == 2) return string2;
+		else return null;
 	}
 
 

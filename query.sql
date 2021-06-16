@@ -35,4 +35,6 @@ SELECT * FROM tblplassbillett;
 SELECT *
 FROM tblplass;
 
+SELECT COUNT(p_setenr) AS Antall_seter from tblplass where p_kinosalnr = '102';
+
 DELETE FROM tblplassbillett;

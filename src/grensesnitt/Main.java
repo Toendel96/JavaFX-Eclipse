@@ -74,7 +74,7 @@ public class Main extends Application {
 			kontroll.hentPlassbilletter(); //getPlassbillett() for aa faa plassbilletter sin liste
 			//kontroll.slettinnholdAlleTabeller();
 			vindu.setTitle("Kinosentralen");
-			vindu.setWidth(900);
+			vindu.setWidth(800);
 			vindu.setHeight(800);
 			lagKundescene();
 			lagStatistikkKinosal();
@@ -494,14 +494,29 @@ public class Main extends Application {
 	        
 	        //Tekst - startside
 	        Label label1= new Label(
-	                kontroll.getFormattertString());
+	                kontroll.getFormattertString(1));
 	        VBox layout1 = new VBox(20);
 	        layout1.getChildren().addAll(label1);
 	        rotpanel.setCenter(layout1);
 	        
 	        Button tilbake = new Button("Tilbake");
 	        tilbake.setOnAction(e -> behandleTilbake(menyscene));
-	        rotpanel.setRight(tilbake);
+	        Button sorterFilm = new Button("Sorter: film");
+	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
+	        
+	        sorterFilm.setOnAction(e -> {
+	        	try {
+	        		label1.setText("test");
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
+	        sorterTidspunkt.setOnAction(e -> {
+	        	try {
+	        		label1.setText("test2");
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+	        
+	        //rotpanel.setRight(tilbake);
 	        //vindu.setScene(scene_faktura);
 	        
 	      //Sok etter visning -------------------------------------------------------
@@ -525,7 +540,7 @@ public class Main extends Application {
 	        });	
 	        
 	        rotpanel.setTop(sokpanel);
-	        sokpanel.getChildren().addAll(sokVisninger, sokKnapp, tilbake);
+	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt);
 	        sokpanel.setHgap(10);
 	        
 			
