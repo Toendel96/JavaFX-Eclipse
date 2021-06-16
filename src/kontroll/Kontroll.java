@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import domene.Film;
 import java.sql.Time;
@@ -262,8 +263,6 @@ public class Kontroll implements kontrollInterface {
 	public String getFormattertString1() {
 		
 		String string = "";
-		String string2 = "";
-		String string3 = "";
 		String antallLedigePlasser = null;
 		String filmnavn = null;
 		
@@ -309,56 +308,62 @@ public class Kontroll implements kontrollInterface {
 		return string;
 	}
 	
+	//Sortert paa film
 	public String getFormattertString2() {
+		
+	ObservableList<Visning> visningOrdinar = getAlleVisninger();
+	visningOrdinar.sort(Comparator.comparingInt(Visning::getFilmnr).reversed());
+		
+		String string = "";
+		String string2 = "";
+		String string3 = "";
+		String antallLedigePlasser = null;
+		String filmnavn = null;
+		
+		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "filmnr "+ "       ";
+		string = string + " " + "filmnavn "+ "          ";
+		string = string + " " + "kinosalnr" + "         ";
+		string = string + " " + "dato" + "               ";
+		string = string + " " + "starttid" + "           ";
+		string = string + " " + "pris" + "         ";
+		string = string + " " + "antallLedigePlasser" + "\n";
+		
+		
+		for (Visning v : getAlleVisninger()) {
+			String visningsnr = String.valueOf(v.getVisningnr());
+			int filmnr1 = v.getFilmnr();
 			
-			String string = "";
-			String string2 = "";
-			String string3 = "";
-			String antallLedigePlasser = null;
-			String filmnavn = null;
-			
-			string = string + " " + "visningsnr" + "     ";
-			string = string + " " + "filmnr "+ "       ";
-			string = string + " " + "filmnavn "+ "          ";
-			string = string + " " + "kinosalnr" + "         ";
-			string = string + " " + "dato" + "               ";
-			string = string + " " + "starttid" + "           ";
-			string = string + " " + "pris" + "         ";
-			string = string + " " + "antallLedigePlasser" + "\n";
-			
-			for (Visning v : getAlleVisninger()) {
-				String visningsnr = String.valueOf(v.getVisningnr());
-				int filmnr1 = v.getFilmnr();
-				
-				for (Film f : getFilm()) {
-					if (filmnr1 == f.getFilmnr()) {
-						filmnavn = f.getFilmnavn();
-					}
+			for (Film f : getFilm()) {
+				if (filmnr1 == f.getFilmnr()) {
+					filmnavn = f.getFilmnavn();
 				}
-				
-				String filmnr = String.valueOf(filmnr1);
-				int kinosalnr1 = v.getKinosalnr();
-				antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
-				
-				String kinosalnr = String.valueOf(kinosalnr1);
-				String dato = String.valueOf(v.getDato());
-				String starttid = String.valueOf(v.getStarttid());
-				String pris = String.valueOf(v.getPris());
-				
-	
-				string = string + " " + visningsnr + "                    ";
-				string = string + " " + filmnr + "                 ";
-				string = string + " " + filmnavn + "                 ";
-				string = string + " " + kinosalnr + "          ";
-				string = string + " " + dato + "        ";
-				string = string + " " + starttid + "        ";
-				string = string + " " + pris + "                    ";
-				string = string + " " + antallLedigePlasser + "\n";
 			}
 			
-			return string;
-		}
+			String filmnr = String.valueOf(filmnr1);
+			int kinosalnr1 = v.getKinosalnr();
+			antallLedigePlasser = String.valueOf(finnLedigePlasserForKinosal(visningsnr, kinosalnr1));
+			
+			String kinosalnr = String.valueOf(kinosalnr1);
+			String dato = String.valueOf(v.getDato());
+			String starttid = String.valueOf(v.getStarttid());
+			String pris = String.valueOf(v.getPris());
+			
 
+			string = string + " " + visningsnr + "                    ";
+			string = string + " " + filmnr + "                 ";
+			string = string + " " + filmnavn + "                 ";
+			string = string + " " + kinosalnr + "          ";
+			string = string + " " + dato + "        ";
+			string = string + " " + starttid + "        ";
+			string = string + " " + pris + "                    ";
+			string = string + " " + antallLedigePlasser + "\n";
+		}
+		
+		return string;
+	}
+
+	//Sortert basert paa tidspunkt (dato og tid)
 	public String getFormattertString3() {
 		
 		String string = "";
@@ -376,7 +381,12 @@ public class Kontroll implements kontrollInterface {
 		string = string + " " + "pris" + "         ";
 		string = string + " " + "antallLedigePlasser" + "\n";
 		
-		for (Visning v : getAlleVisninger()) {
+		
+		ObservableList<Visning> visningOrdinar = getAlleVisninger();
+		visningOrdinar.sort(Comparator.comparing(Visning::getDato).reversed());
+		
+		
+		for (Visning v : visningOrdinar) {
 			String visningsnr = String.valueOf(v.getVisningnr());
 			int filmnr1 = v.getFilmnr();
 			
