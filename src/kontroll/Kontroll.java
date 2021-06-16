@@ -1,5 +1,6 @@
 package kontroll;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -8,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import domene.Film;
 import java.sql.Time;
@@ -26,6 +29,7 @@ import domene.Kinosal;
 import domene.Plass;
 import domene.Plassbillett;
 import domene.Visning;
+import hjelpeklasser.Filer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -60,6 +64,7 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<List<String>> visningString = FXCollections.observableArrayList();
 	    private ObservableList<Integer> antallLedigePlasserListe = FXCollections.observableArrayList();
 	    private ObservableList<Plass> tempreservasjon = FXCollections.observableArrayList();
+	    private final String SLETTEFIL = "slettinger.dat";
 
 
 	
@@ -287,7 +292,6 @@ public class Kontroll implements kontrollInterface {
 			//Fjerner ønsket plass fra listen
 			if(p.getRadnr()==radnr && p.getSetenr()==setenr) {
 				index= tempreservasjon.indexOf(p);
-				
 			}
 		}
 		tempreservasjon.remove(index);
@@ -703,11 +707,27 @@ public String getStatistikkKino(String kinosalNr) {
 			showMessageDialog(null, "Finnes ingen ubetalte billetter");
 		}else {
 		for (Billett u: ubetaltBillettListe) {
-				billett.remove(u);
+			for (Visning v: alleVisninger) {
+				if(v.getVisningnr()==u.getVisningsnr()) {
+					lagreSlettetBillett();
+					
+				}
 			}
-		showMessageDialog(null, "Ubetalte billetter er fjernet");
+			billett.remove(u);
+			}
+		showMessageDialog(null, "Ubetalte billetter er slettet");
 		ubetaltBillettListe.clear();
 		}
+	}
+	
+	public void lagreSlettetBillett(Billett ubetaltBillettListe){
+		try{
+			PrintWriter utfil = Filer.lagSkriveForbindelse("SLETTEFIL");
+			for (Billett u: ubetaltBillettListe) {
+				utfil.println(u.toFile()+","+v.getFilmnr());
+			}
+			utfil.close();
+		}catch(Exception e) {}
 	}
 
 	@Override
