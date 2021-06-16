@@ -18,9 +18,9 @@ public class Filer {
 		}catch(IOException e) {return null;}
 	} //Metode
 	
-	public static BufferedReader lagLeseForbindelse(String filnavn) {
+	public static BufferedReader lagLeseForbindelse() {
 		try {
-			FileReader filForbindelse = new FileReader(filnavn);
+			FileReader filForbindelse = new FileReader("slettinger.dat");
 			BufferedReader leser = new BufferedReader(filForbindelse);
 			return leser;
 		}catch(IOException e){return null;}		
