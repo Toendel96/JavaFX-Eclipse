@@ -102,6 +102,10 @@ public class Kontroll implements kontrollInterface {
 	public void settBillett(String billettkode, int visningsnr, boolean erBetalt) {
 		billett.add(new Billett(billettkode, visningsnr, erBetalt));
     }
+	
+	public void settBillettNy(ObservableList<Billett> billett) {
+		this.billett = billett;
+	}
 
 	public ObservableList<Film> getFilm() {
 		return film;
@@ -125,7 +129,7 @@ public class Kontroll implements kontrollInterface {
 	public void setPlass(int radnr, int setenr, int kinosalnr) {
 		plass.add(new Plass(radnr, setenr, kinosalnr));
 	}
-	
+
 	public ObservableList<Integer> getAntallLedigePlasserListe() {
 		return antallLedigePlasserListe;
 	}
@@ -155,6 +159,10 @@ public class Kontroll implements kontrollInterface {
 
 	public void setPlassbillett(int radnr, int setenr, int kinosalnr, String billettkode) {
 		plassbillett.add(new Plassbillett(radnr, setenr, kinosalnr, billettkode));
+	}
+	
+	public void settPlassbillettNy(ObservableList<Plassbillett> plassbillett) {
+		this.plassbillett = plassbillett;
 	}
 
 	public ObservableList<Visning> getVisning() {
@@ -188,6 +196,10 @@ public class Kontroll implements kontrollInterface {
 
 	public void setTempreservasjon(ObservableList<Plass> tempreservasjon) {
 		this.tempreservasjon = tempreservasjon;
+	}
+	
+	public void setTempreservasjonNull() {
+		tempreservasjon.clear();
 	}
 
 	@Override
@@ -298,16 +310,15 @@ public class Kontroll implements kontrollInterface {
 		
 		for (Plass p : tempreservasjon) {
 			kinosalnrtemp = p.getKinosalnr();
+			//System.out.println(kinosalnrtemp);
 		}
 		
 		ObservableList<Billett> billett = getBillett();
 		
-		for (Billett b : billett) {
-			System.out.println(b.toString());
-		}
-		
-		int index = billett.size();
+		int index = billett.size()-1;
 		Billett billettVerdi = billett.get(index);
+		int billettkode = Integer.parseInt(billettVerdi.getBillettkode());
+		billettkode = billettkode+1;
 		
 	    ObservableList<Film> film = getFilm();
 	    ObservableList<Plass> plass = getPlass();
@@ -316,6 +327,7 @@ public class Kontroll implements kontrollInterface {
 	    
 		string = "                                                                      Vil du bekrefte bestillingen?\n\n";
 		string = string + " " + "visningsnr" + "     ";
+		string = string + " " + "billettkode" + "     ";
 		string = string + " " + "filmnr "+ "       ";
 		string = string + " " + "filmnavn "+ "          ";
 		string = string + " " + "kinosalnr" + "         ";
@@ -345,13 +357,28 @@ public class Kontroll implements kontrollInterface {
 			String pris = String.valueOf(v.getPris());
 			
 
-			string = string + " " + visningsnr + "                    ";
-			string = string + " " + filmnr + "                 ";
-			string = string + " " + filmnavn + "                 ";
+			string = string + " " + visningsnr + "                           ";
+			string = string + " " + billettkode + "                ";
+			string = string + " " + filmnr + "               ";
+			string = string + " " + filmnavn + "                  ";
 			string = string + " " + kinosalnr + "          ";
-			string = string + " " + dato + "        ";
-			string = string + " " + starttid + "        ";
-			string = string + " " + totalpris + "                    \n";
+			string = string + " " + dato + "      ";
+			string = string + " " + starttid + "          ";
+			string = string + " " + totalpris + "     \n";
+			
+			string = string + "\n";
+			string = string + " " + "radnr" + "     ";
+			string = string + " " + "setenr" + "     \n";
+			
+			for (Plass p : tempreservasjon) {
+				if (kinosalnrtemp == p.getKinosalnr()) {
+				string = string + "     " + String.valueOf(p.getRadnr());
+				string = string + "           " + String.valueOf(p.getSetenr()) + "\n";	
+				
+				setPlassbillett(p.getRadnr(), p.getSetenr(), Integer.parseInt(kinosalnr), String.valueOf(billettkode));
+				}
+			}
+			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), false);
 			break;
 		}
 		
@@ -361,9 +388,17 @@ public class Kontroll implements kontrollInterface {
 		Alert avbrutt = new Alert(AlertType.INFORMATION);
 		avbrytEllerBekreft.getDialogPane().setMinHeight(400);
 		avbrytEllerBekreft.getDialogPane().setMinWidth(800);
+		ok.getDialogPane().setMinWidth(600);
 		
 		avbrytEllerBekreft.setContentText(string);
-		ok.setContentText("Bestilling bekreftet");
+		
+		String string2 = "";
+		
+		string2 = "Bestilling bekreftet\n";
+		string2 = string2 + "Billettene må hentes senest 30 minutter før forestillingen\n";
+		string2 = string2 + "Du må oppgi billettkoden når du kommer";
+		
+		ok.setContentText(string2);
 		avbrutt.setContentText("Du fullforte ikke bestillingen");
 		
 		 Optional<ButtonType> result = avbrytEllerBekreft.showAndWait();
@@ -379,8 +414,58 @@ public class Kontroll implements kontrollInterface {
 			 bestillingBekreftetLeggInnIListe(visningsnr);
 			 return true; 
 		 } else {
+			 
+			//Skal slettes --------------------------
+			 for (Billett b : getBillett()) {
+					System.out.println(b.toString());
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					System.out.println(pb.toString());
+				}
+			
+			
+			ObservableList<Billett> billettTemp = FXCollections.observableArrayList();
+			ObservableList<Plassbillett> plassbillettTemp = FXCollections.observableArrayList();
+			 
+			 
+			 for (Billett b : getBillett()) {
+				 System.out.println("getBillettkode: " + b.getBillettkode());
+				 System.out.println("billettkode: " + billettkode);
+					if (Integer.parseInt(b.getBillettkode()) == billettkode) {
+						System.out.println("treff");
+					} else {
+						System.out.println("ikke treff");
+						billettTemp.add(new Billett(b.getBillettkode(), b.getVisningsnr(), b.getErBetalt()));
+					}
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					if (Integer.parseInt(pb.getBillettkode()) == billettkode) {
+					} else {
+						plassbillettTemp.add(new Plassbillett(pb.getRadnr(), pb.getSetenr(), pb.getKinosalnr(), pb.getBillettkode()));
+					}
+				}
+				
+				billett.clear();
+				plassbillett.clear();
+				
+				settBillettNy(billettTemp);
+				settPlassbillettNy(plassbillettTemp);
+				
+				
+				//Skal slettes --------------------------
+				System.out.println("Slette");
+				for (Billett b : getBillett()) {
+					System.out.println(b.toString());
+				}
+				
+				for (Plassbillett pb : getPlassbillett()) {
+					System.out.println(pb.toString());
+				}
+				
 			 return false;
-		 }
+		 }	 
 	}
 	
 	public void bestillingBekreftetLeggInnIListe(String visningsnr) {

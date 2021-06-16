@@ -35,6 +35,28 @@ public class Billett {
 		return(billettkode+ "," + visningsnr);
 	}
 	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Billett other = (Billett) obj;
+		if (billettkode == null) {
+			if (other.billettkode != null)
+				return false;
+		} else if (!billettkode.equals(other.billettkode))
+			return false;
+		if (erBetalt != other.erBetalt)
+			return false;
+		if (visningsnr != other.visningsnr)
+			return false;
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return "Billett [billettkode=" + billettkode + ", visningsnr=" + visningsnr + ", erBetalt=" + erBetalt + "]";
