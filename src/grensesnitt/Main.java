@@ -136,6 +136,8 @@ public class Main extends Application {
 		gridpane.add(passord, 1, 1);
 		gridpane.add(new Label("Passord"), 0, 1);
 		Button loggInn = new Button("Logg inn");
+		gridpane.setHgap(5);
+		gridpane.setVgap(10);
 		gridpane.add(loggInn, 1, 2);
 		Button tilbake = new Button("Tilbake");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene));
