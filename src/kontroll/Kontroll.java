@@ -1256,18 +1256,38 @@ public String getStatistikkKino(String kinosalNr) {
 	}
 	
 	public boolean oppdaterVisningKinosalnr(String visningsnr, String kinosalnr) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
 	public boolean oppdaterVisningDato(String visningsnr, String dato) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
 	public boolean oppdaterVisningStarttid(String visningsnr, String starttid) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
-	public boolean oppdaterVisningPris(String visningsnr, String pris) {
+	public boolean oppdaterVisningPris(String visningsnr1, String pris1) {
+		if (finnSpesifikkVisning(visningsnr1)) {
+			System.out.println("Treff");
+			int visningsnr = Integer.parseInt(visningsnr1);
+			float pris = Float.parseFloat(pris1);
+			for (Visning v : getAlleVisninger()) {
+				if (v.getVisningnr() == visningsnr) {
+					v.setPris(pris);
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	
