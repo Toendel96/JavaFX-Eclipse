@@ -765,7 +765,7 @@ public class Main extends Application {
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
-	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        	} catch (Exception exception) { showMessageDialog(null, "Oppdatering feilet"); }
 	        });
 			
 			//Oppretter en knapp for starttid:
@@ -779,7 +779,7 @@ public class Main extends Application {
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
-	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        	} catch (Exception exception) { showMessageDialog(null, "Oppdatering feilet"); }
 	        });
 			
 			//Oppretter en knapp for pris:

@@ -16,6 +16,8 @@ import java.util.Iterator;
 
 import domene.Film;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -1289,9 +1291,19 @@ public String getStatistikkKino(String kinosalNr) {
 		return false;
 	}
 	
-	public boolean oppdaterVisningDato(String visningsnr, String dato) {
-		if (finnSpesifikkVisning(visningsnr)) {
-			
+	//Denne fungerer nesten, men mangler aa konvertere på rett maate
+	public boolean oppdaterVisningDato(String visningsnr1, String dato1) throws ParseException {
+		if (finnSpesifikkVisning(visningsnr1)) {
+			if(!sjekkOmVisningHarBilletter(visningsnr1)){
+			int visningsnr = Integer.parseInt(visningsnr1);
+			Date dato = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(dato1);  
+			for (Visning v : getAlleVisninger()) {
+				if (v.getVisningnr() == visningsnr) {
+					v.setDato(dato);
+					return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -1305,13 +1317,14 @@ public String getStatistikkKino(String kinosalNr) {
 	
 	public boolean oppdaterVisningPris(String visningsnr1, String pris1) {
 		if (finnSpesifikkVisning(visningsnr1)) {
-			System.out.println("Treff");
+			if(!sjekkOmVisningHarBilletter(visningsnr1)){
 			int visningsnr = Integer.parseInt(visningsnr1);
 			float pris = Float.parseFloat(pris1);
 			for (Visning v : getAlleVisninger()) {
 				if (v.getVisningnr() == visningsnr) {
 					v.setPris(pris);
 					return true;
+					}
 				}
 			}
 		}
