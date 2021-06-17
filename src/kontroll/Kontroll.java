@@ -71,7 +71,6 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Billett> ubillettlisteFrafil = FXCollections.observableArrayList();
 	    private ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 
-
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
 	    /** Kodet av 7088, kontrollert og godkjent av 7074*/
