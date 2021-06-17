@@ -1,5 +1,7 @@
 package grensesnitt;
 	
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -65,6 +67,7 @@ public class Main extends Application {
 	private Scene ledigePlasserScene;
 	private Scene registrerBillettKBScene;
 	private Scene sceneOppdatering;
+	private Scene adminScene;
 	private String radnr;
 
 	public void start(Stage primaryStage) {
@@ -84,12 +87,15 @@ public class Main extends Application {
 			vindu.setHeight(600);
 			lagKundescene();
 			lagStatistikkKinosal();
+			lagRapportScene();
 			lagStatistikkFilm();
+			lagAdminScene();
 			lagPlanleggerscene();
 			lagNyFilmScene();
 			lagNyVisningScene();
 			lagMenyscene();
 			lagKinobetjentscene();
+			lagOppdaterScene();
 			kontroll.lesslettingerfrafil();
 
 			//registrerBillettKBScene();
@@ -182,23 +188,15 @@ public class Main extends Application {
 		GridPane planleggerGridpane = new GridPane();
 		planleggerScene = new Scene(planleggerRotpanel,600,600);
 		
-		//Oppretter en knapp for Oppdater info:
-		Button oppdaterInformasjon = new Button("Oppdater informasjon");
-		planleggerGridpane.add(oppdaterInformasjon,0,0);
-		//administrasjon.setOnAction(e -> lagLoginscene());
+		//Oppretter en knapp for administrasjonsdel:
+		Button administrasjon = new Button("Administrasjon");
+		planleggerGridpane.add(administrasjon,0,0);
+		administrasjon.setOnAction(e -> vindu.setScene(adminScene));
 		
 		//Oppretter en knapp for rapportdel:
 		Button rapport = new Button("Rapport");
 		planleggerGridpane.add(rapport, 1, 0);
-		rapport.setOnAction(e -> lagRapportScene());
-		
-		Button leggTilFilm = new Button("Legg til en film");
-		leggTilFilm.setOnAction(e -> vindu.setScene(nyFilmScene));
-		planleggerGridpane.add(leggTilFilm,2,0);
-		
-		Button leggTilVisning = new Button("Ny visning");
-		leggTilVisning.setOnAction(e -> vindu.setScene(nyVisningScene));
-		planleggerGridpane.add(leggTilVisning,3,0);
+		rapport.setOnAction(e -> vindu.setScene(rapportScene));
 		
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene));
@@ -209,6 +207,42 @@ public class Main extends Application {
 		planleggerGridpane.setHgap(10);
 		planleggerRotpanel.setBottom(tilbake);
 		planleggerRotpanel.setCenter(planleggerGridpane);
+	}
+	
+	public void lagAdminScene() {
+		BorderPane adminRotpanel = new BorderPane();
+		GridPane adminGridpane = new GridPane();
+		adminScene = new Scene(adminRotpanel,600,600);
+		
+		Button leggTilFilm = new Button("Legg til en film");
+		leggTilFilm.setOnAction(e -> vindu.setScene(nyFilmScene));
+		adminGridpane.add(leggTilFilm,0,0);
+		
+		Button leggTilVisning = new Button("Ny visning");
+		leggTilVisning.setOnAction(e -> vindu.setScene(nyVisningScene));
+		adminGridpane.add(leggTilVisning,1,0);
+		
+		//Oppretter en knapp for Oppdater info:
+		Button oppdaterInformasjon = new Button("Oppdater informasjon");
+		adminGridpane.add(oppdaterInformasjon,2,0);
+		//administrasjon.setOnAction(e -> lagLoginscene());
+		
+		oppdaterInformasjon.setOnAction(e -> {
+        	try {
+        		vindu.setScene(sceneOppdatering);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+			
+		Button tilbake = new Button("Logg ut");
+		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
+		
+		adminGridpane.getChildren().addAll();
+		
+		//GridPane settings
+		adminGridpane.setHgap(10);
+		adminRotpanel.setBottom(tilbake);
+		adminRotpanel.setCenter(adminGridpane);
+		
 		
 	}
 	/** Kodet av 7085, kontrollert og godkjent av 7074 */
@@ -228,7 +262,7 @@ public class Main extends Application {
 		statistikkKinosal.setOnAction(e -> vindu.setScene(kinoStatistikkScene));
 			
 		Button tilbake = new Button("Logg ut");
-		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
+		tilbake.setOnAction(e -> behandleTilbake(planleggerScene));
 		
 		rapportGridpane.getChildren().addAll();
 		
@@ -237,8 +271,7 @@ public class Main extends Application {
 		rapportRotpanel.setBottom(tilbake);
 		rapportRotpanel.setCenter(rapportGridpane);
 		
-		vindu.setScene(rapportScene);
-		vindu.show();
+		
 	
 	}
 	/** Kodet av 7085, kontrollert og godkjent av 7088  */
@@ -256,7 +289,7 @@ public class Main extends Application {
 		Button sokKnapp = new Button ("Hent statistikk");
 		sokKnapp.setOnAction(e-> lblFilmStatistikk.setText(kontroll.getStatistikkFilm(filmSok.getText())));
 		Button btnTilbake = new Button("Tilbake");
-		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
+		btnTilbake.setOnAction(e-> behandleTilbake(planleggerScene));
 		valgpanel.getChildren().addAll(filmSok,sokKnapp,btnTilbake);
 		filmStatistikkPanel.setTop(valgpanel);
 	}
@@ -276,7 +309,7 @@ public class Main extends Application {
 		Button sokKnapp = new Button ("Hent statistikk");
 		sokKnapp.setOnAction(e-> lblKinoStatistikk.setText(kontroll.getStatistikkKino(kinoSok.getText())));
 		Button btnTilbake = new Button("Tilbake");
-		btnTilbake.setOnAction(e-> behandleTilbake(menyscene));
+		btnTilbake.setOnAction(e-> behandleTilbake(planleggerScene));
 		valgpanel.getChildren().addAll(kinoSok,sokKnapp,btnTilbake);
 		kinoStatistikkPanel.setTop(valgpanel);
 		
@@ -569,76 +602,132 @@ public class Main extends Application {
 	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void lagOppdaterScene() {
 		try {
-			BorderPane rotpanel = new BorderPane();
-			sceneOppdatering = new Scene(rotpanel,600,600);
-	        
-	        //Tekst - startside
-	        Label label1= new Label(
-	                kontroll.getFormattertString1()
-	        		);
-	        VBox layout1 = new VBox(20);
-	        layout1.getChildren().addAll(label1);
-	        rotpanel.setCenter(layout1);
-	        
-	        Button tilbake = new Button("Tilbake");
-	        
-	        tilbake.setOnAction(e -> {
+			BorderPane oppdateringRotpanel = new BorderPane();
+			GridPane oppdateringGridpane = new GridPane();
+			FlowPane panel = new FlowPane();
+			sceneOppdatering = new Scene(oppdateringRotpanel, 600,600);
+			
+			//Oppretter en knapp for tilbake
+			Button tilbake = new Button("Tilbake");
+			oppdateringGridpane.add(tilbake,0,1);
+			tilbake.setOnAction(e -> {
 	        	try {
-	        		behandleTilbake(planleggerScene);
+	        		behandleTilbake(adminScene);
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
-	        
-	        Button standard = new Button("Standard");
-	        Button sorterFilm = new Button("Sorter: film");
-	        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
-	        
-	        standard.setOnAction(e -> {
+			
+			//Labels
+			Label lblfilmnr = new Label("Filmnr:");
+			oppdateringGridpane.add(lblfilmnr, 1, 1);
+			
+			Label lblkinosalnr = new Label("Kinosalnr:");
+			oppdateringGridpane.add(lblkinosalnr, 2, 1);
+			
+			Label lbldato = new Label("Dato:");
+			oppdateringGridpane.add(lbldato, 3, 1);
+			
+			Label lblstarttid = new Label("Starttid:");
+			oppdateringGridpane.add(lblstarttid, 4, 1);
+			
+			Label lblpris = new Label("Pris:");
+			oppdateringGridpane.add(lblpris, 5, 1);
+			
+			Label lblvisningsnr = new Label("Visningsnr:");
+			oppdateringGridpane.add(lblvisningsnr, 6, 1);
+			
+			Label lblinfo = new Label("\nDu må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp");
+		
+			oppdateringRotpanel.getChildren().addAll(lblinfo);
+			oppdateringRotpanel.setCenter(panel);
+			
+			//Textfield
+			TextField txtfilmnr = new TextField();
+			oppdateringGridpane.add(txtfilmnr, 1, 2);
+			txtfilmnr.setMaxWidth(70);
+			txtfilmnr.setMinWidth(60);
+			
+			TextField txtkinosalnr = new TextField();
+			oppdateringGridpane.add(txtkinosalnr, 2, 2);
+			txtkinosalnr.setMaxWidth(70);
+			txtkinosalnr.setMinWidth(60);
+			
+			TextField txtdato = new TextField();
+			oppdateringGridpane.add(txtdato, 3, 2);
+			txtdato.setMaxWidth(80);
+			txtdato.setMinWidth(70);
+			
+			TextField txtstarttid = new TextField();
+			oppdateringGridpane.add(txtstarttid, 4, 2);
+			txtstarttid.setMaxWidth(80);
+			txtstarttid.setMinWidth(70);
+			
+			TextField txtpris = new TextField();
+			oppdateringGridpane.add(txtpris, 5, 2);
+			txtpris.setMaxWidth(70);
+			txtpris.setMinWidth(60);
+			
+			TextField txtvisningsnr = new TextField();
+			oppdateringGridpane.add(txtvisningsnr, 6, 2);
+			txtvisningsnr.setMaxWidth(70);
+			txtvisningsnr.setMinWidth(60);
+			
+			//Oppretter en knapp for filmnr:
+			Button filmnr = new Button("Oppdater");
+			oppdateringGridpane.add(filmnr,1,3);
+			filmnr.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString1());
+	        		//metode
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
-	        
-	        sorterFilm.setOnAction(e -> {
+			
+			//Oppretter en knapp for kinosalnr:
+			Button kinosalnr = new Button("Oppdater");
+			oppdateringGridpane.add(kinosalnr, 2, 3);
+			kinosalnr.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString2());
+	        		//metode
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
-	        
-	        sorterTidspunkt.setOnAction(e -> {
+			
+			//Oppretter en knapp for dato:
+			Button dato = new Button("Oppdater");
+			oppdateringGridpane.add(dato,3,3);
+			dato.setOnAction(e -> {
 	        	try {
-	        		label1.setText(kontroll.getFormattertString3());
+	        		//metode
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
-	        
-	        //rotpanel.setRight(tilbake);
-	        //vindu.setScene(scene_faktura);
-	        
-	      //Sok etter visning -------------------------------------------------------
-	        FlowPane sokpanel = new FlowPane();
-	        TextField sokVisninger = new TextField();
-	        sokVisninger.setPromptText("Visningnr ");
-	        sokVisninger.setMinWidth(100);
-
-	        Button sokKnapp = new Button("Velg visning");
-	        
-	        sokKnapp.setOnAction(e -> {
-	            try {
-	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
-	            	//Maa vise totalbelop og antall plasser
-	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
-	            	//Metode for ï¿½ sjekke om Visning finnes
-	            	if (hentetKinosalnr!=0) {
-		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
-		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
-		            		sokVisninger.clear();
-		            	}
-	            	}
-	            } catch (Exception exception) { exception.printStackTrace(); }
-	        });	
-	        
-	        rotpanel.setTop(sokpanel);
-	        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt, standard);
-	        sokpanel.setHgap(10);
+			
+			//Oppretter en knapp for starttid:
+			Button starttid = new Button("Oppdater");
+			oppdateringGridpane.add(starttid,4,3);
+			starttid.setOnAction(e -> {
+	        	try {
+	        		//metode
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for pris:
+			Button pris = new Button("Oppdater");
+			oppdateringGridpane.add(pris,5,3);
+			pris.setOnAction(e -> {
+	        	try {
+	        		//metode
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for pris:
+			Button info = new Button("Info-knapp");
+			info.setStyle("-fx-background-color: #42A87A");
+			oppdateringGridpane.add(info,7,2);
+			info.setOnAction(e -> showMessageDialog(null, "Du må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp"));
+			
+			oppdateringGridpane.getChildren().addAll();
+			
+			//GridPane settings
+			oppdateringGridpane.setHgap(30);
+			oppdateringGridpane.setVgap(5);
+			oppdateringRotpanel.setCenter(oppdateringGridpane);
 	        
 			
 		} catch(Exception e) {e.printStackTrace();}
