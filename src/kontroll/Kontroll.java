@@ -351,7 +351,6 @@ public class Kontroll implements kontrollInterface {
 			String filmnr = String.valueOf(filmnr1);
 			int kinosalnr1 = v.getKinosalnr();
 			
-			
 			String kinosalnr = String.valueOf(kinosalnr1);
 			String dato = String.valueOf(v.getDato());
 			String starttid = String.valueOf(v.getStarttid());
@@ -495,6 +494,7 @@ public class Kontroll implements kontrollInterface {
 				index= tempreservasjon.indexOf(p);
 			}
 		}
+		showMessageDialog(null, "Du fjernet en billett");
 		tempreservasjon.remove(index);
 		return tempreservasjon;
 	}
@@ -768,21 +768,20 @@ public String getStatistikkFilm(String filmNr) {
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
-		int antallSett = 0;
-		String billettKode = null;
+		String antallSett = "0";
+		String billettKode = "0";
+		int slettet = 0;
 		
 		
 		string = string + " " + "Visningnr" + "         ";
-		string = string + " " + "Antall sett" + "         ";	
-		string = string + " " + "Prosent kinosal" + "         ";	
-		string = string + " " + "Bestilling slettet" + "\n";
+		string = string + " " + "Antall sett" + "         ";		
+		string = string + " " + "Bestillinger slettet" + "\n";
 		
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
-			string = string + "   " + visningnr+" ";
 			
-			}
+			
 			Date dato = v.getDato();
 			Time tid = v.getStarttid();
 			boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
@@ -793,21 +792,30 @@ public String getStatistikkFilm(String filmNr) {
 				if (b.getVisningsnr()==(visningnr)) {
 					if (b.getErBetalt()) {
 						billettKode = b.getBillettkode();
+						
+						for (Plassbillett pb : getPlassbillett()) {
+							if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
+								System.out.println(billettKode);
+								antallSett = String.valueOf(billettKode);
+							}
+							else {
+								antallSett="0";
+							}
+						} 
+						
 					}
 				}
+				
 			}
-			for (Plassbillett pb : getPlassbillett()) {
-				if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
-					antallSett++;
-				}
-				else {
-					antallSett=0;
-				}
+				
+			} 
+			string = string + "      " + visningnr+"                         ";
+			string = string + " " + antallSett + "                           ";
+			string = string + " " + slettet + "\n";
+			
 			}
-			}
-			//string = string + " " + visningnr + "  "; 
-			string = string + " " + antallSett + "\n";	
 		}
+		
 		
 								
 		return string;
