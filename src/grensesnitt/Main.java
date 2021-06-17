@@ -115,10 +115,7 @@ public class Main extends Application {
 		planleggerknapp.setOnAction(e -> lagLoginscene(planleggeren));
 		//Oppretter en knapp for kinobetjent:
 		Button kinobetjentknapp = new Button("Kinobetjent");
-		//kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
-		kinobetjentknapp.setOnAction((e) -> {
-			vindu.setScene(kinoscene);
-			});
+		kinobetjentknapp.setOnAction(e -> lagLoginscene(kinobetjent));
 		//Oppretter en knapp for kunde:
 		Button kundeknapp = new Button("Kunde");
 		kundeknapp.setOnAction(e -> vindu.setScene(scene_kundeBestilling));
@@ -171,7 +168,7 @@ public class Main extends Application {
 		}else {
 			if (brukernavn.equals("knut")) {
 				if (passord.equals("1234")) {
-					lagKinobetjentscene();
+					vindu.setScene(kinoscene);
 				}else {loggInnFeilet.setContentText("Feil passord");
 						loggInnFeilet.show();}
 			} else {

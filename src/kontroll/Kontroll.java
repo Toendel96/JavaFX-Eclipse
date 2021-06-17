@@ -1284,7 +1284,14 @@ public String getStatistikkKino(String kinosalNr) {
 	
 	public boolean oppdaterVisningKinosalnr(String visningsnr, String kinosalnr) {
 		if (finnSpesifikkVisning(visningsnr)) {
-			
+			if(!sjekkOmVisningHarBilletter(visningsnr)){
+				for(Visning v: alleVisninger) {
+					if(Integer.toString(v.getKinosalnr()).equals(kinosalnr)) {
+						v.setKinosalnr(Integer.parseInt(kinosalnr));
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -1298,7 +1305,18 @@ public String getStatistikkKino(String kinosalNr) {
 	
 	public boolean oppdaterVisningStarttid(String visningsnr, String starttid) {
 		if (finnSpesifikkVisning(visningsnr)) {
-			
+			if(!sjekkOmVisningHarBilletter(visningsnr)){
+				/*for(Visning v: alleVisninger) {
+					System.out.println(v.getStarttid());
+					System.out.println(starttid);
+					if(Time.String(v.getStarttid()).equals(starttid)) {
+						System.out.println(v.getStarttid());
+						System.out.println(starttid);
+						v.setKinosalnr(Integer.parseInt(kinosalnr));
+						return true;
+					}
+				}
+			*/}
 		}
 		return false;
 	}
