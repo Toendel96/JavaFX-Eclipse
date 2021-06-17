@@ -397,8 +397,8 @@ public class Kontroll implements kontrollInterface {
 		String string2 = "";
 		
 		string2 = "Bestilling bekreftet\n";
-		string2 = string2 + "Billettene m� hentes senest 30 minutter f�r forestillingen\n";
-		string2 = string2 + "Du m� oppgi billettkoden n�r du kommer";
+		string2 = string2 + "Billettene maa hentes senest 30 minutter for forestillingen\n";
+		string2 = string2 + "Du maa oppgi billettkoden naar du kommer";
 		
 		ok.setContentText(string2);
 		avbrutt.setContentText("Du fullforte ikke bestillingen");
