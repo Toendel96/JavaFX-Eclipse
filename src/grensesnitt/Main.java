@@ -96,10 +96,8 @@ public class Main extends Application {
 			lagMenyscene();
 			lagKinobetjentscene();
 			lagOppdaterScene();
+			registrerBillettKBScene();
 			kontroll.lesslettingerfrafil();
-
-			//registrerBillettKBScene();
-			
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -392,7 +390,7 @@ public class Main extends Application {
 		nyVisningPanel.setBottom(tilbake);
 	}
 	/** Kodet av 7079, kontrollert og godkjent av 7074 */
-	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
+	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr, boolean erKinoBetjent) {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
@@ -437,7 +435,7 @@ public class Main extends Application {
 		
 		reserver.setOnAction(e -> {
         	try {
-        		boolean status = kontroll.giBestillingBekreftelse(visningsnr);
+        		boolean status = kontroll.giBestillingBekreftelse(visningsnr,erKinoBetjent);
         		if (status) behandleTilbake(menyscene);
         	} catch (Exception exception) { exception.printStackTrace(); }
         });
@@ -500,23 +498,79 @@ public class Main extends Application {
 	}
 	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void registrerBillettKBScene() {
-		//Kopi av lagKundeScene;
-		GridPane rotpanel = new GridPane();
+		//Kopi av lagKundeScene
+		BorderPane rotpanel = new BorderPane();
 		registrerBillettKBScene = new Scene(rotpanel,600,600);
-		Label lblVisningsNr = new Label("Visningsnr: ");
-		rotpanel.add(lblVisningsNr,0,0);
-		ChoiceBox<String> cbxVisningsNr = kontroll.visVisningerChoice();
-		rotpanel.add(cbxVisningsNr, 1, 0);
-		Label lblRadNr = new Label("Rad nummer: ");
-		rotpanel.add(lblRadNr, 0, 1);
-		ComboBox<String> cbxRadNr = new ComboBox<>();
-		rotpanel.add(cbxRadNr, 1, 1);
-		cbxVisningsNr.setOnAction(e -> {
-			try {
-			}catch(Exception except) {}
-		});
+		
+		Label label1= new Label(
+                kontroll.getFormattertString1()
+        		);
+        VBox layout1 = new VBox(20);
+        layout1.getChildren().addAll(label1);
+        rotpanel.setCenter(layout1);
+        
         Button tilbake = new Button("Tilbake");
+        
+        tilbake.setOnAction(e -> {
+        	try {
+        		kontroll.setTempreservasjonNull();
+        		behandleTilbake(menyscene);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        Button standard = new Button("Standard");
+        Button sorterFilm = new Button("Sorter: film");
+        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
+        
+        standard.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString1());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        sorterFilm.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString2());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        sorterTidspunkt.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString3());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
         tilbake.setOnAction(e -> behandleTilbake(menyscene));
+        
+      //Sok etter visning -------------------------------------------------------
+        FlowPane sokpanel = new FlowPane();
+        TextField sokVisninger = new TextField();
+        sokVisninger.setPromptText("Visningnr ");
+        sokVisninger.setMinWidth(100);
+
+        Button sokKnapp = new Button("Velg visning");
+        
+        sokKnapp.setOnAction(e -> {
+            try {
+            	//Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. 
+            	//Maa vise totalbelop og antall plasser
+            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+            	boolean erKinoBetjent = true;
+            	//Metode for � sjekke om Visning finnes
+            	if (hentetKinosalnr!=0) {
+	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
+	            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr, erKinoBetjent);
+	            		sokVisninger.clear();
+	            	}
+            	}
+            } catch (Exception exception) { exception.printStackTrace(); }
+        });	
+        
+        rotpanel.setTop(sokpanel);
+        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt, standard);
+        sokpanel.setHgap(10);
+        
+        
 	}
 	
 	/** Kodet av 7079, kontrollert og godkjent av 7104 */
@@ -581,10 +635,11 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for � se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	boolean erKinoBetjent = false;
 	            	//Metode for � sjekke om Visning finnes
 	            	if (hentetKinosalnr!=0) {
 		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
-		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr, erKinoBetjent);
 		            		sokVisninger.clear();
 		            	}
 	            	}

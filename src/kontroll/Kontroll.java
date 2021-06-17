@@ -299,7 +299,7 @@ public class Kontroll implements kontrollInterface {
 	
 	/** Kodet av 7074, kontrollert og godkjent av 7104 */
 	
-	public boolean giBestillingBekreftelse(String visningsnr) {
+	public boolean giBestillingBekreftelse(String visningsnr, boolean erKinoBetjent) {
 		boolean status = false;
 	    String string = "";
 	    String filmnavn = null;
@@ -379,7 +379,7 @@ public class Kontroll implements kontrollInterface {
 				setPlassbillett(p.getRadnr(), p.getSetenr(), Integer.parseInt(kinosalnr), String.valueOf(billettkode));
 				}
 			}
-			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), false);
+			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), erKinoBetjent);
 			break;
 		}
 		
@@ -396,8 +396,8 @@ public class Kontroll implements kontrollInterface {
 		String string2 = "";
 		
 		string2 = "Bestilling bekreftet\n";
-		string2 = string2 + "Billettene må hentes senest 30 minutter før forestillingen\n";
-		string2 = string2 + "Du må oppgi billettkoden når du kommer";
+		string2 = string2 + "Billettene mï¿½ hentes senest 30 minutter fï¿½r forestillingen\n";
+		string2 = string2 + "Du mï¿½ oppgi billettkoden nï¿½r du kommer";
 		
 		ok.setContentText(string2);
 		avbrutt.setContentText("Du fullforte ikke bestillingen");
@@ -695,7 +695,7 @@ public class Kontroll implements kontrollInterface {
 		for (Billett b:billett) {
 			for (Visning v: alleVisninger) {
 				if(b.getVisningsnr()==v.getVisningnr()) {
-					//Kall på metode som sjekker mot 30 min
+					//Kall pï¿½ metode som sjekker mot 30 min
 					if(sjekkOmDatoTidErFremtid(v.getStarttid(),v.getDato(), 30)) {
 						//Billetten er lengere enn 30min fram i tid
 					}else {	
@@ -953,7 +953,7 @@ public String getStatistikkKino(String kinosalNr) {
 				String visningsnr = innhold.nextToken();
 				ubillettlisteFrafil.add(new Billett(billettkode, Integer.parseInt(visningsnr),false));
 				linje = innfil.readLine();
-			} //løkke
+			} //lï¿½kke
 			for(Billett b:ubillettlisteFrafil) {
 			}
 			innfil.close();
