@@ -352,7 +352,6 @@ public class Kontroll implements kontrollInterface {
 			String filmnr = String.valueOf(filmnr1);
 			int kinosalnr1 = v.getKinosalnr();
 			
-			
 			String kinosalnr = String.valueOf(kinosalnr1);
 			String dato = String.valueOf(v.getDato());
 			String starttid = String.valueOf(v.getStarttid());
@@ -496,6 +495,7 @@ public class Kontroll implements kontrollInterface {
 				index= tempreservasjon.indexOf(p);
 			}
 		}
+		showMessageDialog(null, "Du fjernet en billett");
 		tempreservasjon.remove(index);
 		return tempreservasjon;
 	}
