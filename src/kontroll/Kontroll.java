@@ -1251,7 +1251,26 @@ public String getStatistikkKino(String kinosalNr) {
 		return finnes;
 	}
 	
+	public boolean sjekkOmVisningHarBilletter(String visningsnr) {
+		for(Billett b: billett) {
+			if(b.getVisningsnr()==Integer.parseInt(visningsnr)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean oppdaterVisningFilmnr(String visningsnr, String filmnr) {
+		if(finnSpesifikkVisning(visningsnr)) {
+			if(!sjekkOmVisningHarBilletter(visningsnr)){
+				for(Visning v: alleVisninger) {
+					if(Integer.toString(v.getVisningnr()).equals(visningsnr)) {
+						v.setFilmnr(Integer.parseInt(filmnr));
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 	
