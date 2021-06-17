@@ -1,5 +1,7 @@
 package grensesnitt;
 	
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -64,6 +66,7 @@ public class Main extends Application {
 	private Scene nyVisningScene;
 	private Scene ledigePlasserScene;
 	private Scene registrerBillettKBScene;
+	private Scene sceneOppdatering;
 	private Scene adminScene;
 	private String radnr;
 
@@ -92,10 +95,9 @@ public class Main extends Application {
 			lagNyVisningScene();
 			lagMenyscene();
 			lagKinobetjentscene();
+			lagOppdaterScene();
+			registrerBillettKBScene();
 			kontroll.lesslettingerfrafil();
-
-			//registrerBillettKBScene();
-			
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -203,8 +205,8 @@ public class Main extends Application {
 		planleggerGridpane.setHgap(10);
 		planleggerRotpanel.setBottom(tilbake);
 		planleggerRotpanel.setCenter(planleggerGridpane);
-		
 	}
+	
 	public void lagAdminScene() {
 		BorderPane adminRotpanel = new BorderPane();
 		GridPane adminGridpane = new GridPane();
@@ -217,6 +219,17 @@ public class Main extends Application {
 		Button leggTilVisning = new Button("Ny visning");
 		leggTilVisning.setOnAction(e -> vindu.setScene(nyVisningScene));
 		adminGridpane.add(leggTilVisning,1,0);
+		
+		//Oppretter en knapp for Oppdater info:
+		Button oppdaterInformasjon = new Button("Oppdater informasjon");
+		adminGridpane.add(oppdaterInformasjon,2,0);
+		//administrasjon.setOnAction(e -> lagLoginscene());
+		
+		oppdaterInformasjon.setOnAction(e -> {
+        	try {
+        		vindu.setScene(sceneOppdatering);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
 			
 		Button tilbake = new Button("Logg ut");
 		tilbake.setOnAction(e -> behandleTilbake(menyscene)); //Opprette ny tilbake funksjon her
@@ -377,7 +390,7 @@ public class Main extends Application {
 		nyVisningPanel.setBottom(tilbake);
 	}
 	/** Kodet av 7079, kontrollert og godkjent av 7074 */
-	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr) {
+	public void lagLedigePlasserVisning(String visningsnr, int kinosalnr, boolean erKinoBetjent) {
 		BorderPane ledigePlasserPanel = new BorderPane();
 		ledigePlasserScene = new Scene(ledigePlasserPanel,400,400);
 		FlowPane comboBoxPanel = new FlowPane();
@@ -422,7 +435,7 @@ public class Main extends Application {
 		
 		reserver.setOnAction(e -> {
         	try {
-        		boolean status = kontroll.giBestillingBekreftelse(visningsnr);
+        		boolean status = kontroll.giBestillingBekreftelse(visningsnr,erKinoBetjent);
         		if (status) behandleTilbake(menyscene);
         	} catch (Exception exception) { exception.printStackTrace(); }
         });
@@ -485,24 +498,81 @@ public class Main extends Application {
 	}
 	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void registrerBillettKBScene() {
-		//Kopi av lagKundeScene;
-		GridPane rotpanel = new GridPane();
+		//Kopi av lagKundeScene
+		BorderPane rotpanel = new BorderPane();
 		registrerBillettKBScene = new Scene(rotpanel,600,600);
-		Label lblVisningsNr = new Label("Visningsnr: ");
-		rotpanel.add(lblVisningsNr,0,0);
-		ChoiceBox<String> cbxVisningsNr = kontroll.visVisningerChoice();
-		rotpanel.add(cbxVisningsNr, 1, 0);
-		Label lblRadNr = new Label("Rad nummer: ");
-		rotpanel.add(lblRadNr, 0, 1);
-		ComboBox<String> cbxRadNr = new ComboBox<>();
-		rotpanel.add(cbxRadNr, 1, 1);
-		cbxVisningsNr.setOnAction(e -> {
-			try {
-			}catch(Exception except) {}
-		});
+		
+		Label label1= new Label(
+                kontroll.getFormattertString1()
+        		);
+        VBox layout1 = new VBox(20);
+        layout1.getChildren().addAll(label1);
+        rotpanel.setCenter(layout1);
+        
         Button tilbake = new Button("Tilbake");
+        
+        tilbake.setOnAction(e -> {
+        	try {
+        		kontroll.setTempreservasjonNull();
+        		behandleTilbake(menyscene);
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        Button standard = new Button("Standard");
+        Button sorterFilm = new Button("Sorter: film");
+        Button sorterTidspunkt = new Button("Sorter: tidspunkt");
+        
+        standard.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString1());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        sorterFilm.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString2());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
+        sorterTidspunkt.setOnAction(e -> {
+        	try {
+        		label1.setText(kontroll.getFormattertString3());
+        	} catch (Exception exception) { exception.printStackTrace(); }
+        });
+        
         tilbake.setOnAction(e -> behandleTilbake(menyscene));
+        
+      //Sok etter visning -------------------------------------------------------
+        FlowPane sokpanel = new FlowPane();
+        TextField sokVisninger = new TextField();
+        sokVisninger.setPromptText("Visningnr ");
+        sokVisninger.setMinWidth(100);
+
+        Button sokKnapp = new Button("Velg visning");
+        
+        sokKnapp.setOnAction(e -> {
+            try {
+            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
+            	//Maa vise totalbelop og antall plasser
+            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+            	boolean erKinoBetjent = true;
+            	//Metode for ï¿½ sjekke om Visning finnes
+            	if (hentetKinosalnr!=0) {
+	            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
+	            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr, erKinoBetjent);
+	            		sokVisninger.clear();
+	            	}
+            	}
+            } catch (Exception exception) { exception.printStackTrace(); }
+        });	
+        
+        rotpanel.setTop(sokpanel);
+        sokpanel.getChildren().addAll(tilbake, sokVisninger, sokKnapp, sorterFilm, sorterTidspunkt, standard);
+        sokpanel.setHgap(10);
+        
+        
 	}
+	
 	/** Kodet av 7079, kontrollert og godkjent av 7104 */
 	public void lagKundescene() {
 		try {
@@ -522,7 +592,7 @@ public class Main extends Application {
 	        
 	        tilbake.setOnAction(e -> {
 	        	try {
-	        		kontroll.setTempreservasjonNull();
+	        		//kontroll.setTempreservasjonNull();
 	        		behandleTilbake(menyscene);
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
@@ -565,10 +635,11 @@ public class Main extends Application {
 	            	//Metode for aapne nytt vindu for ï¿½ se ledige enkeltplasser. Velge/ombestemme plasser. 
 	            	//Maa vise totalbelop og antall plasser
 	            	int hentetKinosalnr = kontroll.finnKinosalnrBasertPaaVisningsnr(sokVisninger.getText());
+	            	boolean erKinoBetjent = false;
 	            	//Metode for ï¿½ sjekke om Visning finnes
 	            	if (hentetKinosalnr!=0) {
 		            	if(kontroll.finnSpesifikkVisning(sokVisninger.getText())) {
-		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr);
+		            		lagLedigePlasserVisning(sokVisninger.getText(), hentetKinosalnr, erKinoBetjent);
 		            		sokVisninger.clear();
 		            	}
 	            	}
@@ -582,6 +653,161 @@ public class Main extends Application {
 			
 		} catch(Exception e) {e.printStackTrace();}
 	}
+	
+	/** Kodet av 7079, kontrollert og godkjent av 7104 */
+	public void lagOppdaterScene() {
+		try {
+			BorderPane oppdateringRotpanel = new BorderPane();
+			GridPane oppdateringGridpane = new GridPane();
+			FlowPane panel = new FlowPane();
+			sceneOppdatering = new Scene(oppdateringRotpanel, 600,600);
+			
+			//Oppretter en knapp for tilbake
+			Button tilbake = new Button("Tilbake");
+			oppdateringGridpane.add(tilbake,0,1);
+			tilbake.setOnAction(e -> {
+	        	try {
+	        		behandleTilbake(adminScene);
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Labels
+			Label lblfilmnr = new Label("Filmnr:");
+			oppdateringGridpane.add(lblfilmnr, 1, 1);
+			
+			Label lblkinosalnr = new Label("Kinosalnr:");
+			oppdateringGridpane.add(lblkinosalnr, 2, 1);
+			
+			Label lbldato = new Label("Dato:");
+			oppdateringGridpane.add(lbldato, 3, 1);
+			
+			Label lblstarttid = new Label("Starttid:");
+			oppdateringGridpane.add(lblstarttid, 4, 1);
+			
+			Label lblpris = new Label("Pris:");
+			oppdateringGridpane.add(lblpris, 5, 1);
+			
+			Label lblvisningsnr = new Label("Visningsnr:");
+			oppdateringGridpane.add(lblvisningsnr, 6, 1);
+			
+			Label lblinfo = new Label("\nDu må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp");
+		
+			oppdateringRotpanel.getChildren().addAll(lblinfo);
+			oppdateringRotpanel.setCenter(panel);
+			
+			//Textfield
+			TextField txtfilmnr = new TextField();
+			oppdateringGridpane.add(txtfilmnr, 1, 2);
+			txtfilmnr.setMaxWidth(70);
+			txtfilmnr.setMinWidth(60);
+			
+			TextField txtkinosalnr = new TextField();
+			oppdateringGridpane.add(txtkinosalnr, 2, 2);
+			txtkinosalnr.setMaxWidth(70);
+			txtkinosalnr.setMinWidth(60);
+			
+			TextField txtdato = new TextField();
+			oppdateringGridpane.add(txtdato, 3, 2);
+			txtdato.setMaxWidth(80);
+			txtdato.setMinWidth(70);
+			
+			TextField txtstarttid = new TextField();
+			oppdateringGridpane.add(txtstarttid, 4, 2);
+			txtstarttid.setMaxWidth(80);
+			txtstarttid.setMinWidth(70);
+			
+			TextField txtpris = new TextField();
+			oppdateringGridpane.add(txtpris, 5, 2);
+			txtpris.setMaxWidth(70);
+			txtpris.setMinWidth(60);
+			
+			TextField txtvisningsnr = new TextField();
+			oppdateringGridpane.add(txtvisningsnr, 6, 2);
+			txtvisningsnr.setMaxWidth(70);
+			txtvisningsnr.setMinWidth(60);
+			
+			//Oppretter en knapp for filmnr:
+			Button filmnr = new Button("Oppdater");
+			oppdateringGridpane.add(filmnr,1,3);
+			filmnr.setOnAction(e -> {
+	        	try {
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtfilmnr.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for kinosalnr:
+			Button kinosalnr = new Button("Oppdater");
+			oppdateringGridpane.add(kinosalnr, 2, 3);
+			kinosalnr.setOnAction(e -> {
+	        	try {
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtkinosalnr.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for dato:
+			Button dato = new Button("Oppdater");
+			oppdateringGridpane.add(dato,3,3);
+			dato.setOnAction(e -> {
+	        	try {
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtdato.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for starttid:
+			Button starttid = new Button("Oppdater");
+			oppdateringGridpane.add(starttid,4,3);
+			starttid.setOnAction(e -> {
+	        	try {
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtstarttid.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for pris:
+			Button pris = new Button("Oppdater");
+			oppdateringGridpane.add(pris,5,3);
+			pris.setOnAction(e -> {
+	        	try {
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtpris.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
+	        	} catch (Exception exception) { exception.printStackTrace(); }
+	        });
+			
+			//Oppretter en knapp for pris:
+			Button info = new Button("Info-knapp");
+			info.setStyle("-fx-background-color: #42A87A");
+			oppdateringGridpane.add(info,7,2);
+			info.setOnAction(e -> showMessageDialog(null, "Du må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp\nVisningsnr kan ikke oppdateres"));
+			
+			oppdateringGridpane.getChildren().addAll();
+			
+			//GridPane settings
+			oppdateringGridpane.setHgap(30);
+			oppdateringGridpane.setVgap(5);
+			oppdateringRotpanel.setCenter(oppdateringGridpane);
+	        
+			
+		} catch(Exception e) {e.printStackTrace();}
+	}
+	
 	/** Kodet av 7074, kontrollert og godkjent av 7085 */
 	public void knappBehandleAvbestill(){
 		kontroll.slettAlleBilletter(kontroll.hentUbetalteBilletter());

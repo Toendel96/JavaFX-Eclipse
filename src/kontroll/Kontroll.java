@@ -71,7 +71,6 @@ public class Kontroll implements kontrollInterface {
 	    private ObservableList<Billett> ubillettlisteFrafil = FXCollections.observableArrayList();
 	    private ObservableList<Billett> ubetaltBillettListe = FXCollections.observableArrayList();
 
-
 	
 	//------------------------ aapne/Lukke forbindelse --------------------------------
 	    /** Kodet av 7088, kontrollert og godkjent av 7074*/
@@ -300,7 +299,7 @@ public class Kontroll implements kontrollInterface {
 	
 	/** Kodet av 7074, kontrollert og godkjent av 7104 */
 	
-	public boolean giBestillingBekreftelse(String visningsnr) {
+	public boolean giBestillingBekreftelse(String visningsnr, boolean erKinoBetjent) {
 		boolean status = false;
 	    String string = "";
 	    String filmnavn = null;
@@ -352,7 +351,6 @@ public class Kontroll implements kontrollInterface {
 			String filmnr = String.valueOf(filmnr1);
 			int kinosalnr1 = v.getKinosalnr();
 			
-			
 			String kinosalnr = String.valueOf(kinosalnr1);
 			String dato = String.valueOf(v.getDato());
 			String starttid = String.valueOf(v.getStarttid());
@@ -380,7 +378,7 @@ public class Kontroll implements kontrollInterface {
 				setPlassbillett(p.getRadnr(), p.getSetenr(), Integer.parseInt(kinosalnr), String.valueOf(billettkode));
 				}
 			}
-			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), false);
+			settBillett(String.valueOf(billettkode), Integer.parseInt(visningsnr), erKinoBetjent);
 			break;
 		}
 		
@@ -496,6 +494,7 @@ public class Kontroll implements kontrollInterface {
 				index= tempreservasjon.indexOf(p);
 			}
 		}
+		showMessageDialog(null, "Du fjernet en billett");
 		tempreservasjon.remove(index);
 		return tempreservasjon;
 	}
@@ -1258,6 +1257,26 @@ public String getStatistikkKino(String kinosalNr) {
 		showMessageDialog(null, "Visningsnummeret finnes ikke");
 		}
 		return finnes;
+	}
+	
+	public boolean oppdaterVisningFilmnr(String visningsnr, String filmnr) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningKinosalnr(String visningsnr, String kinosalnr) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningDato(String visningsnr, String dato) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningStarttid(String visningsnr, String starttid) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningPris(String visningsnr, String pris) {
+		return false;
 	}
 	
 	//------------------------------------ Sletter alt innhold i databasen (kjores n�r applikasjonen avsluttes) --------------------------------------------
