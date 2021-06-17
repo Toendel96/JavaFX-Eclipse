@@ -768,21 +768,20 @@ public String getStatistikkFilm(String filmNr) {
 		String string = "";
 		String filmnr = filmNr;
 		int visningnr = 0;
-		int antallSett = 0;
-		String billettKode = null;
+		String antallSett = "0";
+		String billettKode = "0";
+		int slettet = 0;
 		
 		
 		string = string + " " + "Visningnr" + "         ";
-		string = string + " " + "Antall sett" + "         ";	
-		string = string + " " + "Prosent kinosal" + "         ";	
-		string = string + " " + "Bestilling slettet" + "\n";
+		string = string + " " + "Antall sett" + "         ";		
+		string = string + " " + "Bestillinger slettet" + "\n";
 		
 		for (Visning v : getAlleVisninger()) {
 			if (String.valueOf(v.getFilmnr()).equals(filmnr)) {
 			visningnr = v.getVisningnr();
-			string = string + "   " + visningnr+" ";
 			
-			}
+			
 			Date dato = v.getDato();
 			Time tid = v.getStarttid();
 			boolean status = sjekkOmDatoTidErFremtid(tid,dato,0);
@@ -793,21 +792,30 @@ public String getStatistikkFilm(String filmNr) {
 				if (b.getVisningsnr()==(visningnr)) {
 					if (b.getErBetalt()) {
 						billettKode = b.getBillettkode();
+						
+						for (Plassbillett pb : getPlassbillett()) {
+							if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
+								System.out.println(billettKode);
+								antallSett = String.valueOf(billettKode);
+							}
+							else {
+								antallSett="0";
+							}
+						} 
+						
 					}
 				}
+				
 			}
-			for (Plassbillett pb : getPlassbillett()) {
-				if (String.valueOf(pb.getBillettkode()).equals(billettKode)) {
-					antallSett++;
-				}
-				else {
-					antallSett=0;
-				}
+				
+			} 
+			string = string + "      " + visningnr+"                         ";
+			string = string + " " + antallSett + "                           ";
+			string = string + " " + slettet + "\n";
+			
 			}
-			}
-			//string = string + " " + visningnr + "  "; 
-			string = string + " " + antallSett + "\n";	
 		}
+		
 		
 								
 		return string;
@@ -1275,18 +1283,38 @@ public String getStatistikkKino(String kinosalNr) {
 	}
 	
 	public boolean oppdaterVisningKinosalnr(String visningsnr, String kinosalnr) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
 	public boolean oppdaterVisningDato(String visningsnr, String dato) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
 	public boolean oppdaterVisningStarttid(String visningsnr, String starttid) {
+		if (finnSpesifikkVisning(visningsnr)) {
+			
+		}
 		return false;
 	}
 	
-	public boolean oppdaterVisningPris(String visningsnr, String pris) {
+	public boolean oppdaterVisningPris(String visningsnr1, String pris1) {
+		if (finnSpesifikkVisning(visningsnr1)) {
+			System.out.println("Treff");
+			int visningsnr = Integer.parseInt(visningsnr1);
+			float pris = Float.parseFloat(pris1);
+			for (Visning v : getAlleVisninger()) {
+				if (v.getVisningnr() == visningsnr) {
+					v.setPris(pris);
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	

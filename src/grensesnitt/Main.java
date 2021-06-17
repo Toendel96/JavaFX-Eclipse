@@ -733,6 +733,7 @@ public class Main extends Application {
 	        	try {
 	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtfilmnr.getText())) {
 	        			showMessageDialog(null, "Oppdatering godkjent");
+	        			lagKundescene();
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
@@ -744,8 +745,9 @@ public class Main extends Application {
 			oppdateringGridpane.add(kinosalnr, 2, 3);
 			kinosalnr.setOnAction(e -> {
 	        	try {
-	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtkinosalnr.getText())) {
+	        		if (kontroll.oppdaterVisningKinosalnr(txtvisningsnr.getText(), txtkinosalnr.getText())) {
 	        			showMessageDialog(null, "Oppdatering godkjent");
+	        			lagKundescene();
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
@@ -757,8 +759,9 @@ public class Main extends Application {
 			oppdateringGridpane.add(dato,3,3);
 			dato.setOnAction(e -> {
 	        	try {
-	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtdato.getText())) {
+	        		if (kontroll.oppdaterVisningDato(txtvisningsnr.getText(), txtdato.getText())) {
 	        			showMessageDialog(null, "Oppdatering godkjent");
+	        			lagKundescene();
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
@@ -770,8 +773,9 @@ public class Main extends Application {
 			oppdateringGridpane.add(starttid,4,3);
 			starttid.setOnAction(e -> {
 	        	try {
-	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtstarttid.getText())) {
+	        		if (kontroll.oppdaterVisningStarttid(txtvisningsnr.getText(), txtstarttid.getText())) {
 	        			showMessageDialog(null, "Oppdatering godkjent");
+	        			lagKundescene();
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
@@ -783,8 +787,9 @@ public class Main extends Application {
 			oppdateringGridpane.add(pris,5,3);
 			pris.setOnAction(e -> {
 	        	try {
-	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtpris.getText())) {
+	        		if (kontroll.oppdaterVisningPris(txtvisningsnr.getText(), txtpris.getText())) {
 	        			showMessageDialog(null, "Oppdatering godkjent");
+	        			lagKundescene();
 	        		} else {
 	        			showMessageDialog(null, "Oppdatering feilet");
 	        		}
