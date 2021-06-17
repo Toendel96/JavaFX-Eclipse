@@ -1251,6 +1251,26 @@ public String getStatistikkKino(String kinosalNr) {
 		return finnes;
 	}
 	
+	public boolean oppdaterVisningFilmnr(String visningsnr, String filmnr) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningKinosalnr(String visningsnr, String kinosalnr) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningDato(String visningsnr, String dato) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningStarttid(String visningsnr, String starttid) {
+		return false;
+	}
+	
+	public boolean oppdaterVisningPris(String visningsnr, String pris) {
+		return false;
+	}
+	
 	//------------------------------------ Sletter alt innhold i databasen (kjores n�r applikasjonen avsluttes) --------------------------------------------
 	/** Kodet av 7088, kontrollert og godkjent av 7085  */
 	public void slettinnholdAlleTabeller() throws Exception {

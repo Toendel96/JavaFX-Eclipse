@@ -731,7 +731,11 @@ public class Main extends Application {
 			oppdateringGridpane.add(filmnr,1,3);
 			filmnr.setOnAction(e -> {
 	        	try {
-	        		//metode
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtfilmnr.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 			
@@ -740,7 +744,11 @@ public class Main extends Application {
 			oppdateringGridpane.add(kinosalnr, 2, 3);
 			kinosalnr.setOnAction(e -> {
 	        	try {
-	        		//metode
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtkinosalnr.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 			
@@ -749,7 +757,11 @@ public class Main extends Application {
 			oppdateringGridpane.add(dato,3,3);
 			dato.setOnAction(e -> {
 	        	try {
-	        		//metode
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtdato.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 			
@@ -758,7 +770,11 @@ public class Main extends Application {
 			oppdateringGridpane.add(starttid,4,3);
 			starttid.setOnAction(e -> {
 	        	try {
-	        		//metode
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtstarttid.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 			
@@ -767,7 +783,11 @@ public class Main extends Application {
 			oppdateringGridpane.add(pris,5,3);
 			pris.setOnAction(e -> {
 	        	try {
-	        		//metode
+	        		if (kontroll.oppdaterVisningFilmnr(txtvisningsnr.getText(), txtpris.getText())) {
+	        			showMessageDialog(null, "Oppdatering godkjent");
+	        		} else {
+	        			showMessageDialog(null, "Oppdatering feilet");
+	        		}
 	        	} catch (Exception exception) { exception.printStackTrace(); }
 	        });
 			
@@ -775,7 +795,7 @@ public class Main extends Application {
 			Button info = new Button("Info-knapp");
 			info.setStyle("-fx-background-color: #42A87A");
 			oppdateringGridpane.add(info,7,2);
-			info.setOnAction(e -> showMessageDialog(null, "Du må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp"));
+			info.setOnAction(e -> showMessageDialog(null, "Du må skrive inn visningsnr og info til feltet du vil oppdatere. Klikk deretter på tilhørende oppdater-knapp\nVisningsnr kan ikke oppdateres"));
 			
 			oppdateringGridpane.getChildren().addAll();
 			
